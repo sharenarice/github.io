@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta name="description" content="MECHANISMS: A Systems Account of Medical Neurotechnology. 55 named structural patterns across five volumes. Written by Sharena Rice, PhD.">
+<meta name="author" content="Sharena Rice, PhD">
+<meta property="og:title" content="Sharena Rice, PhD — Medical Neurotechnology">
+<meta property="og:description" content="MECHANISMS names the structural patterns that determine why medical neurotechnology fails.">
+<meta property="og:image" content="https://sharenarice.com/og-image.png">
+<meta property="og:url" content="https://sharenarice.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sharena Rice, PhD — Medical Neurotechnology">
+<meta name="twitter:description" content="MECHANISMS names the structural patterns that determine why medical neurotechnology fails.">
+<meta name="twitter:image" content="https://sharenarice.com/og-image.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sharena Rice, PhD · Working on Neurotech Infrastructure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --dg: #11241D;
+  --lg: #dcefe8;
+  --gold: #F0C318;
+  --white: #ffffff;
+  --serif: 'Cormorant Garamond', serif;
+  --sans: 'Karla', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dg);
+  color: var(--white);
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 60px;
+  background: rgba(17,36,29,0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 0.5px solid rgba(220,239,232,0.1);
+}
+
+.nav-logo { display: flex; align-items: center; gap: 12px; }
+.nav-logo img { width: 32px; height: 32px; object-fit: contain; }
+.nav-logo-text {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(220,239,232,0.6);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+
+.hero {
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 200px 60px 72px;
+  border-bottom: 0.5px solid rgba(220,239,232,0.08);
+}
+
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(52px, 7.5vw, 92px);
+  font-weight: 300;
+  line-height: 1.0;
+  margin-bottom: 32px;
+}
+
+.hero-name em { font-style: italic; color: var(--lg); }
+
+.hero-statement {
+  max-width: 620px;
+  border-left: 1.5px solid var(--gold);
+  padding-left: 24px;
+  margin-bottom: 44px;
+}
+
+.hero-descriptor {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.hero-statement p {
+  font-size: 17px;
+  color: rgba(220,239,232,0.78);
+  line-height: 1.9;
+  margin-bottom: 18px;
+}
+
+.hero-statement p:last-child { margin-bottom: 0; }
+
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.btn-p {
+  display: inline-block;
+  padding: 13px 32px;
+  background: var(--gold);
+  color: var(--dg);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+.btn-p:hover { opacity: 0.86; }
+
+.btn-s {
+  display: inline-block;
+  padding: 13px 32px;
+  background: transparent;
+  color: var(--lg);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 0.5px solid rgba(220,239,232,0.3);
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-s:hover { border-color: var(--lg); color: var(--white); }
+
+section {
+  padding: 100px 60px;
+  border-bottom: 0.5px solid rgba(220,239,232,0.07);
+}
+
+.sec-eye {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.sec-head {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 48px;
+}
+
+.sec-head em { font-style: italic; color: var(--lg); }
+
+.gold-bar {
+  width: 36px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.55;
+  margin-bottom: 36px;
+}
+
+/* ABOUT */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.65fr 0.75fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.about-text p {
+  font-size: 17px;
+  color: rgba(220,239,232,0.78);
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+
+.formation-note {
+  margin-top: 28px;
+  padding: 18px 22px;
+  border: 0.5px solid rgba(220,239,232,0.1);
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(220,239,232,0.45);
+  line-height: 1.75;
+  max-width: 100%;
+  width: 100%;
+}
+
+.about-photo {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: grayscale(12%);
+}
+
+.photo-caption {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(220,239,232,0.3);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.stat {
+  background: rgba(220,239,232,0.03);
+  border: 0.5px solid rgba(220,239,232,0.07);
+  padding: 28px 22px;
+}
+
+.stat-n {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-l {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(220,239,232,0.45);
+  text-transform: uppercase;
+}
+
+/* RESOURCES */
+.resources-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.res-card {
+  background: rgba(220,239,232,0.025);
+  border: 0.5px solid rgba(220,239,232,0.08);
+  padding: 38px 34px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.res-card:hover {
+  background: rgba(220,239,232,0.045);
+  border-color: rgba(220,239,232,0.14);
+}
+
+.res-card-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.res-card-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 5px;
+}
+
+.res-card-subtitle {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(220,239,232,0.44);
+  margin-bottom: 18px;
+}
+
+.res-card-desc {
+  font-size: 15px;
+  color: rgba(220,239,232,0.65);
+  line-height: 1.8;
+  margin-bottom: 22px;
+}
+
+.res-card-meta {
+  font-size: 12px;
+  color: rgba(220,239,232,0.32);
+  letter-spacing: 0.05em;
+}
+
+.res-card-meta span { color: var(--gold); }
+.res-card-meta a {
+  color: var(--gold);
+  border-bottom: 0.5px solid rgba(240,195,24,0.3);
+  padding-bottom: 1px;
+  transition: border-color 0.18s;
+}
+.res-card-meta a:hover { border-color: var(--gold); }
+
+.resources-note {
+  font-size: 15px;
+  color: rgba(220,239,232,0.72);
+  border-left: 1.5px solid var(--gold);
+  padding-left: 20px;
+  margin-bottom: 44px;
+  line-height: 1.8;
+  max-width: 720px;
+}
+
+.res-subsection {
+  margin-top: 84px;
+  padding-top: 60px;
+  border-top: 0.5px solid rgba(220,239,232,0.08);
+}
+
+.sub-sec-head {
+  font-family: var(--serif);
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: 36px;
+}
+
+.sub-sec-head em { font-style: italic; color: var(--lg); }
+
+/* WORK */
+.work-positions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-bottom: 48px;
+}
+
+.pos-card {
+  padding: 30px 26px;
+  border: 0.5px solid rgba(220,239,232,0.07);
+}
+
+.pos-org {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.pos-title {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.pos-desc {
+  font-size: 14px;
+  color: rgba(220,239,232,0.55);
+  line-height: 1.75;
+}
+
+.work-writing {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-top: 40px;
+  border-top: 0.5px solid rgba(220,239,232,0.07);
+}
+
+.writing-org {
+  font-size: 14px;
+  color: rgba(220,239,232,0.45);
+  border-left: 1.5px solid rgba(240,195,24,0.3);
+  padding-left: 14px;
+  line-height: 1.6;
+}
+
+.writing-org strong {
+  display: block;
+  font-weight: 500;
+  color: rgba(220,239,232,0.72);
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+/* CONTACT */
+.contact-inner { max-width: 580px; }
+
+.contact-inner p {
+  font-size: 17px;
+  color: rgba(220,239,232,0.7);
+  line-height: 1.85;
+  margin-bottom: 30px;
+}
+
+.contact-rule {
+  font-size: 15px;
+  font-style: italic;
+  color: rgba(220,239,232,0.38);
+  border-left: 1px solid rgba(240,195,24,0.25);
+  padding-left: 18px;
+  margin-bottom: 30px;
+  line-height: 1.7;
+}
+
+.contact-links { display: flex; gap: 22px; flex-wrap: wrap; }
+
+.c-link {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lg);
+  border-bottom: 0.5px solid rgba(220,239,232,0.25);
+  padding-bottom: 3px;
+  transition: color 0.18s, border-color 0.18s;
+}
+
+.c-link:hover { color: var(--gold); border-color: var(--gold); }
+
+footer {
+  padding: 36px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-logo { display: flex; align-items: center; gap: 10px; }
+.footer-logo img { width: 22px; height: 22px; object-fit: contain; opacity: 0.45; }
+.footer-l { font-family: var(--serif); font-size: 14px; color: rgba(220,239,232,0.3); }
+.footer-r { font-size: 12px; color: rgba(220,239,232,0.2); letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <img src="ShuffleSynthesisIconYellow.svg" alt="Sharena Rice logo">
+    <span class="nav-logo-text">Sharena Rice, PhD</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#resources">Resources</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1 class="hero-name">What I do</h1>
+  <div class="hero-statement">
+    <p class="hero-descriptor">Medical Neurotechnology · Quality · Capital · Field Architecture</p>
+    <p>I work on making neurotech work.</p>
+    <p>Cross-pollinating viewpoints between quality engineering, writing, and funding to have real-time hands-on knowledge of how the field works and how it is evolving.</p>
+    <p>My flagship canon, <a href="https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview" target="_blank" style="color:var(--gold);border-bottom:0.5px solid rgba(240,195,24,0.35);padding-bottom:1px">MECHANISMS</a>, names the hidden patterns that cause capable teams to produce value that goes uncaptured, good research to stall, and prevent promising devices from reaching patients.</p>
+  </div>
+  <div class="hero-actions">
+    <a href="#resources" class="btn-p">Resources</a>
+    <a href="#work" class="btn-s">Work</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-eye">About</div>
+  <div class="about-grid">
+    <div>
+      <div class="gold-bar"></div>
+      <h2 class="sec-head">Building at the<br><em>intersection of fields</em></h2>
+      <div class="about-text">
+        <p>I earned a PhD in neuroscience from the University of Michigan. My research focused on brain rhythms and how neural circuits work together. Today I work across quality engineering, venture investing, writing, and strategy in neurotechnology.</p>
+        <p>My work turns hard-won knowledge into tools and resources others can use.</p>
+      </div>
+      <div class="formation-note">
+        A note on how I got here: as a child, I wrote a 45-page typed documentary on human behavior just because I was curious. My dream was to be a scientist and write books about my inventions. I also lived and trained at the Ann Arbor Zen Buddhist Temple for 22 months during graduate school. You cannot meditate your way through the FDA, but you can learn to observe lines of thought.
+      </div>
+    </div>
+    <div>
+      <img src="sharena_speaking.png" alt="Sharena Rice speaking at UCLA David Geffen School of Medicine" class="about-photo">
+      <div class="photo-caption">Speaking at UCLA David Geffen<br>School of Medicine</div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-n">55</div>
+        <div class="stat-l">Named structural claims in <a href="https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview" target="_blank" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">MECHANISMS</a></div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">30+</div>
+        <div class="stat-l">Published resources in neurotech</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">14K+</div>
+        <div class="stat-l">LinkedIn followers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">5</div>
+        <div class="stat-l">Active positions in the field</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section id="resources">
+  <div class="sec-eye">Resources</div>
+  <h2 class="sec-head">Canon and reference<br><em>infrastructure</em></h2>
+  <div class="resources-note">These resources are free to use and share. No login, no email needed.</p>
+    <p>If you use them, please reference me.</div>
+  <div class="resources-grid">
+    <div class="res-card">
+      <div class="res-card-tag">Structural diagnostics · Five volumes</div>
+      <div class="res-card-title">MECHANISMS</div>
+      <div class="res-card-subtitle">A Systems Account of Medical Neurotechnology</div>
+      <div class="res-card-desc">A five-volume canon that names the structural patterns behind why medical neurotechnology fails. This is because systems build in the wrong incentives, authority structures, and blind spots before anyone makes a single product decision. Written for operators, builders, and funders who already sense something is broken but do not yet have the language for it. Recognizing the patterns is the first step to fixing things.</div>
+      <div class="res-card-meta"><a href="https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview" target="_blank">Read MECHANISMS →</a></div>
+    </div>
+    <div class="res-card">
+      <div class="res-card-tag">Field navigation · Five volumes</div>
+      <div class="res-card-title">NAVIGATIONS</div>
+      <div class="res-card-subtitle">Making the Odds Visible</div>
+      <div class="res-card-desc">A five-volume canon. NAVIGATIONS gives people practical coordinates for moving forward when their path is unclear and the stakes are real.</div>
+      <div class="res-card-meta"><span>Expected Q3 2026</span></div>
+    </div>
+    <div class="res-card">
+      <div class="res-card-tag">Standards and governance reference</div>
+      <div class="res-card-title">Neurotechnology Standards &amp; Governance</div>
+      <div class="res-card-subtitle">A Curated Reference for Innovators</div>
+      <div class="res-card-desc">A map of the standards bodies, regulators, and ethics initiatives that shape how neurotechnology products are developed and approved worldwide. Used by product teams, researchers, and program managers who need to find the right frameworks early.</div>
+      <div class="res-card-meta"><a href="https://sharenarice-9366jxw.gamma.site/neurotech-standards" target="_blank">View resource →</a></div>
+    </div>
+    <div class="res-card">
+      <div class="res-card-tag">Reimbursement reference</div>
+      <div class="res-card-title">Navigating the Neurotechnology Reimbursement Maze</div>
+      <div class="res-card-subtitle">From Clearance to Coverage</div>
+      <div class="res-card-desc">Article on how neurotechnology products move from FDA clearance to insurance coverage to patient access. Designed for developers and teams who need to understand the reimbursement landscape before it becomes a late-stage surprise.</div>
+      <div class="res-card-meta"><a href="#" target="_blank">View resource →</a></div>
+    </div>
+    <div class="res-card">
+      <div class="res-card-tag">Career Reference · Article</div>
+      <div class="res-card-title">My Journey + Resources for Yours in Neurotech</div>
+      <div class="res-card-subtitle">The article I send when people ask about my career</div>
+      <div class="res-card-desc">A walk through how I came into neuroscience research and progressed into quality engineering, venture, and field architecture. Contains resources I recommend for people building their own path into medical neurotechnology. Sent most often to people who want to move into the field as a professional.</div>
+      <div class="res-card-meta"><a href="https://substack.com/home/post/p-176299869" target="_blank">Read the essay →</a></div>
+    </div>
+  </div>
+
+  <div class="res-subsection">
+    <div class="sec-eye">Choose your own adventure</div>
+    <h3 class="sub-sec-head">Interactive games <em>for students</em></h3>
+      <div class="resources-note">These games are free to use and share. No login, no email needed.</p>
+    <p>If you use them, please reference me.</div>
+    <div class="resources-grid">
+      <div class="res-card">
+        <div class="res-card-tag">For undergraduates interested in neuro</div>
+        <div class="res-card-title">First Contact</div>
+        <div class="res-card-subtitle">A Navigation Game</div>
+        <div class="res-card-desc">Step through the choices that shape an early career in the field, from networking to research direction to what to pursue after graduation. Built to make the structure of the path visible before students commit to it.</div>
+        <div class="res-card-meta"><a href="https://sharenarice.com/forundergrads/" target="_blank">Play the game →</a></div>
+      </div>
+      <div class="res-card">
+        <div class="res-card-tag">For graduate students interested in neuro</div>
+        <div class="res-card-title">For Grad Students Interested in Neuro</div>
+        <div class="res-card-subtitle">A Navigation Game</div>
+        <div class="res-card-desc">Surfaces the structural tradeoffs that shape a graduate career and helps students see how decisions change authority, agency, and optinality.</div>
+        <div class="res-card-meta"><a href="https://sharenarice.com/forgradstudents/" target="_blank">Play the game →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="sec-eye">Work</div>
+  <h2 class="sec-head">Current positions<br></h2>
+  <div class="work-positions">
+    <div class="pos-card">
+      <div class="pos-org"><a href="https://sanmai.tech/" target="_blank" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">Sanmai Technologies PBC</a></div>
+      <div class="pos-title">Senior Quality Engineer</div>
+      <div class="pos-desc">Joined Sanmai in 2022. Building the quality systems this transcranial focused ultrasound neuromodulation startup needs to get a device through FDA review. This includes design controls, testing protocols, verification, and the documentation that holds up under audit.</div>
+    </div>
+    <div class="pos-card">
+      <div class="pos-org"><a href="https://www.kaleidacapital.com/" target="_blank" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">Kaleida Capital</a></div>
+      <div class="pos-title">Venture Fellow</div>
+      <div class="pos-desc">Investment team member at a venture fund backing the future of neurotech and computation. Producing due diligence frameworks that enable the fund evaluate companies with more depth and speed.</div>
+    </div>
+    <div class="pos-card">
+      <div class="pos-org"><a href="https://www.neuradaptive.com/" target="_blank" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">Neuradaptive</a></div>
+      <div class="pos-title">Strategy Consultant</div>
+      <div class="pos-desc">Quality, regulatory, and commercialization strategy for an AI-native neuromodulation implant company. Building the right foundations before they scale.</div>
+    </div>
+  </div>
+  <div class="work-writing">
+    <div class="writing-org">
+      <strong><a href="https://www.neurotechreports.com/" target="_blank" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">Neurotech Reports</a></strong>
+      Writing about medical devices for professional audiences<br>
+      Since 2022 · Acquired by Cambridge Innovation Institute
+    </div>
+    <div class="writing-org">
+      <strong><a href="https://foresight.org/grants/grants-ai-for-science-safety/" target="_blank" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">Foresight Institute</a></strong>
+      Grant advising<br>
+      Since 2024
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="Follow">
+  <div class="sec-eye">Connect</div>
+  <div class="gold-bar"></div>
+  <div class="contact-inner">
+    <p>Follow for neurotech. Stay for systems, incentives, and what actually scales.</p>
+    <p>I am heads-down building and selective about meetings. If you reach out, please include a concrete ask.</p>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/sharenarice/" target="_blank" class="c-link">LinkedIn</a>
+      <a href="/cdn-cgi/l/email-protection#97e4fff6e5f2f9f6a6a6a7a1d7eef6fff8f8b9f4f8fa" class="c-link">Email</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">
+    <img src="ShuffleSynthesisIconYellow.svg" alt="logo">
+    <span class="footer-l">Sharena Rice, PhD · sharenarice.com</span>
+  </div>
+  <div class="footer-r">Medical neurotechnology · Quality · Capital · San Francisco Bay Area</div>
+</footer>
+
+</body>
+</html>
