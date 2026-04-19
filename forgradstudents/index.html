@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growing in the Field: A Career Navigation Game for Grad Students</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<!-- Open Graph / social thumbnail -->
+<meta property="og:title" content="Growing in the Field: A Career Navigation Game for Grad Students">
+<meta property="og:description" content="Navigate research direction, advisor dynamics, funding, and post-PhD paths in neurotechnology. Eleven scenarios. Three acts. Choose your own adventure.">
+<meta property="og:image" content="https://sharenarice.com/og-image.png">
+<meta property="og:url" content="https://sharenarice.com/forgradstudents/">
+<meta property="og:type" content="website">
+
+<!-- Twitter / LinkedIn card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Growing in the Field: A Career Navigation Game for Grad Students">
+<meta name="twitter:description" content="Navigate research direction, advisor dynamics, funding, and post-PhD paths in neurotechnology. Eleven scenarios. Three acts. Choose your own adventure.">
+<meta name="twitter:image" content="https://sharenarice.com/og-image.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
+#wrap{max-width:660px;margin:0 auto;padding:1.25rem 0}
+#hdr{margin-bottom:1.1rem}
+#act-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;display:block;margin-bottom:3px}
+#act-title{font-size:17px;font-weight:500;color:#1a1a1a;margin-bottom:2px;line-height:1.4}
+#act-sub{font-size:13px;color:#555;line-height:1.5}
+#meters{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.mc{display:flex;align-items:center;gap:8px;padding:7px 12px;border:0.5px solid #ddd;border-radius:12px;background:#fff;flex:1;min-width:130px}
+.md{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.mn{font-size:11px;color:#666;flex:1}
+.mv{font-size:13px;font-weight:500;color:#1a1a1a}
+#prow{display:flex;align-items:center;gap:8px;margin-bottom:.85rem}
+#psegs{display:flex;gap:4px;flex:1}
+.ps{height:3px;flex:1;border-radius:2px;background:#e5e3de;transition:background .3s;cursor:pointer}
+.ps:hover{opacity:.7}
+.ps.done{background:#F0C318}
+.ps.active{background:#11241D}
+#qc{font-size:11px;color:#999;white-space:nowrap}
+#card{border:0.5px solid #ccc;border-radius:12px;background:#fff;padding:1.2rem 1.35rem;margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:none}
+#ctitle{font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:.55rem;line-height:1.55}
+#cbody{font-size:13px;color:#555;line-height:1.8}
+#choices-wrap{border:0.5px solid #ccc;border-top:none;border-bottom-left-radius:12px;border-bottom-right-radius:12px;background:#f2f0eb;padding:1rem 1.1rem 1.1rem;margin-bottom:.8rem}
+#choices-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:.65rem;display:block}
+#choices{display:flex;flex-direction:column;gap:7px;margin-bottom:0}
+.cb{text-align:left;padding:11px 15px 11px 14px;border:0.5px solid #c8c5be;border-left:3px solid #11241D;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;color:#1a1a1a;line-height:1.6;transition:background .12s,border-left-color .12s;font-family:inherit;width:100%}
+.cb:hover{background:#f9f8f5;border-left-color:#2a5c42}
+.cb.sg{border-color:#1D9E75;border-left:3px solid #1D9E75;background:#EAF3DE;color:#085041}
+.cb.sb{border-color:#E24B4A;border-left:3px solid #E24B4A;background:#FCEBEC;color:#4A1B0C}
+.cb.sm{border-color:#1D9E75;border-left:3px solid #1D9E75;background:#EAF3DE;color:#085041}
+.cb.dim{opacity:.38}
+#fb{border-radius:12px;padding:.85rem 1.05rem;font-size:13px;line-height:1.8;display:none;margin-bottom:.8rem;border:0.5px solid}
+#fb.good{background:#EAF3DE;color:#085041;border-color:#1D9E75}
+#fb.bad{background:#FCEBEC;color:#4A1B0C;border-color:#E24B4A}
+#fb.mid{background:#EAF3DE;color:#085041;border-color:#1D9E75}
+#fb .fbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.6;display:block;margin-bottom:4px}
+#fb .fbp{font-size:11px;margin-top:8px;opacity:.75;font-style:italic}
+#btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.navbtn{padding:9px 18px;border-radius:12px;cursor:pointer;font-size:13px;font-family:inherit;border:0.5px solid #ccc;background:#fff;color:#1a1a1a;transition:background .12s;display:none}
+.navbtn:hover{background:#f5f4f0}
+#nxt{background:#11241D;color:#fff;border-color:#11241D}
+#nxt:hover{opacity:.82;background:#11241D}
+#end{display:none;padding:1.75rem 1rem;border:0.5px solid #ddd;border-radius:12px;background:#fff;text-align:center}
+#etitle{font-size:19px;font-weight:500;color:#1a1a1a;margin-bottom:.6rem}
+#esummary{font-size:13px;color:#555;line-height:1.8;max-width:480px;margin:0 auto 1rem}
+.echips{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:1rem 0}
+.echip{padding:7px 15px;border-radius:12px;font-size:13px;font-weight:500;border:0.5px solid}
+.plist-wrap{text-align:left;max-width:480px;margin:0 auto 1rem}
+.plist-wrap h4{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-bottom:.45rem}
+.plist-wrap li{font-size:12px;color:#555;line-height:1.7;margin-bottom:4px}
+#rbtn{padding:9px 22px;border-radius:12px;cursor:pointer;font-size:13px;font-family:inherit;background:#11241D;color:#fff;border:none;margin-top:.35rem}
+#rbtn:hover{opacity:.8}
+#intro{padding:1.75rem 1.5rem;border:0.5px solid #ccc;border-radius:12px;background:#fff;margin-bottom:1.25rem}
+#intro .badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999;display:block;margin-bottom:.5rem}
+#intro h1{font-size:21px;font-weight:500;color:#1a1a1a;margin-bottom:.6rem;line-height:1.35}
+#intro p{font-size:13px;color:#555;line-height:1.8;margin-bottom:.65rem}
+#start-btn{padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;background:#11241D;color:#fff;border:none;margin-top:.25rem}
+#start-btn:hover{opacity:.82}
+
+#cc-footer{max-width:660px;margin:2rem auto 0;padding:1rem 1.5rem;border-top:0.5px solid #ddd;text-align:center;font-size:10px;color:#999;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#cc-footer a{color:#999;text-decoration:underline}
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="intro">
+  <span class="badge">A navigation game for grad students</span>
+  <h1>Growing in the Field</h1>
+  <p>You are in a graduate program, whether a master's or a PhD, in a field connected to neuroscience, biomedical engineering, or something adjacent. You care about doing work that matters. You are also navigating a system that was not designed with your interests as the primary consideration. In a world where AI can generate a resume in thirty seconds, being a real person who has done things and built real relationships is more of a differentiator than it has ever been.</p>
+  <p>This game covers structural patterns that shape your training and your options, whether or not you have names for them yet. Twelve scenarios. Three acts. Some of what comes up will be familiar. Some will be new. Choose your own adventure.</p>
+  <button id="start-btn" onclick="startGame()">Let's go</button>
+</div>
+<div id="game" style="display:none">
+  <div id="hdr">
+    <span id="act-badge">Act 1 of 3</span>
+    <div id="act-title">What you see around you</div>
+    <div id="act-sub">Learning which patterns in your environment compound and which ones just consume</div>
+  </div>
+  <div id="meters">
+    <div class="mc"><div class="md" style="background:#F0C318"></div><span class="mn">Authority</span><span class="mv" id="va">50</span></div>
+    <div class="mc"><div class="md" style="background:#3d10bd"></div><span class="mn">Agency</span><span class="mv" id="vg">50</span></div>
+    <div class="mc"><div class="md" style="background:#1D9E75"></div><span class="mn">Optionality</span><span class="mv" id="vo">50</span></div>
+  </div>
+  <div id="prow"><div id="psegs"></div><span id="qc">1 / 12</span></div>
+  <div id="card"><div id="ctitle"></div><div id="cbody"></div></div>
+  <div id="choices-wrap">
+    <span id="choices-label">What would you do?</span>
+    <div id="choices"></div>
+  </div>
+  <div id="fb"></div>
+  <div id="btnrow">
+    <button class="navbtn" id="try" onclick="tryAnother()">Try another answer</button>
+    <button class="navbtn" id="back" onclick="goBack()">Back</button>
+    <button class="navbtn" id="nxt" onclick="goNext()">Continue</button>
+  </div>
+  <div id="end">
+    <div id="etitle"></div>
+    <div id="esummary"></div>
+    <div class="echips" id="echips"></div>
+    <div class="plist-wrap"><h4>Patterns you encountered</h4><ul id="plist"></ul></div>
+    <button id="rbtn" onclick="restart()">Play again</button>
+  </div>
+
+</div><!-- end #game -->
+</div><!-- end #wrap -->
+
+<script>
+const ACTS=[
+  {badge:"Act 1 of 3",title:"What you see around you",sub:"Learning which patterns in your environment compound and which ones just consume"},
+  {badge:"Act 2 of 3",title:"Where you are right now",sub:"Deciding what to invest in and what to let pass"},
+  {badge:"Act 3 of 3",title:"Who you are becoming",sub:"The moves that separate people who shape the field from people who get shaped by it"}
+];
+
+const S=[
+  {act:0,
+   title:"A fifth-year student in your lab has produced three strong studies. Her advisor keeps adding experiments before approving submission.",
+   body:"There is no written timeline and no authorship agreement. She says she is fine. You have watched this for two years.",
+   choices:[
+    {t:"This is a personal situation between her and her advisor. Not your circus, not your monkeys.",out:"bad",d:{a:-5,g:-5,o:-5},
+     fb:"It does feel personal. But the pattern is structural: undefined advancement criteria, no written agreement, and the material cost of leaving making inaction feel rational. It will repeat with the next student. The first person who names it out loud makes it easier for the next person to do the same.",
+     p:"Unnamed structural patterns repeat. Naming them is the first condition for change."},
+    {t:"Ask her directly whether she knows the specific criteria for her advisor approving submission.",out:"good",d:{a:10,g:6,o:8},
+     fb:"She has never asked. The conversation surfaces that no written criteria exist. She begins to understand that the indefinite timeline is a feature of the structure, not a temporary phase that patience will resolve. That understanding is the beginning of a different kind of decision-making.",
+     p:"Named dependency is easier to navigate than unnamed dependency."},
+    {t:"Mention it to a more senior student or faculty member you trust.",out:"mid",d:{a:5,g:0,o:3},
+     fb:"The senior person nods and says this is common. Which is true. Common patterns are still worth naming. You have confirmed what you suspected, though nothing has changed for her yet. There may be a more direct move available.",
+     p:"Confirming that a structural problem exists is not the same as addressing it."}
+   ]},
+
+  {act:0,
+   title:"Your program has a formal mentorship structure. Your assigned mentor is a senior grad student who is actively on the job market.",
+   body:"You were expecting guidance about how to navigate graduate school and build toward a career. What you got is someone whose attention is almost entirely on their own search right now: applications, interviews, rejections, more applications. The advice they have offered mostly reflects choices they made three years ago that have not produced the outcome they were hoping for. You are not on the job market yet. They are. The program website still calls this a key feature.",
+   choices:[
+    {t:"Treat it as a peer relationship. They might still share something useful about what they have tried.",out:"mid",d:{a:5,g:0,o:5},
+     fb:"A reasonable reframe. Someone one step ahead can share tactical information about the job market even when their strategic guidance is limited by their own circumstances. Just be clear about what you are getting: a view from someone in the middle of an uncertain process, not a view from someone who has solved the problem you are trying to solve.",
+     p:"A resource that does not deliver what it claims can still deliver something. Know what it actually offers."},
+    {t:"Invest the time fully because the program requires it and it might look good later.",out:"bad",d:{a:-5,g:-3,o:-5},
+     fb:"Time is the main resource you have in a grad program. Your mentor is focused on their own search and cannot give you what you need right now. Investing time in this relationship because it might look good is a pattern worth examining. The mentorship is not compounding for you. Something else could be using that time.",
+     p:"Time spent on low-yield obligations because they might look good is a slow drain. Know what is actually compounding."},
+    {t:"Redirect the time toward finding one person outside your institution who is already doing what you want to do and reach out to them directly.",out:"good",d:{a:12,g:8,o:12},
+     fb:"This is the harder move and the right one. Your assigned mentor is managing their own uncertainty right now, not yours. Someone who has already landed where you want to go will give you a far clearer picture of what is required to get there. You have to find that person yourself. The program is not going to assign them to you.",
+     p:"Formal structures assign mentors by availability, not relevance. Your job is to find the relevant ones."}
+   ]},
+
+  {act:1,
+ title:"You are at a networking event. You are standing near the food table for the third time, not because you are hungry but because it gives you something to do. You want to talk to the professionals in the room but you have no idea how to start.",
+ body:"The room contains businesspeople, clinicians, lived experience advocates, investors, engineers, and a few researchers. Most of them are catching up with people they already know. Several conversations are deep in field gossip about who is raising money and whose trial just failed. The cheese is good though.",
+ choices:[
+ {t:"Stay near the edges of the room and wait for a natural opening to appear.",out:"bad",d:{a:-8,g:-3,o:-5},
+ fb:"Watching for a natural opening is reasonable, but staying to yourself or spending the whole event with the friend you arrived with means the event produces nothing new. Natural openings rarely materialize without some movement on your part. The person who gets the most out of an event like this is the one who decides to make something happen, even imperfectly. The cheese will still be there when you get back.",
+ p:"Watching for a natural opening is fine. Staying to yourself or only talking to people you already know means the event produces nothing new."},
+ {t:"Find someone who is alone or between conversations. Ask what brought them to the event and listen more than you talk.",out:"good",d:{a:12,g:10,o:12},
+ fb:"This is the move. Approaching someone between conversations with a simple open question is low-pressure and often works surprisingly well. What comes next is what matters: listen for what they are excited or frustrated about and look for a real intersection with something you know or care about. If there is one, say so specifically. If there is not, let the conversation end naturally and connect on LinkedIn. Sometimes you will not realize until months later that someone you briefly met was exactly the right person to know, once you have seen what they pay attention to and what they are building.",
+ p:"A brief conversation followed by a LinkedIn connection can compound over months as you learn more about someone and find relevant moments to re-engage."},
+ {t:"Introduce yourself to several people in quick succession and ask for their advice on getting into the field.",out:"mid",d:{a:5,g:6,o:6},
+ fb:"Asking for advice from someone who is catching up with an old colleague tends to produce a polite non-answer. That said, making brief contact with several people and connecting with them all on LinkedIn afterward is a completely valid strategy. You will not know in the moment which of them will turn out to be relevant to you. Sometimes that becomes clear months later when you see what they are working on, share something they find interesting, or need an intro they happen to be able to give. Cast a reasonable net.",
+ p:"Brief contacts at events plus LinkedIn connections can compound over time. You often do not know who will be most relevant until later."}
+  ]},
+
+  {act:0,
+   title:"No matter how much work you finish, your pile of responsibilities keeps growing. You are producing more than ever and feel further behind than ever.",
+   body:"You completed a manuscript, mentored a rotation student, served on a committee, and handled three urgent lab crises this semester. Your advisor has responded to each completed task by adding two more. Your inbox is a horror. Your to-do list is longer now than it was six months ago despite everything you have crossed off. You are starting to experience health problems.",
+   choices:[
+    {t:"Work harder and faster. The backlog will eventually clear if you are productive enough.",out:"bad",d:{a:-8,g:0,o:-8},
+     fb:"This pattern does not clear the backlog. In many lab environments, output signals capacity, and capacity gets filled immediately. Working harder does not reduce the pile. It increases the rate at which new items arrive. The finish line is not a fixed point. You need to set boundaries and be firm about them. Without a boundary, your situation worsens.",
+     p:"In systems where output signals available capacity, productivity without boundaries accelerates accumulation, not completion."},
+    {t:"Accept it. An expanding workload is just what graduate school is.",out:"bad",d:{a:-10,g:-6,o:-6},
+     fb:"Graduate school is demanding, and some accumulation is normal. What is worth noticing is whether the accumulation ever resolves or whether it structurally cannot. If every finished task produces two new ones with no mechanism for the pile to shrink, the situation is not demanding. It is extractive. Without a boundary, your situation worsens.",
+     p:"Demanding and extractive are different conditions. Knowing which one you are in changes what the right response is."},
+    {t:"Name the pattern explicitly to your advisor: tasks are being added faster than you can complete them, and you need to agree on which responsibilities are sustainable to take on and yours to own.",out:"good",d:{a:14,g:8,o:10},
+     fb:"This is the direct move and the uncomfortable one. The conversation may not go perfectly. But it surfaces something that has been invisible: the absence of any agreement about what is and is not in your scope. Some advisors respond well to this framing. Others do not. Either response gives you information you need. What you learn from the conversation is more valuable than avoiding it.",
+     p:"A workload without defined scope is a scope that expands to fill all available time. Naming it is the first move toward changing it."}
+   ]},
+
+  {act:1,
+   title:"You realize your work is only legible to people in your exact subfield.",
+   body:"Three years of highly technical work. When you try to explain it to anyone outside your immediate specialty, including other students in your own department, you lose them in about two minutes. You have never explained it to a clinician, a device engineer, or someone who actually lives with the condition you study. Your committee follows you fine. Everyone else at the departmental mixer finds the cheese plate.",
+   choices:[
+    {t:"That is fine. Depth is the point of a grad program. Broad legibility comes later.",out:"bad",d:{a:-8,g:-3,o:-8},
+     fb:"Depth is the point of a grad program. Legibility is how depth becomes influence. The people who will hire you, fund you, and cite you mostly cannot follow a 45-minute technical seminar. If you cannot translate your work now, you will not suddenly be able to later. It is a skill that atrophies without practice.",
+     p:"Work that cannot travel beyond its originating context does not compound into field-level influence."},
+    {t:"Write a one-page description of your work aimed at an intelligent non-specialist. Share it with two people outside your field and ask what questions it raises.",out:"good",d:{a:14,g:6,o:12},
+     fb:"The exercise is harder than expected. The questions your non-specialist readers ask reveal gaps in your own framing that your committee never noticed because they already know everything you left out. You rewrite. The second version is better science and better communication at the same time.",
+     p:"Making your work legible to non-specialists is a form of quality infrastructure for your own career."},
+    {t:"Find one clinician or patient advocate in the area you study and ask what questions they actually need answered.",out:"good",d:{a:16,g:5,o:10},
+     fb:"The conversation is disorienting at first. Their questions do not map neatly onto your research design. But two of them are ones your existing data could speak to that you had never thought to highlight. Your work gets more useful without changing a single experiment.",
+     p:"Proximity to the people the work is for changes what you build and how you describe it."}
+   ]},
+
+  {act:1,
+   title:"Your advisor is deeply connected, in academia and in industry. Most of your professional paths currently run through them.",
+   body:"They have opened real doors for students before, both faculty positions and industry roles. Every path you can currently imagine runs through their network, their letters, and their opinion of when you are ready. You have never applied for anything they did not suggest. You have also never emailed anyone they did not introduce you to first.",
+   choices:[
+    {t:"A well-connected advisor is an asset. This is exactly what advisors are for.",out:"mid",d:{a:0,g:0,o:-5},
+     fb:"A well-connected advisor is a real asset. The risk is concentration, not connection. If your paths diverge, or your advisor has different ideas about your future than you do, you want footing that exists independently of that relationship. The goal is to benefit from their network while also building one of your own.",
+     p:"An advisor's network is a real asset. It is not a substitute for your own."},
+    {t:"Ask your advisor to make a few specific introductions AND reach out independently to two people whose work you admire.",out:"good",d:{a:14,g:10,o:14},
+     fb:"Your advisor's introductions carry weight because their relationships are warm and credible. The two cold emails you send independently also produce responses, one of which eventually leads to a collaboration. You now have relationships that flow through your advisor and around them. That is the right configuration whether you are headed to academia, industry, or somewhere in between.",
+     p:"Leveraging your advisor's network and building an independent one are not in conflict. Both compound."},
+    {t:"Start building independent professional relationships without waiting for your advisor to initiate them.",out:"good",d:{a:12,g:12,o:12},
+     fb:"You send three emails to researchers you found on your own. One does not respond. One sends a brief reply. One invites you to a call. That call produces a workshop invitation. At the workshop you meet two more people. Your network has begun to exist independently of your advisor. You can still ask your advisor for introductions. These are not competing strategies.",
+     p:"Independent professional relationships give you footing that does not depend entirely on any one person's continued goodwill."}
+   ]},
+
+  {act:1,
+   title:"Your thesis committee keeps offering vague criteria for completion, and you are starting to wonder if that is all there is.",
+   body:"Three experiments flopped without revealing anything conclusively new. Your committee members are thoughtful people, but they have told you variations of 'keep digging' and 'we will know it when we see it.' You are in year four and beginning to suspect that 'we will know it when we see it' may be the most honest answer they have.",
+   choices:[
+    {t:"Request a formal meeting to nail down specific, written completion criteria.",out:"mid",d:{a:8,g:3,o:5},
+     fb:"The meeting is worth having. Be prepared for the honest possibility that the vague criteria reflect scientific uncertainty, not evasion. When experiments have not yet produced a coherent story, the committee may not be able to give you a cleaner answer than 'produce something that holds together.' The meeting clarifies which kind of vagueness you are dealing with.",
+     p:"There are two kinds of vague criteria: evasive and scientifically uncertain. Knowing which one you have changes your next move."},
+    {t:"Show up to your next committee meeting with a proposed set of completion criteria and ask them to respond to it.",out:"good",d:{a:16,g:8,o:10},
+     fb:"This changes the dynamic considerably. Instead of waiting for the committee to define success, you are proposing a defensible story from what you have and asking whether it is sufficient. Committees are often more able to react to a concrete proposal than to generate criteria from scratch. You have shifted from petitioner to author of your own endpoint.",
+     p:"Showing up with a proposal transfers authorship of the criteria from the committee to you."},
+    {t:"Keep running experiments until something produces a clear result.",out:"bad",d:{a:-8,g:0,o:-8},
+     fb:"This is the default behavior of a grad student in a difficult chapter, which is why it is important to examine. If three experiments have flopped, more experiments may or may not produce clarity. Meanwhile time is moving. Consider whether the problem is insufficient data or insufficient framing of the data you already have. Sometimes a defensible story exists in what you have already produced.",
+     p:"More experiments are not always the answer. Insufficient framing and insufficient data are different problems."}
+   ]},
+
+  {act:1,
+   title:"You have some unstructured time this semester and several options for how to fill it.",
+   body:"Your lab work is in a manageable phase. You have been invited to join a journal club, asked to help organize a departmental symposium, offered a spot in a professional development workshop on scientific communication, and could also use the time to independently develop a technical skill adjacent to your dissertation but increasingly in demand outside academia. Nothing is required. Everything competes.",
+   choices:[
+    {t:"Join the journal club. It is low-effort and keeps you current with the literature.",out:"mid",d:{a:3,g:0,o:2},
+     fb:"Journal clubs are not without value. They are also rarely the highest-yield use of discretionary time. The main thing a journal club produces is familiarity with recent papers, which you can get other ways. If the club has strong participants who push each other's thinking, that changes the calculus. If it is mostly a social obligation with snacks, it probably is not where your marginal time compounds.",
+     p:"Not all professional activities compound equally. The question is not whether something has value but whether it has the most value relative to the alternatives."},
+    {t:"Help organize the departmental symposium.",out:"mid",d:{a:5,g:3,o:4},
+     fb:"Organizing a symposium builds real skills: logistics, communication, managing people with competing priorities, and producing a visible output with your name on it. It also puts you in direct contact with speakers your advisor would not have introduced you to. The yield depends on how much you are actually in the room versus doing administrative tasks in the background. Get in the room.",
+     p:"Organizational roles compound when they put you in contact with people and give you visible output. They consume when they are purely logistical."},
+    {t:"Take the scientific communication workshop and independently develop the adjacent technical skill.",out:"good",d:{a:14,g:10,o:14},
+     fb:"These two investments are doing different things. The communication workshop builds legibility, which travels across career paths. The adjacent technical skill builds a second capability that is increasingly in demand and that your dissertation alone would not provide. Together they widen the range of roles you are viable for without requiring you to change what your dissertation is about.",
+     p:"Skills that travel across career paths and independently signal competence. They compound regardless of which direction you eventually go."}
+   ]},
+
+  {act:2,
+   title:"You have reached out to 48 senior people doing work you want to do someday. The results are discouraging.",
+   body:"You connected on LinkedIn. Some accepted. A handful responded briefly. The responses were short and not particularly useful: 'follow your passion,' 'work hard,' 'network.' No one has agreed to a real conversation. You have sent follow-ups. The silence has returned. You have spent real time on this and feel you have nothing to show for it. You begin to wonder whether senior people simply do not help students.",
+   choices:[
+    {t:"Accept that senior people do not have time for students and stop trying.",out:"bad",d:{a:-10,g:-5,o:-12},
+     fb:"Some senior people do not have time. But the more likely problem is the ask itself. 'Tell me about your journey' and 'any advice for someone like me' are questions that cost the recipient significant effort to answer well and produce answers that may not replicate to your situation. A busy person reads that kind of message and feels the weight of it before deciding not to reply. The ask is not wrong because senior people are indifferent. It is wrong because it is not specific enough to be easy to answer.",
+     p:"Vague asks are easy to ignore. Specific asks that are easy to answer are much harder to pass up."},
+    {t:"Keep sending the same kind of outreach to more people. It is a numbers game.",out:"bad",d:{a:-5,g:0,o:-8},
+     fb:"Sending the same low-yield message to more people produces more of the same results. If the response rate on 48 contacts is near zero, the problem is not volume. Volume without changing the approach just means you are being ignored at scale. The message needs to change before the list gets longer.",
+     p:"Scaling a low-yield approach produces more low-yield results. Diagnose the approach before expanding the effort."},
+    {t:"Change the ask entirely: ask for specific resources they would have found useful when they were in your position, trying to become someone who improves the world with their knowledge. Then seriously engage with what they share and follow up with what you learned.",out:"good",d:{a:18,g:10,o:16},
+     fb:"This is the move almost no one makes, which is exactly why it works. A specific ask, 'What resources would have helped you most when you were a student trying to figure out how to actually make a difference with your knowledge?' takes the recipient about thirty seconds to answer. It does not ask them to perform their life story. It asks for something concrete they can point to. When you follow up after engaging with what they shared, you have done something that virtually no student ever does. Senior people notice. The conversation that follows is a different kind of conversation.",
+     p:"Specific asks that are easy to answer, followed by evidence that you took the answer seriously, are the most reliable way to convert a cold contact into a real relationship."}
+   ]},
+
+  {act:2,
+   title:"You are thinking about how you show up online. You have watched peers handle this very differently.",
+   body:"One peer posts complaints about academia, their advisor, and the job market on social media. Another shares work in progress, comments on papers in their area, and has built a small following of people in adjacent fields. A third has no online presence at all and considers this a principled stance. You are trying to figure out what, if anything, you should be doing.",
+   choices:[
+    {t:"Stay off social media entirely. Your work should speak through publications, not posts.",out:"mid",d:{a:3,g:0,o:-5},
+     fb:"A coherent position. Publications are the primary record and always will be. The cost of no online presence is that your work only reaches people who are already looking for it. People who might have found you relevant, cited you, invited you, or hired you will not know you exist until someone hands them a paper with your name on it. Discoverability is not vanity. It is surface area.",
+     p:"Publications are the primary record. Online presence determines who finds that record before they are already looking for it."},
+    {t:"Post complaints about academia, your advisor, and the job market when you are frustrated. At least it is honest.",out:"bad",d:{a:-10,g:-3,o:-12},
+     fb:"The frustrations are real and the field has real problems. The public record of those complaints, however, follows you. Hiring committees, collaborators, and funders search your name. What they find shapes what they think before they have read a word of your work. Complaints signal that you are someone who processes frustration publicly, which is a costly signal regardless of whether the frustration is justified.",
+     p:"A public record of complaints signals how you handle difficulty. That signal reaches people before your work does."},
+    {t:"Use your online presence to share work in progress, comment substantively on papers in your area, and make your interests legible to people in adjacent fields.",out:"good",d:{a:14,g:8,o:14},
+     fb:"This is the compounding choice. Each substantive comment or shared finding is a small act of positioning: it tells people in your field who you are, what you think, and what you are working on before you ever meet them. The peer who did this has collaborators, citations, and inbound invitations that the invisible peer and the complaining peer do not. The output does not need to be frequent. It needs to be worth reading.",
+     p:"Online presence that demonstrates thinking and work compounds into discoverability, relationships, and inbound opportunity."}
+   ]},
+
+  {act:1,
+ title:"You had a good conversation with a professional at the event. You connected on LinkedIn. Now you are home. A week passes. Then two. You still have their card. You have not followed up.",
+ body:"You are not sure if following up would seem too forward, too eager, or just like another student trying to extract something. Meanwhile, more time passes.",
+ choices:[
+ {t:"If it felt like a good conversation, they will probably reach out when something relevant comes up.",out:"bad",d:{a:-8,g:-3,o:-5},
+ fb:"The impression may be durable. Durable is not the same as actionable. Professionals are often heads-down, traveling, or simply do not yet know whether you are someone worth investing attention in. In a field where trust is earned slowly, a good conversation is a start, not a result. Waiting for them to initiate is waiting for something that almost never happens without a reason to do it.",
+ p:"A good impression is durable but not automatically actionable. Something real needs to happen to move it forward."},
+ {t:"Send a LinkedIn message the next day referencing the conversation, then let it sit unless you have something real to add.",out:"mid",d:{a:6,g:6,o:6},
+ fb:"Connecting with a specific reference to the conversation is the right first step and is worth doing. Be honest about what it produces in the short term: probably nothing immediately actionable. Persistent follow-up without demonstrated work behind it can tip from engaged to annoying in a small field where people know each other. One clear, specific message is the right first step. What comes after needs to be something real.",
+ p:"One specific follow-up is worth sending. What builds on it needs to be something you did."},
+ {t:"Do something real in the area you discussed, then reach out with something to show: a piece you wrote, a project you built, a question that came from work you did.",out:"good",d:{a:14,g:12,o:10},
+ fb:"In a world where AI can generate a follow-up message in seconds, the thing that is hard to fake is that you went and did something. Reaching out with 'I wrote a short piece about the problem we discussed and wanted to share it' or 'I tried building the thing you mentioned and ran into this specific issue' announces that you are a person who makes things. That is a different category entirely. It gives the professional something specific to respond to. You do not need months to do this. A short piece or a small experiment can take a week.",
+ p:"Reaching out after doing something real is unfakeable and announces that you are someone who makes things. That changes the nature of every conversation that follows."}
+  ]},
+
+  {act:2,
+   title:"You are finishing your graduate program. A peer with a weaker technical record just accepted a position you wanted. You did not get an interview.",
+   body:"He presented confidently at every available opportunity. He served on two committees and produced visible output from both. He made his work sound important to people who were not specialists without dumbing it down. He had relationships with two key people at the hiring organization, built at a conference two years earlier. You had stronger technical credentials. You did not get an interview.",
+   choices:[
+    {t:"The hiring process was political. This confirms it.",out:"bad",d:{a:-8,g:-5,o:-8},
+     fb:"You are partly right. Hiring processes are not pure meritocracies and relationships matter. But the specific things he did, building relationships early, making his work legible, showing up and producing visible output, are not politics. They are structural moves that work across sectors. Calling them political makes them invisible as things you can learn to do.",
+     p:"Attributing structural advantages to politics makes those advantages invisible and unrepeatable."},
+    {t:"Analyze specifically what he did differently that was not about technical credentials. Make a list. Start doing those things now.",out:"good",d:{a:16,g:6,o:14},
+     fb:"The list is uncomfortable. Relationships outside his own lab: several. Non-specialist presentations: many. Visible service with real output: two roles. You have time before your own search peaks. Starting later than you wish you had is still better than not starting.",
+     p:"Structural moves compound. Starting later than you wish you had is still better than not starting."},
+    {t:"Ask him directly how he approached the search and whether he would share what worked.",out:"good",d:{a:12,g:5,o:10},
+     fb:"He is surprisingly candid and clearly pleased to be asked. He started building relationships at the hiring organization two years before the position opened. He treated every presentation as a chance to be legible to someone who did not already know his work. You cannot recover two years. You can start now with the time you have.",
+     p:"Learning structural moves from someone who made them is faster than figuring them out alone."}
+   ]}
+];
+
+const TOTAL=S.length;
+let history=[];
+let st={turn:0,a:50,ag:50,o:50,pats:[]};
+
+function initHistory(){history=S.map(function(){return{chosen:null,exploring:false};});}
+function clamp(v){return Math.max(0,Math.min(100,Math.round(v)));}
+function $i(id){return document.getElementById(id);}
+
+function recomputeMeters(){
+  var a=50,ag=50,o=50;
+  var cap=Math.min(st.turn+1,TOTAL);
+  for(var i=0;i<cap;i++){
+    var h=history[i];
+    if(h.chosen!==null){
+      a=clamp(a+S[i].choices[h.chosen].d.a);
+      ag=clamp(ag+S[i].choices[h.chosen].d.g);
+      o=clamp(o+S[i].choices[h.chosen].d.o);
+    }
+  }
+  st.a=a;st.ag=ag;st.o=o;
+}
+
+function recomputePatterns(){
+  st.pats=[];
+  var cap=Math.min(st.turn+1,TOTAL);
+  for(var i=0;i<cap;i++){
+    var h=history[i];
+    if(h.chosen!==null){var p=S[i].choices[h.chosen].p;if(p)st.pats.push(p);}
+  }
+}
+
+function buildSegs(){
+  var c=$i('psegs');c.innerHTML='';
+  S.forEach(function(_,i){
+    var d=document.createElement('div');
+    var isPast=i<st.turn;
+    d.className='ps'+(isPast?' done':i===st.turn?' active':'');
+    if(isPast){(function(idx){d.onclick=function(){jumpTo(idx);};})(i);d.title='Go back to question '+(i+1);}
+    c.appendChild(d);
+  });
+  $i('qc').textContent=(st.turn+1)+' / '+TOTAL;
+}
+
+function setMeters(){$i('va').textContent=st.a;$i('vg').textContent=st.ag;$i('vo').textContent=st.o;}
+
+function setHdr(){
+  var ac=ACTS[S[st.turn].act];
+  $i('act-badge').textContent=ac.badge;
+  $i('act-title').textContent=ac.title;
+  $i('act-sub').textContent=ac.sub;
+}
+
+function showFeedback(idx){
+  var c=S[st.turn].choices[idx];
+  var fb=$i('fb');
+  fb.className=c.out;
+  fb.innerHTML='<span class="fbl">What this reveals</span>'+c.fb+'<div class="fbp">'+c.p+'</div>';
+  fb.style.display='block';
+}
+
+function renderChoices(){
+  var s=S[st.turn],h=history[st.turn];
+  var cc=$i('choices');cc.innerHTML='';
+  s.choices.forEach(function(c,i){
+    var b=document.createElement('button');
+    b.className='cb';b.textContent=c.t;
+    if(h.chosen!==null&&i===h.chosen){b.classList.add('s'+c.out[0]);}
+    b.onclick=(function(idx){return function(){pick(idx);};})(i);
+    cc.appendChild(b);
+  });
+}
+
+function render(){
+  var h=history[st.turn];
+  setHdr();buildSegs();setMeters();
+  $i('ctitle').textContent=S[st.turn].title;
+  $i('cbody').textContent=S[st.turn].body;
+  renderChoices();
+  if(h.chosen!==null){showFeedback(h.chosen);}
+  else{$i('fb').style.display='none';}
+  var tryBtn=$i('try'),backBtn=$i('back'),nxtBtn=$i('nxt');
+  tryBtn.style.display='none';backBtn.style.display='none';nxtBtn.style.display='none';
+  if(h.chosen!==null){
+    tryBtn.style.display='inline-block';
+    if(st.turn>0)backBtn.style.display='inline-block';
+    nxtBtn.style.display='inline-block';
+    nxtBtn.textContent=st.turn<TOTAL-1?'Continue':'See results';
+  }
+}
+
+function pick(idx){
+  var h=history[st.turn];h.chosen=idx;h.exploring=false;
+  recomputeMeters();recomputePatterns();render();
+}
+
+
+function tryAnother(){
+  $i('fb').style.display='none';
+}
+
+function jumpTo(idx){st.turn=idx;recomputeMeters();recomputePatterns();render();}
+function goBack(){if(st.turn>0){st.turn--;recomputeMeters();recomputePatterns();render();}}
+function goNext(){
+  if(st.turn<TOTAL-1){st.turn++;recomputeMeters();recomputePatterns();render();}
+  else{st.turn=TOTAL;recomputeMeters();recomputePatterns();showEnd();}
+}
+
+function showEnd(){
+  ['hdr','meters','prow','card','choices-wrap','fb','btnrow'].forEach(function(id){var el=$i(id);if(el)el.style.display='none';});
+  var a=st.a,ag=st.ag,o=st.o;
+  var title,summary;
+  if(a>=65&&ag>=60&&o>=65){
+    title="You are building structural authority.";
+    summary="You have been identifying what compounds and what consumes, making the moves that build independent standing, and learning to distinguish effort from progress. None of this means the field is fair or easy to navigate. It means you are moving through it with your eyes open, which is the most anyone can do and more than most people do.";
+  } else if(a<=38||ag<=35){
+    title="The structure is extracting more from you than you are getting back.";
+    summary="The patterns you encountered have accumulated in a direction that serves the institution more than it serves you. That is not a character judgment. It is what these systems produce by default when decisions are made reactively rather than structurally. The first move is to name what is happening. You have now done that.";
+  } else {
+    title="You are learning to read the field.";
+    summary="You made some moves that built real authority and avoided some traps. There are also places where the structure held more weight than your choices did. That is accurate. The field is harder to navigate than individual decisions can fully overcome, and individual decisions still matter more than people think.";
+  }
+  $i('etitle').textContent=title;
+  $i('esummary').textContent=summary;
+  var ec=$i('echips');ec.innerHTML='';
+  [{l:'Authority',v:a,bg:'#EAF3DE',b:'#1D9E75',c:'#085041'},
+   {l:'Agency',v:ag,bg:'#EDE8FD',b:'#3d10bd',c:'#1a0860'},
+   {l:'Optionality',v:o,bg:'#EAF3DE',b:'#1D9E75',c:'#085041'}
+  ].forEach(function(ch){
+    var el=document.createElement('div');el.className='echip';
+    el.style.cssText='background:'+ch.bg+';border-color:'+ch.b+';color:'+ch.c;
+    el.textContent=ch.l+': '+ch.v;ec.appendChild(el);
+  });
+  var uniq=[...new Set(st.pats)];
+  $i('plist').innerHTML=uniq.slice(0,8).map(function(p){return '<li>'+p+'</li>';}).join('');
+  $i('end').style.display='block';
+}
+
+function restart(){
+  initHistory();st={turn:0,a:50,ag:50,o:50,pats:[]};
+  ['hdr','meters','prow','card','choices-wrap','btnrow'].forEach(function(id){var el=$i(id);if(el)el.style.display='';});
+  $i('fb').style.display='none';$i('end').style.display='none';
+  $i('game').style.display='none';$i('intro').style.display='block';
+}
+
+function startGame(){
+  $i('intro').style.display='none';
+  $i('game').style.display='block';
+  initHistory();render();
+}
+
+initHistory();
+</script>
+<div id="cc-footer">
+  This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0). You are free to share and adapt this material for non-commercial purposes, provided you give appropriate credit to Sharena Rice, indicate if changes were made, and distribute your contributions under the same license.<br>
+  Full license terms: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0" target="_blank">creativecommons.org/licenses/by-nc-sa/4.0</a><br>
+  &copy; 2026 Sharena Rice. All rights reserved under the above license.
+</div>
+</body>
+</html>

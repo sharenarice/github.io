@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Contact: A Career Navigation Game for Undergrads Interested in Neuro</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<!-- Open Graph / social thumbnail -->
+<meta property="og:title" content="First Contact: A Career Navigation Game for Undergrads Interested in Neuro">
+<meta property="og:description" content="Eleven scenarios. Three acts. No assumed background, no assumed career plan. Choose your own adventure into neurotech.">
+<meta property="og:image" content="https://sharenarice.com/og-image.png">
+<meta property="og:url" content="https://sharenarice.com/forundergrads/">
+<meta property="og:type" content="website">
+
+<!-- Twitter / LinkedIn card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="First Contact: A Career Navigation Game for Undergrads Interested in Neuro">
+<meta name="twitter:description" content="Eleven scenarios. Three acts. No assumed background, no assumed career plan. Choose your own adventure into neurotech.">
+<meta name="twitter:image" content="https://sharenarice.com/og-image.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
+#wrap{max-width:660px;margin:0 auto;padding:1.25rem 0}
+#intro{padding:1.75rem 1.5rem;border:0.5px solid #ccc;border-radius:12px;background:#fff;margin-bottom:1.25rem}
+#intro .badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999;display:block;margin-bottom:.5rem}
+#intro h1{font-size:21px;font-weight:500;color:#1a1a1a;margin-bottom:.6rem;line-height:1.35}
+#intro p{font-size:13px;color:#555;line-height:1.8;margin-bottom:.65rem}
+#start-btn{padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;background:#11241D;color:#fff;border:none;margin-top:.25rem}
+#start-btn:hover{opacity:.82}
+#game{display:none}
+#hdr{margin-bottom:1.1rem}
+#act-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;display:block;margin-bottom:3px}
+#act-title{font-size:17px;font-weight:500;color:#1a1a1a;margin-bottom:2px;line-height:1.4}
+#act-sub{font-size:13px;color:#555;line-height:1.5}
+#meters{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.mc{display:flex;align-items:center;gap:8px;padding:7px 12px;border:0.5px solid #e0e0e0;border-radius:12px;background:#fff;flex:1;min-width:130px}
+.md{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.mn{font-size:11px;color:#666;flex:1}
+.mv{font-size:13px;font-weight:500;color:#1a1a1a}
+#prow{display:flex;align-items:center;gap:8px;margin-bottom:.85rem}
+#psegs{display:flex;gap:4px;flex:1}
+.ps{height:3px;flex:1;border-radius:2px;background:#e5e3de;transition:background .3s;cursor:pointer}
+.ps:hover{opacity:.7}
+.ps.done{background:#F0C318}
+.ps.active{background:#11241D}
+#qc{font-size:11px;color:#999;white-space:nowrap}
+#card{border:0.5px solid #ccc;border-radius:12px 12px 0 0;background:#fff;padding:1.2rem 1.35rem;border-bottom:none}
+#ctitle{font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:.55rem;line-height:1.55}
+#cbody{font-size:13px;color:#555;line-height:1.8}
+#choices-wrap{border:0.5px solid #ccc;border-top:none;border-radius:0 0 12px 12px;background:#f2f0eb;padding:1rem 1.1rem 1.1rem;margin-bottom:.8rem}
+#choices-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:.65rem;display:block}
+#choices{display:flex;flex-direction:column;gap:7px}
+.cb{text-align:left;padding:11px 15px 11px 14px;border:0.5px solid #c8c5be;border-left:3px solid #11241D;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;color:#1a1a1a;line-height:1.6;transition:background .12s,border-left-color .12s;font-family:inherit;width:100%}
+.cb:hover{background:#f9f8f5;border-left-color:#2a5c42}
+.cb.sg{border-color:#1D9E75;border-left:3px solid #1D9E75;background:#EAF3DE;color:#085041}
+.cb.sb{border-color:#E24B4A;border-left:3px solid #E24B4A;background:#FCEBEC;color:#4A1B0C}
+.cb.sm{border-color:#1D9E75;border-left:3px solid #1D9E75;background:#EAF3DE;color:#085041}
+.cb.dim{opacity:.38}
+#fb{border-radius:12px;padding:.85rem 1.05rem;font-size:13px;line-height:1.8;display:none;margin-bottom:.8rem;border:0.5px solid}
+#fb.good{background:#EAF3DE;color:#085041;border-color:#1D9E75}
+#fb.bad{background:#FCEBEC;color:#4A1B0C;border-color:#E24B4A}
+#fb.mid{background:#EAF3DE;color:#085041;border-color:#1D9E75}
+#fb .fbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.6;display:block;margin-bottom:4px}
+#fb .fbp{font-size:11px;margin-top:8px;opacity:.75;font-style:italic}
+#btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.navbtn{padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;border:0.5px solid #ccc;background:#fff;color:#1a1a1a;transition:background .12s;display:none}
+.navbtn:hover{background:#f5f4f0}
+#nxt{background:#11241D;color:#fff;border-color:#11241D}
+#nxt:hover{opacity:.82;background:#11241D}
+#end{display:none;padding:1.75rem 1rem;border:0.5px solid #ddd;border-radius:12px;background:#fff;text-align:center}
+#etitle{font-size:19px;font-weight:500;color:#1a1a1a;margin-bottom:.6rem;line-height:1.4}
+#esummary{font-size:13px;color:#555;line-height:1.8;max-width:500px;margin:0 auto 1rem}
+.echips{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:1rem 0}
+.echip{padding:7px 15px;border-radius:8px;font-size:13px;font-weight:500;border:0.5px solid}
+.plist-wrap{text-align:left;max-width:500px;margin:0 auto 1rem}
+.plist-wrap h4{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-bottom:.45rem}
+.plist-wrap li{font-size:12px;color:#555;line-height:1.7;margin-bottom:5px}
+#rbtn{padding:9px 22px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;background:#11241D;color:#fff;border:none;margin-top:.35rem}
+#rbtn:hover{opacity:.8}
+
+#cc-footer{max-width:660px;margin:2rem auto 0;padding:1rem 1.5rem;border-top:0.5px solid #ddd;text-align:center;font-size:10px;color:#999;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#cc-footer a{color:#999;text-decoration:underline}
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="intro">
+ <span class="badge">A navigation game for undergrads interested in neuro</span>
+ <h1>First Contact</h1>
+ <p>You are studying something that touches the brain, whether neuroscience, biomedical engineering, electrical engineering, computer science, or something adjacent, and you want to do something that matters in this field. Good. The field needs people who care about the work.</p>
+ <p>Neuro is exciting. Some parts can be tricky to break into. Some companies do not hire early-career people at all. And in a world where AI can generate a resume in thirty seconds, being a real person who has done things and built real relationships is more of a differentiator than it has ever been.</p>
+ <p>Eleven scenarios. Three acts. No assumed background, no assumed career plan. Choose your own adventure.</p>
+ <button id="start-btn" onclick="startGame()">Let's go</button>
+</div>
+
+<div id="game">
+ <div id="hdr">
+ <span id="act-badge">Act 1 of 3</span>
+ <div id="act-title"></div>
+ <div id="act-sub"></div>
+ </div>
+ <div id="meters">
+ <div class="mc"><div class="md" style="background:#F0C318"></div><span class="mn">Authority</span><span class="mv" id="va">50</span></div>
+ <div class="mc"><div class="md" style="background:#3d10bd"></div><span class="mn">Agency</span><span class="mv" id="vg">50</span></div>
+ <div class="mc"><div class="md" style="background:#1D9E75"></div><span class="mn">Optionality</span><span class="mv" id="vo">50</span></div>
+ </div>
+ <div id="prow"><div id="psegs"></div><span id="qc">1 / 11</span></div>
+ <div id="card"><div id="ctitle"></div><div id="cbody"></div></div>
+ <div id="choices-wrap">
+ <span id="choices-label">What would you do?</span>
+ <div id="choices"></div>
+ </div>
+ <div id="fb"></div>
+ <div id="btnrow">
+ <button class="navbtn" id="try" onclick="tryAnother()">Try another answer</button>
+ <button class="navbtn" id="back" onclick="goBack()">Back</button>
+ <button class="navbtn" id="nxt" onclick="goNext()">Continue</button>
+ </div>
+ <div id="end">
+ <div id="etitle"></div>
+ <div id="esummary"></div>
+ <div class="echips" id="echips"></div>
+ <div class="plist-wrap"><h4>Things you learned that school probably did not teach you</h4><ul id="plist"></ul></div>
+ <button id="rbtn" onclick="restart()">Play again</button>
+ </div>
+</div>
+</div>
+
+<script>
+const ACTS=[
+ {badge:"Act 1 of 3",title:"What neuro is",sub:"The parts of the field that do not show up in any syllabus"},
+ {badge:"Act 2 of 3",title:"How to get in the room",sub:"The gap between being interested and being someone the field knows"},
+ {badge:"Act 3 of 3",title:"How to become useful",sub:"What separates students who get opportunities from students who wait for them"}
+];
+
+const S=[
+ {act:0,
+ title:"You tell someone at an event that you want to work in neuro. They ask what kind of job you are thinking about. You give a general answer about wanting to help people with brain disorders. They nod politely and change the subject.",
+ body:"You have a real motivation. That matters. But you do not yet have a specific answer about what you would do on a Tuesday. The person was not being difficult. They were asking the question that every job application and eventually every hiring manager will also ask.",
+ choices:[
+ {t:"You do not need to know yet. You are an undergrad. Figure it out when you get closer.",out:"mid",d:{a:0,g:0,o:3},
+ fb:"Completely fair, and not the whole story. The field is wider than it looks from inside a university: engineering, neuroscience, biology, computer science, law, business, and clinical backgrounds all have a home here. The jobs span research, device development, regulatory affairs, clinical trials, quality engineering, investment, policy, and more. Not knowing exactly what you want is fine. Not having looked at what exists is a gap, and gaps are closeable. The map takes a few hours to sketch and changes how every conversation you have afterward sounds.",
+ p:"Not knowing your direction is fine. Building a map of what exists in the field is how not-knowing becomes a real answer over time."},
+ {t:"Look up several job postings in neuro and read the requirements carefully.",out:"good",d:{a:10,g:12,o:12},
+ fb:"Job postings are a useful window into what kinds of work exist and what skills are valued. You will find roles you probably did not know existed: quality engineering, regulatory affairs, clinical operations, device testing, data science alongside research. Keep in mind that many roles in this field are never posted at all and are filled through relationships, which means postings show you one part of the map rather than the whole thing. But one part of the map beats no map, and reading postings gives you specific vocabulary to use in every conversation that follows.",
+ p:"Job postings reveal what kinds of work exist and what skills are valued. Many roles are never posted at all, which is why building relationships matters alongside building skills."},
+ {t:"Ask a professor what kinds of careers neuroscience or engineering leads to in neuro.",out:"mid",d:{a:4,g:3,o:5},
+ fb:"A professor is a useful starting point and will likely describe the academic pipeline well. Most have spent their careers inside universities and have more limited visibility into the commercial and applied side. Their answer is a real data point. Combine it with job postings, LinkedIn exploration, and conversations with people who are working in those roles right now.",
+ p:"Professors know the academic pipeline well. Job postings and conversations with practitioners in the field fill in the rest of the map."}
+ ]},
+
+ {act:0,
+ title:"You hear terms like 'FDA clearance' (or equivalent from your country's medical device regulatory agency), 'design controls,' and '510(k)' repeatedly at a neuro event. You nod when they come up. You do not know what any of them mean or how they connect to each other.",
+ body:"This is a learnable gap, and it is a gap most of your peers also have. The good news: working knowledge of how regulated product development works is rarer among students than it should be, which means building it earlier gives you a real and visible edge.",
+ choices:[
+ {t:"This is something to learn when you work at a company. Not relevant yet.",out:"bad",d:{a:-5,g:-5,o:-8},
+ fb:"Neuro devices span a wide regulatory spectrum, from low-risk wearables to high-risk implanted devices, and where a device sits on that spectrum shapes its evidence requirements, development timeline, and risk management obligations. Nobody memorizes all of this. The goal is to become familiar enough with how the landscape is organized that you can find the right thing when you need it, and generally know what is expected at different stages. Students who have that navigational familiarity are noticeably more useful at companies than students who have not engaged with it at all. Starting now is starting ahead.",
+ p:"The goal is not to memorize the regulatory landscape but to become familiar enough with it to navigate it. That familiarity is a real professional differentiator."},
+ {t:"Take the Neurotech Course, which is available free online and earns a certificate.",out:"good",d:{a:10,g:14,o:10},
+ fb:"The Neurotech Course is a curated orientation to how neuro functions as an industry. It covers a span of things that standard curricula typically skip: intellectual property, clinical development, regulatory pathways, reimbursement, and commercialization. It is free, earns a certificate, and is designed for people at exactly your stage. This is different ground from reading guidance documents from the FDA or your country's medical device regulatory agency directly. It is broader and more structured, giving you a conceptual map of the whole field before you go deeper into any specific area. A very good place to start building the vocabulary you will use for the rest of your career in this space.",
+ p:"The Neurotech Course covers the span of neurotech commercialization, from IP to clinical development to regulatory, in a free, structured format designed for early-career people."},
+ {t:"Spend time reading guidance documents from the FDA or your country's medical device regulatory agency on device classifications and regulatory pathways.",out:"good",d:{a:8,g:12,o:8},
+ fb:"Guidance documents from the FDA (in the US), MHRA (in the UK), Health Canada, the TGA (in Australia), or wherever you are based are primary sources and are publicly available at no cost. The right approach is not to memorize them but to become familiar enough with how they are organized that you can find the right thing when you need it, and to absorb what is expected at different stages of device development. Browsing the device classification system, reading an overview of the clearance or approval process relevant to your region, and skimming a risk management guidance document gives you a feel for how the regulatory structure is organized. That navigational familiarity shows up immediately in conversations and interviews. Note that this is different ground from what the Neurotech Course covers: these documents go deep on the regulatory side, while the Course gives you the broader commercial and industry picture. Both are worth your time.",
+ p:"Regulatory guidance documents from your relevant agency are publicly available primary sources. The goal is navigational familiarity: know how the system is organized and where to find the right things when you need them."}
+ ]},
+
+ {act:0,
+ title:"You want to get experience in a neuro company before graduation. You have searched job boards for internships. Most listings want someone who already has experience. You apply to several anyway. You hear nothing back.",
+ body:"The semester is passing and your inbox is quiet. You are starting to wonder if the internship hunt is just supposed to feel this way.",
+ choices:[
+ {t:"Keep applying to neuro internship postings and hope one works out.",out:"bad",d:{a:-5,g:-3,o:-5},
+ fb:"The structural reality here is a little unforgiving: many neuro companies simply do not take interns and do not hire early-career people at all. They are small, moving fast, and need people who already know how the system works and can contribute immediately. This is not personal; it is just the economics of an early-stage field where most companies cannot afford to train someone from scratch. The students who get access before graduating are almost always doing it through relationships, through adjacent industries that build transferable skills, or by creating something that makes their competence visible before they ever apply.",
+ p:"Many neuro companies don't take interns or hire early-career people at all. Access before graduation usually comes through relationships, skills, and things you have built."},
+ {t:"Look for experience in adjacent regulated industries: automotive or aerospace for engineers, cardiovascular devices for biomedical engineers, pharmaceutical clinical operations for those interested in trials.",out:"good",d:{a:8,g:10,o:14},
+ fb:"This is a useful piece of advice that most students never hear. When a neuro company has a project that needs someone with experience in a regulated, safety-critical industry, having that background makes you exactly the right person. Automotive engineering builds fast-feedback, safety-critical, multi-component design habits that map well onto device development. Cardiovascular device experience comes with mature regulatory and quality system exposure. Even if they are not neuro, pharma clinical operations teaches trial design and execution that neuro companies need. Not every neuro company will value every adjacent background, but having one puts you in the conversation for a meaningful subset of roles that you would otherwise be excluded from.",
+ p:"Adjacent regulated industry experience can open specific doors in neuro when a company has a project that needs exactly that background."},
+ {t:"Build something demonstrable: a small project, an open-source contribution, a documented build, anything that shows real skill.",out:"good",d:{a:10,g:10,o:10},
+ fb:"In a world where AI can generate a resume in thirty seconds, the differentiator is evidence that you did something. A GitHub repository with a real signal processing project, a documented PCB design, a 3D-printed prototype with a write-up: these are things you can speak to in full detail, explain every decision you made, and describe what failed and why you reversed it. That specificity is what makes a project credible and memorable. It also gives you something concrete to talk about in every conversation, which matters a lot in a field where most hiring runs through relationships rather than applications.",
+ p:"A documented project with specific, speakable decisions is unfakeable by AI and gives you something real to talk about in every conversation."}
+ ]},
+
+ {act:0,
+ title:"You are interested in the clinical side of neuro but your university does not have strong connections to hospitals or medical device companies. You feel cut off from the part of the field you care most about.",
+ body:"A reasonable frustration. Not a permanent condition.",
+ choices:[
+ {t:"This is a disadvantage of your university. Not much to do about it until you move somewhere else.",out:"bad",d:{a:-5,g:-3,o:-8},
+ fb:"Geographic constraints are real. In-person neuro events and communities tend to cluster in certain hubs, and if you are not near one, you miss some of the spontaneous connections those environments produce. That is worth acknowledging. At the same time, healthcare systems exist pretty much everywhere, which means the clinical perspective on the conditions you care about is accessible wherever you are. You do not need to be in a medical device hub to talk to patients, follow clinicians, or understand what treatments fail to address.",
+ p:"Geographic constraints can limit access to in-person neuro communities. Clinical knowledge and patient perspectives are accessible wherever healthcare exists, which is everywhere."},
+ {t:"Follow professionals working in clinical neuro on LinkedIn, read what they post, and when you have something real to say, start producing: write a short piece, interview someone in the field, document something you built.",out:"good",d:{a:10,g:14,o:10},
+ fb:"Following and reading without commenting is a perfectly valid way to start. Lurking is underrated as a learning mode and you will pick up vocabulary and context faster than you expect. The level up is producing something. In a world flooded with AI-generated content, a piece that is clearly written by a specific human who thought about a specific problem stands out. Publishing something, even short, shifts you from invisible consumer to visible contributor. It also gives you a natural low-pressure reason to reach out to the people you want to know: 'I quoted your work in a piece I wrote, would you be willing to answer one follow-up question?' is a real opening.",
+ p:"Authentic content you wrote makes you visible and gives you a natural reason to reach out to people in the field."},
+ {t:"Find the patient advocacy organization for a neurological condition you care about and look for events that connect patients with researchers or students.",out:"mid",d:{a:6,g:10,o:7},
+ fb:"Patient advocacy organizations are one of the most underused resources available to students in this field. They hold the ground-truth clinical information that most coursework leaves out: what the condition costs people who live with it, which problems current treatments fail to address, and what researchers have been getting wrong about what matters most. And they are accessible wherever you are, since most operate nationally or internationally with online events. Attending something where patients speak directly to researchers produces a picture of the field's purpose that no lecture replicates.",
+ p:"Patient advocacy organizations hold the clinical ground truth that most coursework misses. Most operate nationally or online and are accessible wherever you are."}
+ ]},
+
+ {act:1,
+ title:"You are at a neuro networking event. You are standing near the food table for the third time, not because you are hungry but because it gives you something to do. You want to talk to the professionals in the room but you have no idea how to start.",
+ body:"The room contains businesspeople, clinicians, lived experience advocates, investors, engineers, and a few researchers. Most of them are catching up with people they already know. Several conversations are deep in field gossip about who is raising money and whose trial just failed. The cheese is good though.",
+ choices:[
+ {t:"Stay near the edges of the room and wait for a natural opening to appear.",out:"bad",d:{a:-8,g:-3,o:-5},
+ fb:"The people in this room are primarily there to see each other, not to discover you, and that is fine. That is just how professional events work. Natural openings do not materialize on their own. The person who gets the most out of an event like this is the one who decides to make something happen, even imperfectly. The cheese will still be there when you get back.",
+ p:"Waiting for a natural opening means waiting for something that will not arrive. Make something happen, even a short and imperfect conversation."},
+ {t:"Find someone who is alone or between conversations. Ask what brought them to the event and listen more than you talk.",out:"good",d:{a:12,g:10,o:12},
+ fb:"This is the move. Approaching someone between conversations with a simple open question is low-pressure and often works surprisingly well. What comes next is what matters: listen for what they are excited or frustrated about and look for a real intersection with something you know or care about. If there is one, say so specifically. If there is not, let the conversation end naturally and connect on LinkedIn. Sometimes you will not realize until months later that someone you briefly met was exactly the right person to know, once you have seen what they pay attention to and what they are building.",
+ p:"A brief conversation followed by a LinkedIn connection can compound over months as you learn more about someone and find relevant moments to re-engage."},
+ {t:"Introduce yourself to several people in quick succession and ask for their advice on getting into the field.",out:"mid",d:{a:5,g:6,o:6},
+ fb:"Asking for advice from someone who is catching up with an old colleague tends to produce a polite non-answer. That said, making brief contact with several people and connecting with them all on LinkedIn afterward is a completely valid strategy. You will not know in the moment which of them will turn out to be relevant to you. Sometimes that becomes clear months later when you see what they are working on, share something they find interesting, or need an intro they happen to be able to give. Cast a reasonable net.",
+ p:"Brief contacts at events plus LinkedIn connections can compound over time. You often do not know who will be most relevant until later."}
+ ]},
+
+ {act:1,
+ title:"You had a good conversation with a professional at the event. You connected on LinkedIn. Now you are home. A week passes. Then two. You still have their card. You have not followed up.",
+ body:"You are not sure if following up would seem too forward, too eager, or just like another student trying to extract something. Meanwhile, more time passes.",
+ choices:[
+ {t:"If it felt like a good conversation, they will probably reach out when something relevant comes up.",out:"bad",d:{a:-8,g:-3,o:-5},
+ fb:"The impression may be durable. Durable is not the same as actionable. Professionals are often heads-down, traveling, or simply do not yet know whether you are someone worth investing attention in. In a field where trust is earned slowly, a good conversation is a start, not a result. Waiting for them to initiate is waiting for something that almost never happens without a reason to do it.",
+ p:"A good impression is durable but not automatically actionable. Something real needs to happen to move it forward."},
+ {t:"Send a LinkedIn message the next day referencing the conversation, then let it sit unless you have something real to add.",out:"mid",d:{a:6,g:6,o:6},
+ fb:"Connecting with a specific reference to the conversation is the right first step and is worth doing. Be honest about what it produces in the short term: probably nothing immediately actionable. Persistent follow-up without demonstrated work behind it can tip from engaged to annoying in a small field where people know each other. One clear, specific message is the right first step. What comes after needs to be something real.",
+ p:"One specific follow-up is worth sending. What builds on it needs to be something you did."},
+ {t:"Do something real in the area you discussed, then reach out with something to show: a piece you wrote, a project you built, a question that came from work you did.",out:"good",d:{a:14,g:12,o:10},
+ fb:"In a world where AI can generate a follow-up message in seconds, the thing that is hard to fake is that you went and did something. Reaching out with 'I wrote a short piece about the problem we discussed and wanted to share it' or 'I tried building the thing you mentioned and ran into this specific issue' announces that you are a person who makes things. That is a different category entirely. It gives the professional something specific to respond to. You do not need months to do this. A short piece or a small experiment can take a week.",
+ p:"Reaching out after doing something real is unfakeable and announces that you are someone who makes things. That changes the nature of every conversation that follows."}
+ ]},
+
+ {act:1,
+ title:"You want to get research experience at a university with neuro labs. Your own university does not have one. You have found several professors whose work looks interesting and have sent polite emails expressing your interest. You hear nothing back.",
+ body:"The emails were well-written. You did your homework. You hear nothing. You are starting to suspect that good emails might not be the problem.",
+ choices:[
+ {t:"Keep emailing more professors. It is a numbers game and eventually one will respond.",out:"bad",d:{a:-5,g:-3,o:-5},
+ fb:"Professors at active neuro labs receive a constant stream of interest emails from students around the world. Most get ignored not because the emails are bad but because the professor has no reason to prioritize a message from a stranger they know nothing about. Sending more of the same kind of emails produces more of the same kind of silence. The structural problem is being unknown, which is a different problem than having a bad email.",
+ p:"Professors at active neuro labs might ignore most cold emails. The problem is being unknown, not the quality of the email."},
+ {t:"Find someone connected to the professor, have a real conversation with them first, then reference that context when you write to the professor directly.",out:"good",d:{a:12,g:10,o:12},
+ fb:"Referencing a real conversation with someone in the professor's network, even without asking them to formally introduce you, moves your email out of the stranger category. 'I recently spoke with someone who works closely with your lab and wanted to reach out directly' gives context and shows you are already connected to the world around the research. If you do ask someone for a formal introduction, you can make it extremely easy for them to say yes by writing a forward-able message: a few sentences about who you are and what you are asking that they can paste directly into a note to the professor. When saying yes costs someone almost no effort, more people say yes.",
+ p:"Referencing real conversations gives context without needing a gatekeeper to act. A forward-able message makes a warm intro easy enough to give that more people agree to do it."},
+ {t:"Look for structured programs with formal access pathways: clinical shadowing, university-industry partnerships, summer engineering or device development programs, or research experiences that specifically recruit students from outside the host institution.",out:"good",d:{a:10,g:8,o:14},
+     fb:"Many universities, hospitals, and industry organizations run structured programs specifically designed to give students access they would not otherwise have. These vary by country and institution: some are clinical in focus, some are engineering or device-development oriented, some are research-based. What they share is a formal application channel that is designed to receive and evaluate students like you, unlike cold emails which disappear into an unstructured queue. When you find a program that looks relevant, it is worth reaching out directly to the faculty, supervisors, or engineers involved, asking whether they welcome students from the program and what preparation would make you a strong candidate. That targeted outreach alongside the formal application is more effective than either alone. And if your interest is primarily on the engineering and building side, look specifically for programs with device, hardware, or clinical engineering components rather than pure research placements.",
+     p:"Structured programs with formal access pathways exist across clinical, engineering, and research tracks. Combining the formal application with direct outreach to participating supervisors is more effective than either alone."}
+ ]},
+
+ {act:1,
+ title:"You have a LinkedIn profile. You mostly use it to apply for things. You have not posted anything. You follow your university account and a few professors. The profile has been essentially unchanged for over a year.",
+ body:"You have heard that LinkedIn matters for professional careers. You are not sure what to do with it as a student who does not feel like they have much to show yet.",
+ choices:[
+ {t:"LinkedIn is for people who already have careers. Build a real profile when you have something to put on it.",out:"bad",d:{a:-8,g:-5,o:-8},
+ fb:"The professionals in neuro who make hiring decisions are on LinkedIn right now and so are the people who will make introductions on your behalf someday. A sparse inactive profile says nothing. In a field flooded with AI-generated noise, an active profile that demonstrates real human curiosity and real engagement with what the field is working on stands out specifically because most of what surrounds it is generic and forgettable. Building the profile while you are a student is the easiest time to do it, before there is any pressure attached.",
+ p:"An active professional presence built while you are a student is visible to people who might hire or introduce you long before you need them to."},
+ {t:"Follow neuro companies and professionals in roles that interest you. Read and absorb what they post. That is a fine place to start.",out:"mid",d:{a:5,g:2,o:6},
+ fb:"Following and reading without commenting is a perfectly valid starting point and underrated as a learning mode. You will pick up vocabulary, debates, and context faster than you expect. The limitation is that lurkers are invisible to the people they are observing. At some point, producing something shifts you from invisible consumer to someone the field can see. In a world where AI generates most of the noise in any feed, a post that is clearly written by a specific human who thought about something specific is more noticeable than it would have been a few years ago.",
+ p:"Lurking is a valid learning mode. Producing something, even a short piece, makes you visible in a way that lurking cannot."},
+ {t:"Write something: a short piece about a problem in the field, an interview with someone in neuro, a documented project. Post it and share it with the people you are trying to know.",out:"good",d:{a:12,g:10,o:10},
+ fb:"Publishing something, even a short article on LinkedIn, changes your position in the field from observer to contributor. It also gives you a natural low-pressure reason to reach out to people: 'I quoted your work in a piece I wrote, would you be willing to answer one follow-up question?' is a real opening that most people are happy to say yes to. Asking someone for an interview for something you are writing is one of the easiest asks in professional life because you are asking them to share their expertise, not asking for their help or their judgment of you. And because you wrote it yourself, every detail is yours to speak to specifically.",
+ p:"Publishing gives you a natural reason to reach out to people. Asking for an interview is one of the easiest professional asks to say yes to."}
+ ]},
+
+ {act:2,
+ title:"You are doing well in your classes and keeping a strong GPA. You are about to apply for roles at neuro companies. You feel prepared. Your resume leads with your GPA and your coursework.",
+ body:"You send out applications. You hear nothing back from most of them. You are confused because your academic record is strong.",
+ choices:[
+ {t:"Good grades demonstrate that you can learn. That should matter to employers.",out:"bad",d:{a:-8,g:-5,o:-8},
+ fb:"Neuro companies generally do not care about GPA. What they care about is whether you can do the work. Grades demonstrate that you absorbed curriculum. A project demonstrates that you can apply something and make real decisions under real uncertainty. There is also a structural problem in the current application environment: AI is generating resumes and cover letters at scale, and screening systems are using AI to read them. The result is a noise problem where most applications are difficult to distinguish from each other. GPA does not cut through that noise. Evidence of actual work does, specifically because you can speak to every decision you made in ways that cannot be fabricated by someone who was not there.",
+ p:"GPA does not differentiate you to neuro companies. Documented work that you can speak to in detail does."},
+ {t:"Start one side project this semester: pick a specific problem, build something that addresses a piece of it, document what you did and what you learned, and put it somewhere visible.",out:"good",d:{a:14,g:12,o:12},
+ fb:"The project does not need to be impressive. It needs to be real, documented, and specifically yours. A student who built a signal processing pipeline, documented every design decision and every failure, and posted the code publicly can answer in an interview exactly why they made each choice and what they would do differently now. That specificity is what makes it credible and memorable. AI can generate a polished project description. AI cannot answer the follow-up question about what happened when you tried a different approach and why you reversed it. If you cannot share work because of a lab NDA, do an adjacent personal project that demonstrates the same skills on your own time.",
+ p:"A documented project you can speak to in specific detail is unfakeable and is exactly what makes competence credible to a technical interviewer."},
+ {t:"Polish your resume and cover letter to better reflect your technical skills and relevant coursework.",out:"bad",d:{a:-3,g:-2,o:-3},
+ fb:"A better-framed resume is marginally useful and worth doing eventually. At this point in the application environment, polish alone is unlikely to move the needle. AI is generating resumes and cover letters at scale, and automated screening reads them the same way regardless of quality. The more leveraged investment is building something demonstrable and becoming known to people at companies before a role is posted. That is the structural alternative to the application queue, and it is more available than it looks.",
+ p:"Resume polish has diminishing returns when AI generates applications at scale. Demonstrable work and known relationships are the structural alternative."}
+ ]},
+
+ {act:2,
+ title:"You are a senior. You have applied to 122 positions at neuro companies, startups, and research institutes over the past eight months. You have had a handful of interviews. You have received no offers. You are starting to wonder if neuro is just not for you.",
+ body:"Your resume is solid. You have applied everywhere you could find. You do not understand what is wrong.",
+ choices:[
+ {t:"Keep applying. More volume will eventually produce an offer.",out:"bad",d:{a:-8,g:-3,o:-8},
+ fb:"The structural reality is difficult here, and it is not your fault. Many neuro companies do not hire early-career people at all: they are small, moving fast, and need experienced people who already know the system. The ones that do hire early-career people are receiving thousands of AI-generated applications. The job board is where applications go to accumulate without producing results. The people who land highly-competitive roles are almost universally people who were known to someone there before the role was posted, or who had done a project with someone there, or who arrived from an adjacent field with directly relevant experience. The path in almost never runs through a job board.",
+ p:"Many neuro companies don't hire early-career people at all. The path in almost never runs through a job board."},
+ {t:"Identify five companies you want to work at. Find two people at each on LinkedIn. Produce something relevant to their work and reach out when you have something specific to show.",out:"good",d:{a:10,g:12,o:12},
+ fb:"This is the structural alternative to the application queue, and it works for a simple reason: the people who land roles are almost always known before the role is posted. Producing something related to a company's work and reaching out with something to show puts you in a completely different category from someone who applies cold on the day the posting goes live. This requires starting earlier than most students start. If you are a senior who has not started yet, start today. It still produces more than application 123. And in a world where AI generates most outreach, a message that is clearly from a specific human who did a specific real thing is the rarest thing in anyone's inbox.",
+ p:"Relationships built before a position is posted are what determine who gets the call. Building them requires starting before you need the job."},
+ {t:"Polish your resume and cover letter to better stand out from other applicants.",out:"bad",d:{a:-3,g:-2,o:-3},
+ fb:"A better-polished resume is unlikely to change outcomes materially when it is competing against thousands of AI-assisted applications going through the same screening. Being known by a human being at the company before you apply is the structural alternative. That is the thing that cannot be automated away.",
+ p:"Resume polish has sharply diminishing returns in a world where AI generates applications at scale. Being known by a human at the company before you apply is what changes the outcome."}
+ ]},
+
+ {act:2,
+ title:"You are getting close to graduation. You have been trying to figure out whether to go to graduate school, find a job in the field, or do something else entirely. You feel stuck because you are not sure enough about any of the options to commit.",
+ body:"Everyone around you seems to have a plan. You are not sure whether your uncertainty is a problem or just what deciding feels like from the inside. (It is usually the second one.)",
+ choices:[
+ {t:"Apply to graduate school. It is the natural next step for someone who likes neuroscience.",out:"bad",d:{a:-5,g:-8,o:-8},
+ fb:"A few things worth knowing before applying. Master's programs are generally not funded and can be expensive. PhD programs are a different story: reputable PhD programs in neuroscience and biomedical engineering in the US are typically fully funded, meaning you receive a stipend and tuition is covered. In the UK, PhD programs run around three to four years. In continental Europe the timelines vary similarly. In the US they tend to run longer, often five to six years or more in life sciences. So the timeline varies considerably depending on where you go and what you study. What stays consistent is that a PhD is a commitment to a specific kind of work with a specific set of outcomes at the end. Choosing it because it is the next thing rather than because you have thought carefully about what you want is a decision made by not deciding. People who enter without enough clarity about why sometimes discover two or three years in that it is not what they wanted. That discovery is expensive in time.",
+ p:"PhD programs at reputable institutions are typically funded; master's programs are not. The timeline varies widely by country, from around three years in the UK to five or more in the US. Choosing grad school because it is the next thing is choosing it without enough information."},
+ {t:"Talk to five people doing things you might want to do in five years, including people who went to grad school and people who did not, and ask what their path cost and what it produced.",out:"good",d:{a:12,g:14,o:14},
+ fb:"The people two to five years ahead of you doing something you might want to do hold the most accurate information available about what each path costs and produces. You do not need to know what questions to ask before you start those conversations. You will learn what to ask by being in them. Go in curious and open. Five real conversations produce more useful signal than any amount of introspection or internet research, and the people you talk to are usually glad to share because someone did the same for them.",
+ p:"Talking to people ahead of you on each path produces accurate information about what those paths cost. You learn what to ask by being in the conversations."},
+ {t:"Spend a semester or a gap year actively trying one thing before committing to a longer path.",out:"mid",d:{a:5,g:8,o:8},
+ fb:"Active exploration is a legitimate and underrated strategy, and you do not need specific questions figured out in advance to benefit from it. Spending time in a lab, a company, a clinical research role, or an adjacent industry teaches you what you need to know about whether that path is right for you by showing you what it is. You will discover your questions in the doing. The conditions for learning are showing up, paying attention, and staying curious. None of those require priors. Go and see.",
+ p:"Active exploration teaches you what to want by showing you what things are. You discover your questions in the doing, not before it."}
+ ]}
+];
+
+const TOTAL=S.length;
+let history=[];
+let st={turn:0,a:50,g:50,o:50,pats:[]};
+
+function initHistory(){history=S.map(function(){return{chosen:null,exploring:false};});}
+function clamp(v){return Math.max(0,Math.min(100,Math.round(v)));}
+function $i(id){return document.getElementById(id);}
+
+function startGame(){
+ $i('intro').style.display='none';
+ $i('game').style.display='block';
+ initHistory();render();
+}
+
+function recomputeMeters(){
+ var a=50,g=50,o=50;
+ var cap=Math.min(st.turn+1,TOTAL);
+ for(var i=0;i<cap;i++){
+ var h=history[i];
+ if(h.chosen!==null){
+ a=clamp(a+S[i].choices[h.chosen].d.a);
+ g=clamp(g+S[i].choices[h.chosen].d.g);
+ o=clamp(o+S[i].choices[h.chosen].d.o);
+ }
+ }
+ st.a=a;st.g=g;st.o=o;
+}
+
+function recomputePatterns(){
+ st.pats=[];
+ var cap=Math.min(st.turn+1,TOTAL);
+ for(var i=0;i<cap;i++){
+ var h=history[i];
+ if(h.chosen!==null){var p=S[i].choices[h.chosen].p;if(p)st.pats.push(p);}
+ }
+}
+
+function buildSegs(){
+ var c=$i('psegs');c.innerHTML='';
+ S.forEach(function(_,i){
+ var d=document.createElement('div');
+ var isPast=i<st.turn;
+ d.className='ps'+(isPast?' done':i===st.turn?' active':'');
+ if(isPast){(function(idx){d.onclick=function(){jumpTo(idx);};})(i);d.title='Go back to question '+(i+1);}
+ c.appendChild(d);
+ });
+ $i('qc').textContent=(st.turn+1)+' / '+TOTAL;
+}
+
+function setMeters(){$i('va').textContent=st.a;$i('vg').textContent=st.g;$i('vo').textContent=st.o;}
+
+function setHdr(){
+ var ac=ACTS[S[st.turn].act];
+ $i('act-badge').textContent=ac.badge;
+ $i('act-title').textContent=ac.title;
+ $i('act-sub').textContent=ac.sub;
+}
+
+function showFeedback(idx){
+ var c=S[st.turn].choices[idx];
+ var fb=$i('fb');
+ fb.className=c.out;
+ fb.innerHTML='<span class="fbl">What this reveals</span>'+c.fb+'<div class="fbp">'+c.p+'</div>';
+ fb.style.display='block';
+}
+
+function renderChoices(){
+ var s=S[st.turn],h=history[st.turn];
+ var cc=$i('choices');cc.innerHTML='';
+ s.choices.forEach(function(c,i){
+ var b=document.createElement('button');
+ b.className='cb';b.textContent=c.t;
+ if(h.chosen!==null&&i===h.chosen){b.classList.add('s'+c.out[0]);}
+ b.onclick=(function(idx){return function(){pick(idx);};})(i);
+ cc.appendChild(b);
+ });
+}
+
+function render(){
+ var h=history[st.turn];
+ setHdr();buildSegs();setMeters();
+ $i('ctitle').textContent=S[st.turn].title;
+ $i('cbody').textContent=S[st.turn].body;
+ renderChoices();
+ if(h.chosen!==null){showFeedback(h.chosen);}
+ else{$i('fb').style.display='none';}
+ var tryBtn=$i('try'),backBtn=$i('back'),nxtBtn=$i('nxt');
+ tryBtn.style.display='none';backBtn.style.display='none';nxtBtn.style.display='none';
+ if(h.chosen!==null){
+ tryBtn.style.display='inline-block';
+ if(st.turn>0)backBtn.style.display='inline-block';
+ nxtBtn.style.display='inline-block';
+ nxtBtn.textContent=st.turn<TOTAL-1?'Continue':'See results';
+ }
+}
+
+function pick(idx){
+ var h=history[st.turn];h.chosen=idx;h.exploring=false;
+ recomputeMeters();recomputePatterns();render();
+}
+
+
+function tryAnother(){
+ $i('fb').style.display='none';
+}
+
+function jumpTo(idx){st.turn=idx;recomputeMeters();recomputePatterns();render();}
+function goBack(){if(st.turn>0){st.turn--;recomputeMeters();recomputePatterns();render();}}
+function goNext(){
+ if(st.turn<TOTAL-1){st.turn++;recomputeMeters();recomputePatterns();render();}
+ else{st.turn=TOTAL;recomputeMeters();recomputePatterns();showEnd();}
+}
+
+function showEnd(){
+ ['hdr','meters','prow','card','choices-wrap','fb','btnrow'].forEach(function(id){var el=$i(id);if(el)el.style.display='none';});
+ var a=st.a,g=st.g,o=st.o;
+ var title,summary;
+ if(a>=65&&g>=60&&o>=65){
+ title="You are building the kind of profile the field hires.";
+ summary="You have been making the moves that produce real evidence of competence, real relationships, and a clear picture of what the paths forward cost and produce. In a field flooded with AI-generated noise, your authentic presence and documented work are the things that are hardest to replicate and hardest to ignore. That is the whole game, and you are playing it well.";
+ } else if(a<=38||g<=38){
+ title="There is a gap between where you are and where you want to go. The gap is closeable.";
+ summary="Most of what separates students who get into highly competitive jobs from students who do not is not talent or the right university. It is specific moves: documented work you can speak to, authentic relationships built through things you made, and working knowledge of how the system operates. All of these are available to you right now. The gap is real and closeable, and playing this game is a reasonable first step.";
+ } else {
+ title="You are starting to see what school is not teaching you.";
+ summary="Some of what came up was probably new. The field is harder to break into than a course catalog suggests, and most of what makes you employable is self-directed. In a world where AI can fake almost everything, the unfakeable things, your specific knowledge, your authentic relationships, your documented work, are worth more than they have ever been. You have a clearer map now than you did eleven scenarios ago. Use it.";
+ }
+ $i('etitle').textContent=title;
+ $i('esummary').textContent=summary;
+ var ec=$i('echips');ec.innerHTML='';
+ [{l:'Authority',v:a,bg:'#EAF3DE',b:'#1D9E75',c:'#085041'},
+ {l:'Agency',v:g,bg:'#EDE8FD',b:'#3d10bd',c:'#1a0860'},
+ {l:'Optionality',v:o,bg:'#EAF3DE',b:'#1D9E75',c:'#085041'}
+ ].forEach(function(ch){
+ var el=document.createElement('div');el.className='echip';
+ el.style.cssText='background:'+ch.bg+';border-color:'+ch.b+';color:'+ch.c;
+ el.textContent=ch.l+': '+ch.v;ec.appendChild(el);
+ });
+ var uniq=[...new Set(st.pats)];
+ $i('plist').innerHTML=uniq.slice(0,8).map(function(p){return '<li>'+p+'</li>';}).join('');
+ $i('end').style.display='block';
+}
+
+function restart(){
+ initHistory();st={turn:0,a:50,g:50,o:50,pats:[]};
+ ['hdr','meters','prow','card','choices-wrap','btnrow'].forEach(function(id){var el=$i(id);if(el)el.style.display='';});
+ $i('fb').style.display='none';$i('end').style.display='none';
+ render();
+}
+
+initHistory();render();
+</script>
+<div id="cc-footer">
+  This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0). You are free to share and adapt this material for non-commercial purposes, provided you give appropriate credit to Sharena Rice, indicate if changes were made, and distribute your contributions under the same license.<br>
+  Full license terms: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0" target="_blank">creativecommons.org/licenses/by-nc-sa/4.0</a><br>
+  &copy; 2026 Sharena Rice. All rights reserved under the above license.
+</div>
+</body>
+</html>
