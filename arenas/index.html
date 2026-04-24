@@ -272,7 +272,7 @@ svg:active{cursor:grabbing}
 <script>
 const data = {
   nodes: [
-    {id:'sharena', name:'Sharena Rice, PhD', cat:'self', size:'hub', role:'Neuroscientist · Quality engineer · Field architect', notable:'Life mission: to take as much suffering as possible and invert it. Focused on medical neurotech. 14,500+ LinkedIn followers. Operating across quality, capital, and strategy layers simultaneously. Plays well with words.'},
+    {id:'sharena', name:'Sharena', cat:'self', size:'hub', role:'Neuroscientist · Quality engineer · Field architect', notable:'Life mission: to take as much suffering as possible and invert it. Focused on medical neurotech. 14,500+ LinkedIn followers. Operating across quality, capital, and strategy layers simultaneously. Plays well with words.'},
 
     {id:'sanmai', name:'Sanmai Technologies', cat:'employer', size:'large', role:'Senior Quality Engineer II · First full-time hire · Since May 2022', notable:'Neurotech Public Benefit Corporation working on focused ultrasound neuromodulation. Contributed to building quality management infrastructure as part of the Quality team. Two promotions to date. Prior titles: Research Scientist III, then Neurotechnologist and Science Communications Lead. Holds a provisional patent from this role. Works cross-functionally across Clinical, Product, and Engineering. Trained 6 clinical research sites on the technology.'},
 
@@ -288,8 +288,12 @@ const data = {
 
     {id:'foresight', name:'Foresight Institute', cat:'philanthropy', size:'medium', role:'Grant Advisor · Since 2024', notable:'Evaluate neurotechnology research and company proposals for scientific merit, structural viability, and long-term impact alignment. Fellowship application in development.'},
 
+    {id:'valence', name:'Valence AI', cat:'past', size:'small', role:'Scientific Advisor · 2021-2023', notable: 'Super early advisor to emotion AI company.'},
 
+    {id:'multiple', name:'Multiple Accelerator', cat:'past', size:'small', role:'Lead Mentor · 2023', notable: 'Evaluated applications to the accelerator. Mentored PigPug (now MindMuscle).'},
 
+    {id:'momental', name:'Momental Foundation', cat:'past', size:'small', role:'Selection Committee', notable: 'Evaluated applications for unfettered funding for postdocs and senior PhD students to do humanitarian projects with hardware and life science startups.'},
+    
     {id:'mechanisms', name:'MECHANISMS', cat:'self', size:'large', role:'Structural canon · Published 4/5/2026', notable:'120-page, five-volume structural diagnostic of medical neurotechnology. 55 named failure patterns. CC BY-NC-SA 4.0. Hosted at sharenarice.com. Engaged substantively by Kip Ludwig (UW-Madison) and other senior figures in the field within days of publication.'},
 
     {id:'neuronramp', name:'Neuronramp', cat:'self', size:'large', role:'Open source infrastructure and Substack · Launched April 2026', notable:'GitHub organization hosting educational tools, structural diagnostics, and interactive resources for medical neurotechnology. Also the name of my Substack. Domain owned. CC BY-NC-SA 4.0. Curated contributions only at launch.'},
@@ -318,7 +322,7 @@ const data = {
 
     {id:'umich', name:'University of Michigan', cat:'past', size:'medium', role:'PhD Neuroscience · 2015-2021', notable:'Dissertation lab of Dr. Omar Ahmed. Novel interhemispheric oscillation characterized in Cell Reports (2022). T32 Training Grant. Rackham Merit Fellowship. Return visits as invited speaker: August 2025, April 2026.'},
 
-    {id:'clu', name:'California Lutheran University', cat:'past', size:'small', role:'BA Biochemistry and Molecular Biology · 2011-2015', notable:'Highest Honors. University Honors Program President. Outstanding Young Alumni (2023).'}
+    {id:'clu', name:'California Lutheran University', cat:'past', size:'small', role:'BA Biochemistry and Molecular Biology · 2011-2015', notable:'Graduated with Highest Honors. Inaugural University Honors Program President. William Rosser Leadership Award (highest leadership award), 2015. Outstanding Young Alumni, 2023.'}
   ],
   links: [
     {source:'sharena',target:'sanmai',strength:'strong'},
@@ -350,6 +354,8 @@ const data = {
     {source:'neurotech-reports',target:'brainmind',strength:'medium'},
     {source:'neurotech-reports',target:'brains-connected',strength:'strong'},
     {source:'sanmai',target:'brainmind',strength:'strong'},
+    {source:'valence',target:'multiple',strength:'weak'},
+    {source:'valence',target:'brainmind',strength:'weak'},
     {source:'kaleida',target:'brainmind',strength:'weak'},
     {source:'sharena',target:'nobody-studios',strength:'weak'},
     {source:'sharena',target:'corundum',strength:'medium'},
