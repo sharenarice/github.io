@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Dashboard — Sharena Rice</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dg:#11241D;--lg:#dcefe8;--db:#00274D;--gold:#F0C318;--gold-dim:#b8860b;
+  --white:#fff;--black:#000;
+  --bg:#0e1e18;--bg2:#162820;--bg3:#1e3530;--border:rgba(220,239,232,0.1);
+  --text:rgba(220,239,232,0.9);--text2:rgba(220,239,232,0.55);--text3:rgba(220,239,232,0.3);
+  --serif:'Cormorant Garamond',serif;--sans:'Karla',sans-serif;
+  --pos:#4caf7d;--neg:#e05c5c;
+}
+html{font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.6;min-height:100vh}
+button{cursor:pointer;font-family:var(--sans)}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--dg);padding:28px 0;display:flex;flex-direction:column;border-right:0.5px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{padding:36px 40px;overflow-x:hidden}
+.sidebar-logo{padding:0 24px 24px;border-bottom:0.5px solid var(--border)}
+.logo-name{font-family:var(--serif);font-size:17px;color:var(--gold);letter-spacing:0.03em;display:block;margin-bottom:2px}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase}
+.nav{padding:18px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 24px;font-size:13px;color:var(--text2);letter-spacing:0.04em;border-left:2px solid transparent;transition:all 0.18s;cursor:pointer;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;text-align:left}
+.nav-item:hover{color:var(--text);background:rgba(220,239,232,0.04)}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(240,195,24,0.06)}
+.nav-icon{font-size:14px;width:18px;text-align:center;opacity:0.7}
+.sidebar-footer{padding:18px 24px;border-top:0.5px solid var(--border)}
+.upload-btn{width:100%;padding:10px 14px;background:var(--gold);color:var(--dg);border:none;font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:opacity 0.18s}
+.upload-btn:hover{opacity:0.85}
+.export-btn{width:100%;padding:10px 14px;margin-top:8px;background:transparent;color:var(--lg);border:0.5px solid var(--lg);font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.18s}
+.export-btn:hover{background:var(--lg);color:var(--dg)}
+.file-list{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.file-tag{font-size:11px;color:var(--text2);padding:4px 8px;background:rgba(220,239,232,0.05);display:flex;align-items:center;justify-content:space-between;gap:6px}
+.file-tag .rm{color:var(--neg);cursor:pointer;font-size:14px;line-height:1;flex-shrink:0}
+.panel{display:none}.panel.active{display:block}
+.page-header{margin-bottom:28px}
+.page-eyebrow{font-size:10px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px}
+.page-title{font-family:var(--serif);font-size:34px;font-weight:300;line-height:1.1}
+.page-title em{font-style:italic;color:rgba(220,239,232,0.5)}
+.empty{text-align:center;padding:80px 40px}
+.empty-icon{font-size:44px;margin-bottom:14px;opacity:0.35}
+.empty-title{font-family:var(--serif);font-size:22px;font-weight:300;margin-bottom:8px;color:var(--text2)}
+.empty-body{font-size:14px;color:var(--text3);max-width:340px;margin:0 auto 24px;line-height:1.7}
+.empty-cta{display:inline-block;padding:11px 28px;background:var(--gold);color:var(--dg);font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border:none}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:24px}
+.metric{background:var(--bg2);border:0.5px solid var(--border);padding:16px 18px}
+.metric-label{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.metric-value{font-family:var(--serif);font-size:26px;font-weight:300;line-height:1;margin-bottom:3px}
+.metric-value.gold{color:var(--gold-dim)}.metric-value.pos{color:var(--pos)}.metric-value.neg{color:var(--neg)}
+.metric-sub{font-size:11px;color:var(--text3)}
+.chart-section{margin-bottom:28px}
+.chart-head{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;padding-bottom:9px;border-bottom:0.5px solid var(--border)}
+.chart-wrap{position:relative;width:100%}
+.chart-wrap.h260{height:260px}.chart-wrap.h300{height:300px}.chart-wrap.h200{height:200px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.card{background:var(--bg2);border:0.5px solid var(--border);padding:18px 20px}
+.card-title{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.flow-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid rgba(220,239,232,0.05);font-size:13px}
+.flow-row:last-child{border-bottom:none}
+.flow-label{color:var(--text2)}.flow-val{font-weight:400}
+.flow-val.pos{color:var(--pos)}.flow-val.neg{color:var(--neg)}.flow-val.gold{color:var(--gold-dim)}.flow-val.neutral{color:var(--text)}
+.year-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.year-tab{padding:6px 15px;border:0.5px solid var(--border);font-size:12px;font-weight:500;letter-spacing:0.07em;background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.year-tab.active{background:var(--gold);color:var(--dg);border-color:var(--gold)}
+.year-tab:hover:not(.active){border-color:rgba(220,239,232,0.3);color:var(--text)}
+.assumption-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px}
+.assumption-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:0.5px solid var(--border);padding:11px 14px;gap:10px}
+.assumption-label{font-size:13px;color:var(--text)}
+.assumption-input{width:115px;padding:5px 9px;background:var(--bg3);border:0.5px solid var(--border);color:var(--text);font-size:13px;font-family:var(--sans);text-align:right;outline:none;transition:border-color 0.15s}
+.assumption-input:focus{border-color:rgba(240,195,24,0.4)}
+.milestone-list{display:flex;flex-direction:column;gap:7px}
+.milestone{display:flex;align-items:center;gap:14px;background:var(--bg2);border:0.5px solid var(--border);padding:13px 16px}
+.milestone-year{font-family:var(--serif);font-size:22px;font-weight:300;color:var(--gold-dim);min-width:52px}
+.milestone-age{font-size:11px;color:var(--text3);min-width:42px}
+.milestone-text{font-size:13px;color:var(--text);flex:1}
+.milestone-val{font-size:13px;font-weight:500;color:var(--gold-dim);white-space:nowrap}
+.divider{height:0.5px;background:var(--border);margin:24px 0}
+.save-badge{display:inline-block;padding:2px 8px;background:rgba(76,175,125,0.15);color:var(--pos);font-size:11px;border-radius:10px;margin-left:10px;opacity:0;transition:opacity 0.3s}
+.save-badge.show{opacity:1}
+.drag-overlay{display:none;position:fixed;inset:0;background:rgba(14,30,24,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.drag-overlay.show{display:flex}
+.drag-message{font-family:var(--serif);font-size:30px;font-weight:300;color:var(--gold)}
+.drag-sub{font-size:14px;color:var(--text2)}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(220,239,232,0.12);border-radius:3px}
+.year-status{background:var(--bg2);border:0.5px solid var(--border);padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.year-status .phase-tag{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:3px 9px;background:rgba(240,195,24,0.12);color:var(--gold);border:0.5px solid rgba(240,195,24,0.3)}
+.year-status .phase-tag.complete{background:rgba(76,175,125,0.12);color:var(--pos);border-color:rgba(76,175,125,0.3)}
+.year-status .phase-tag.future{background:rgba(220,239,232,0.06);color:var(--text2);border-color:var(--border)}
+.year-status .progress-bar{flex:1;min-width:120px;height:6px;background:var(--bg3);position:relative;overflow:hidden}
+.year-status .progress-fill{height:100%;background:var(--gold);transition:width 0.3s}
+.year-status .progress-fill.complete{background:var(--pos)}
+.year-status .status-label{font-size:12px;color:var(--text2)}
+.year-status .status-frac{font-family:var(--serif);font-size:20px;font-weight:300;color:var(--gold)}
+.ytd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:24px}
+.ytd-card{background:var(--bg2);border:0.5px solid var(--border);padding:14px 16px;border-left:2px solid var(--gold-dim)}
+.ytd-card.complete{border-left-color:var(--pos)}
+.ytd-label{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.ytd-val{font-family:var(--serif);font-size:22px;font-weight:300;line-height:1;margin-bottom:2px;color:var(--text)}
+.ytd-sub{font-size:11px;color:var(--text3)}
+.ytd-sub .remaining{color:var(--text2)}
+.tax-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:18px}
+.tax-control{background:var(--bg2);border:0.5px solid var(--border);padding:10px 14px}
+.tax-control label{font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:5px}
+.tax-control select,.tax-control input{width:100%;padding:6px 9px;background:var(--bg3);border:0.5px solid var(--border);color:var(--text);font-size:13px;font-family:var(--sans);outline:none}
+.tax-control select{cursor:pointer}
+.tax-control .note{font-size:10px;color:var(--text3);margin-top:4px}
+.retirement-progress{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:24px}
+.ret-row{background:var(--bg2);border:0.5px solid var(--border);padding:14px 16px}
+.ret-row-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.ret-row-name{font-family:var(--serif);font-size:16px;font-weight:300;color:var(--text)}
+.ret-row-limit{font-size:11px;color:var(--text3);letter-spacing:0.08em}
+.ret-bar-outer{position:relative;height:10px;background:var(--bg3);overflow:hidden;margin-bottom:8px}
+.ret-bar-ytd{position:absolute;left:0;top:0;height:100%;background:var(--pos);transition:width 0.3s}
+.ret-bar-planned{position:absolute;left:0;top:0;height:100%;background:rgba(240,195,24,0.55);transition:width 0.3s;border-right:1.5px dashed var(--gold)}
+.ret-bar-limit-mark{position:absolute;right:0;top:-2px;bottom:-2px;width:1px;background:var(--text3)}
+.ret-row-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:11px}
+.ret-stat-label{color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-size:9px;margin-bottom:2px}
+.ret-stat-value{color:var(--text);font-weight:400}
+.ret-stat-value.gold{color:var(--gold-dim)}
+.ret-stat-value.pos{color:var(--pos)}
+.ret-stat-value.neg{color:var(--neg)}
+.data-source-badge{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 14px;background:rgba(240,195,24,0.06);border:0.5px solid rgba(240,195,24,0.2);border-radius:3px;font-size:11px;color:var(--text2);margin-bottom:16px}
+.extras-section{margin-bottom:32px;background:var(--bg2);border:0.5px solid var(--border);border-radius:4px;overflow:hidden}
+.extras-header{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:0.5px solid var(--border);background:rgba(220,239,232,0.02)}
+.extras-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--text);letter-spacing:0.01em;flex:1}
+.extras-badge{font-size:9px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.extras-badge.tier-1{background:rgba(240,195,24,0.18);color:var(--gold);border:0.5px solid rgba(240,195,24,0.4)}
+.extras-badge.tier-2{background:rgba(74,124,106,0.18);color:var(--lg);border:0.5px solid rgba(74,124,106,0.4)}
+.extras-badge.tier-3{background:rgba(61,16,189,0.15);color:#9d7fe8;border:0.5px solid rgba(61,16,189,0.35)}
+.extras-badge.tier-4{background:rgba(220,239,232,0.06);color:var(--text3);border:0.5px solid rgba(220,239,232,0.15)}
+.extras-tag{font-size:10px;letter-spacing:0.08em;color:var(--text3);font-style:italic}
+.extras-body{padding:20px 24px}
+.extras-desc{font-size:12.5px;color:var(--text2);line-height:1.6;margin-bottom:16px;max-width:800px}
+.extras-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+.extras-input{display:flex;flex-direction:column;gap:5px}
+.extras-input label{font-size:11px;color:var(--text2);letter-spacing:0.04em;text-transform:uppercase;font-weight:500}
+.extras-input input{background:var(--bg);border:0.5px solid var(--border);color:var(--text);padding:9px 12px;font-size:13px;font-family:'Karla',sans-serif;border-radius:2px}
+.extras-input input:focus{outline:none;border-color:var(--gold)}
+.extras-input .note{font-size:10px;color:var(--text3);font-style:italic;margin-top:2px}
+.extras-btn{background:var(--gold);color:var(--dg);border:none;padding:10px 16px;font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:opacity 0.18s;margin-top:22px;border-radius:2px}
+.extras-btn:hover{opacity:0.85}
+.extras-note{margin-top:14px;padding:12px 16px;background:rgba(220,239,232,0.03);border-left:2px solid var(--gold-dim);font-size:12px;color:var(--text2);line-height:1.55;border-radius:0 3px 3px 0}
+.sensitivity-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.sensitivity-table th,.sensitivity-table td{padding:8px 10px;text-align:center;border:0.5px solid var(--border)}
+.sensitivity-table th{background:var(--bg);color:var(--text2);font-weight:500;letter-spacing:0.05em;font-size:11px}
+.sensitivity-table td{color:var(--text);font-family:'Karla',sans-serif}
+.sensitivity-table td.hot{background:rgba(240,195,24,0.2);color:var(--gold);font-weight:500}
+.sensitivity-table td.warm{background:rgba(240,195,24,0.08)}
+.data-source-badge .src-item{color:var(--text2)}
+.data-source-badge .src-item strong{color:var(--gold);font-weight:500}
+.data-source-badge .src-sep{color:var(--text3);opacity:0.5}
+.milestone-table{display:flex;flex-direction:column;gap:4px;background:var(--bg2);border:0.5px solid var(--border);padding:10px 14px}
+.ms-row{display:grid;grid-template-columns:70px 70px 1fr 1.2fr;gap:12px;padding:8px 4px;border-bottom:0.5px solid rgba(220,239,232,0.04);align-items:baseline;font-size:12px}
+.ms-row:last-child{border-bottom:none}
+.ms-year{font-family:var(--serif);font-size:17px;font-weight:300;color:var(--gold-dim)}
+.ms-age{font-size:11px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase}
+.ms-event{color:var(--text);font-weight:400}
+.ms-note{color:var(--text3);font-size:11px}
+.tax-limits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:8px;margin-bottom:22px}
+.tax-limit{background:var(--bg2);border:0.5px solid var(--border);padding:11px 14px}
+.tax-limit-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.tax-limit-value{font-family:var(--serif);font-size:18px;font-weight:300;color:var(--text);line-height:1.1}
+.tax-limit-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.tax-limit.projected{border-left:2px solid var(--gold-dim)}
+.tax-limit.projected .tax-limit-value{color:var(--gold-dim)}
+.decision-banner{background:var(--bg2);border:0.5px solid var(--border);padding:16px 20px;margin:12px 0 18px;border-left:2px solid var(--gold)}
+.decision-banner.standard-wins{border-left-color:var(--pos)}
+.decision-banner.itemize-wins{border-left-color:var(--gold)}
+.decision-headline{font-family:var(--serif);font-size:20px;font-weight:300;margin-bottom:5px;line-height:1.3}
+.decision-sub{font-size:13px;color:var(--text2);line-height:1.5}
+.threshold-note{font-size:11px;color:var(--text3);margin-top:10px;padding:8px 10px;background:rgba(220,239,232,0.03);border-left:2px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div class="drag-overlay" id="dragOverlay">
+  <div class="drag-message">Drop Excel file to load</div>
+  <div class="drag-sub">Budget sheets and Time Series, Stocks — both supported</div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-name">Finance Dashboard</span>
+      <span class="logo-sub">Sharena Rice, PhD</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" onclick="showPanel('overview',this)"><span class="nav-icon">◈</span> Overview</button>
+      <button class="nav-item" onclick="showPanel('budget',this)"><span class="nav-icon">◎</span> Budget</button>
+      <button class="nav-item" onclick="showPanel('projections',this)"><span class="nav-icon">◇</span> Projections</button>
+      <button class="nav-item" onclick="showPanel('taxes',this)"><span class="nav-icon">※</span> Taxes</button>
+      <button class="nav-item" onclick="showPanel('assumptions',this)"><span class="nav-icon">⊙</span> Assumptions</button>
+      <button class="nav-item" onclick="showPanel('extras',this)"><span class="nav-icon">✦</span> Extras</button>
+    </nav>
+    <div class="sidebar-footer">
+      <input type="file" id="fileInput" accept=".xlsx,.xls" multiple style="display:none" onchange="handleFiles(this.files)">
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">+ Upload Excel</button>
+      <button class="export-btn" onclick="exportSummary()">↓ Export Summary</button>
+      <div class="file-list" id="fileList"></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="panel active" id="panel-overview">
+      <div class="page-header"><div class="page-eyebrow">Financial Planning</div><div class="page-title">Overview <em>&amp; key metrics</em></div></div>
+      <div id="ov-empty" class="empty"><div class="empty-icon">◈</div><div class="empty-title">Upload your spreadsheet</div><div class="empty-body">Drop an Excel file or click Upload to populate this dashboard. No internet or API required.</div><button class="empty-cta" onclick="document.getElementById('fileInput').click()">Upload Excel file</button></div>
+      <div id="ov-content" style="display:none">
+        <div id="ov-year-status"></div>
+        <div class="metrics" id="ov-metrics"></div>
+        <div id="ov-ytd-section" style="display:none">
+          <div class="chart-head">Year-to-date position</div>
+          <div class="ytd-grid" id="ov-ytd-cards"></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><div class="card-title">Daily cash flow</div><div id="daily-flows"></div></div>
+          <div class="card"><div class="card-title">Income sources</div><div id="income-sources"></div></div>
+        </div>
+        <div class="chart-section"><div class="chart-head">Portfolio growth — all accounts</div><div class="chart-wrap h300"><canvas id="chart-portfolio"></canvas></div></div>
+        <div class="chart-section"><div class="chart-head">Key milestones</div><div class="milestone-list" id="milestones"></div></div>
+      </div>
+    </div>
+
+    <!-- BUDGET -->
+    <div class="panel" id="panel-budget">
+      <div class="page-header"><div class="page-eyebrow">Budget Analysis</div><div class="page-title">Spending <em>&amp; cash flow</em></div></div>
+      <div id="bud-empty" class="empty"><div class="empty-icon">◎</div><div class="empty-title">No budget data loaded</div><div class="empty-body">Upload an Excel file with budget sheets named "Budget '25", "Budget '26", etc.</div><button class="empty-cta" onclick="document.getElementById('fileInput').click()">Upload Excel file</button></div>
+      <div id="bud-content" style="display:none">
+        <div class="year-tabs" id="year-tabs"></div>
+        <div id="bud-year-status"></div>
+        <div class="metrics" id="bud-metrics"></div>
+        <div id="bud-ytd-section" style="display:none">
+          <div class="chart-head">Year-to-date vs annual plan</div>
+          <div class="ytd-grid" id="bud-ytd-cards"></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><div class="card-title">Annual cash flow</div><div id="annual-flow"></div></div>
+          <div class="card"><div class="card-title">By time period</div><div id="period-flow"></div></div>
+        </div>
+        <div class="two-col">
+          <div class="chart-section"><div class="chart-head">Spending breakdown</div><div class="chart-wrap h260"><canvas id="chart-donut"></canvas></div></div>
+          <div class="chart-section"><div class="chart-head">Year-over-year comparison</div><div class="chart-wrap h260"><canvas id="chart-yoy"></canvas></div></div>
+        </div>
+        <div class="chart-section"><div class="chart-head">Running account balance — actual vs projected</div><div class="chart-wrap h200"><canvas id="chart-balance"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- PROJECTIONS -->
+    <div class="panel" id="panel-projections">
+      <div class="page-header"><div class="page-eyebrow">Long-term Projections</div><div class="page-title">Where the money <em>is going</em></div></div>
+
+      <!-- Live off capital gains calculator -->
+      <div class="chart-head">Live off capital gains — FI crossover thresholds</div>
+      <div class="metrics" id="fi-metrics"></div>
+      <div class="chart-section"><div class="chart-wrap h300"><canvas id="chart-fi-thresholds"></canvas></div></div>
+      <div class="threshold-note" id="fi-note"></div>
+
+      <div id="proj-empty" class="empty"><div class="empty-icon">◇</div><div class="empty-title">No time series data in Excel</div><div class="empty-body">The FI projection above uses your Assumptions. For the additional charts below, upload an Excel file with a "Time Series, Stocks" sheet.</div><button class="empty-cta" onclick="document.getElementById('fileInput').click()">Upload Excel file</button></div>
+      <div id="proj-content" style="display:none">
+        <div class="metrics" id="proj-metrics"></div>
+        <div class="chart-section"><div class="chart-head">Account breakdown — near term</div><div class="chart-wrap h300"><canvas id="chart-stacked"></canvas></div></div>
+        <div class="chart-section"><div class="chart-head">Passive income vs. cost of living</div><div class="chart-wrap h260"><canvas id="chart-passive"></canvas></div></div>
+        <div class="chart-section"><div class="chart-head">Annual contribution growth</div><div class="chart-wrap h200"><canvas id="chart-contrib"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- TAXES -->
+    <div class="panel" id="panel-taxes">
+      <div class="page-header"><div class="page-eyebrow">Tax Planning</div><div class="page-title">Charitable impact <em>&amp; itemization strategy</em></div></div>
+      <div class="data-source-badge" id="tax-data-source"><span class="src-item">Data source: <strong>loading...</strong></span></div>
+      <div class="tax-controls">
+        <div class="tax-control"><label>Tax year</label><select id="tax-year" onchange="renderTaxes()"><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option></select></div>
+        <div class="tax-control"><label>Filing status</label><select id="tax-filing" onchange="renderTaxes()"><option value="single" selected>Single</option><option value="mfj">Married filing jointly</option><option value="hoh">Head of household</option><option value="mfs">Married filing separately</option></select></div>
+        <div class="tax-control"><label>Birth year</label><input id="tax-birth-year" type="number" value="1993" step="1" min="1900" max="2030" oninput="renderTaxes()"><div class="note">Age computed per tax year · born March 1993 → age 33 in 2026</div></div>
+        <div class="tax-control"><label>Social Security claim age</label><input id="tax-ss-age" type="number" value="72" step="1" min="62" max="80" oninput="renderTaxes()"><div class="note">Won't apply before this age</div></div>
+        <div class="tax-control"><label>Gross income override ($)</label><input id="tax-gross-override" type="number" value="" placeholder="From assumptions" oninput="renderTaxes()"><div class="note">Blank = salary + consulting + journalism</div></div>
+        <div class="tax-control"><label>State tax model</label><select id="tax-state-mode" onchange="renderTaxes()"><option value="ca" selected>California (progressive)</option><option value="flat">Flat-rate state</option></select><div class="note">CA uses FTB brackets + 1% MHSA over $1M</div></div>
+        <div class="tax-control"><label>Flat rate (%) if applicable</label><input id="tax-state-rate" type="number" value="4.4" step="0.1" min="0" max="15" oninput="renderTaxes()"><div class="note">Used only when model is Flat</div></div>
+        <div class="tax-control"><label>Property tax paid ($)</label><input id="tax-proptax" type="number" value="0" step="100" min="0" oninput="renderTaxes()"><div class="note">0 for renters</div></div>
+        <div class="tax-control"><label>Healthcare FSA</label><select id="tax-fsa-enabled" onchange="renderTaxes()"><option value="yes" selected>Yes, I have an FSA</option><option value="no">No FSA</option></select><div class="note">Healthcare FSA is pre-tax in both fed and CA</div></div>
+      </div>
+
+      <div class="chart-head">Year-to-date contributions &amp; charity (what you've already done)</div>
+      <div class="tax-controls">
+        <div class="tax-control"><label>401(k) contributed YTD ($)</label><input id="tax-401k-ytd" type="number" value="0" step="100" min="0" oninput="renderTaxes()"></div>
+        <div class="tax-control"><label>401(k) year-end total ($)</label><input id="tax-401k-planned" type="number" value="" placeholder="Max $24,500 (from assumptions)" step="100" min="0" oninput="renderTaxes()"><div class="note">Blank = max per assumptions</div></div>
+        <div class="tax-control"><label>IRA contributed YTD ($)</label><input id="tax-ira-ytd" type="number" value="0" step="100" min="0" oninput="renderTaxes()"></div>
+        <div class="tax-control"><label>IRA year-end total ($)</label><input id="tax-ira-planned" type="number" value="" placeholder="Max $7,500 (from assumptions)" step="100" min="0" oninput="renderTaxes()"><div class="note">Blank = max per assumptions</div></div>
+        <div class="tax-control"><label>Healthcare FSA contributed YTD ($)</label><input id="tax-fsa-ytd" type="number" value="0" step="50" min="0" oninput="renderTaxes()"></div>
+        <div class="tax-control"><label>Healthcare FSA year-end total ($)</label><input id="tax-fsa-planned" type="number" value="0" step="50" min="0" oninput="renderTaxes()"><div class="note">Use-it-or-lose-it except $680 carryover</div></div>
+        <div class="tax-control"><label>Charity donated YTD ($)</label><input id="tax-charity-ytd" type="number" value="0" step="100" min="0" oninput="renderTaxes()"><div class="note">What you've given so far</div></div>
+        <div class="tax-control"><label>Additional charity to model ($)</label><input id="tax-charity-additional" type="number" value="20000" step="500" min="0" oninput="renderTaxes()"><div class="note">Scenario: YTD + this = total</div></div>
+      </div>
+
+      <div class="chart-head">IRS published limits for <span id="tax-year-label">2026</span></div>
+      <div class="tax-limits-grid" id="tax-limits-grid"></div>
+
+      <div class="chart-head">Retirement contributions — progress toward annual limits</div>
+      <div class="retirement-progress" id="tax-retirement-progress"></div>
+
+      <div class="chart-head">Your tax position (using year-end planned totals)</div>
+      <div class="metrics" id="tax-position-metrics"></div>
+
+      <div id="tax-decision-banner"></div>
+      <div class="two-col">
+        <div class="card"><div class="card-title">Standard deduction path</div><div id="tax-standard-flow"></div></div>
+        <div class="card"><div class="card-title">Itemized path</div><div id="tax-itemize-flow"></div></div>
+      </div>
+
+      <div class="chart-head">Combined federal + state tax savings across total-year donation amounts</div>
+      <div class="chart-wrap h300"><canvas id="chart-charity-savings"></canvas></div>
+      <div class="threshold-note" id="savings-thresholds-note"></div>
+
+      <div class="chart-head">True cost per dollar donated — how much each charitable dollar actually costs you</div>
+      <div class="chart-wrap h260"><canvas id="chart-charity-cost"></canvas></div>
+
+      <div class="chart-head">Bunching strategy — same total dollars, different timing</div>
+      <div class="chart-wrap h260"><canvas id="chart-bunching"></canvas></div>
+      <div class="two-col">
+        <div class="card"><div class="card-title">Even giving each year</div><div id="bunch-even-detail"></div></div>
+        <div class="card"><div class="card-title">Bunched into year 1</div><div id="bunch-lumpy-detail"></div></div>
+      </div>
+
+      <div class="chart-head">Retirement account limits for <span id="tax-ret-year-label">2026</span></div>
+      <div class="tax-limits-grid" id="tax-retirement-grid"></div>
+
+      <div class="chart-head">Your age-based tax timeline</div>
+      <div class="milestone-table" id="tax-milestones"></div>
+    </div>
+
+    <!-- ASSUMPTIONS -->
+    <div class="panel" id="panel-assumptions">
+      <div class="page-header"><div class="page-eyebrow">Configurable Assumptions</div><div class="page-title">Edit inputs <em>&amp; model scenarios</em><span class="save-badge" id="save-badge">Saved</span></div></div>
+      <div class="assumption-grid" id="assumptions-grid"></div>
+      <div class="divider"></div>
+      <div class="chart-head" style="margin-bottom:14px">Current income &amp; tax position</div>
+      <div class="metrics" id="current-income-metrics"></div>
+      <div class="chart-head" style="margin-top:28px;margin-bottom:14px;font-size:12px">Monthly investment allocation (front-loaded priority: 401(k) → IRA → taxable)</div>
+      <div class="flow-rows" id="allocation-breakdown"></div>
+      <div class="divider"></div>
+      <div class="chart-head" style="margin-bottom:14px">Runway — if all earned income stopped today</div>
+      <div class="metrics" id="runway-metrics"></div>
+      <div class="chart-section"><div class="chart-head">Drawdown scenario — total portfolio, post-tax, growing COL</div><div class="chart-wrap h260"><canvas id="chart-drawdown"></canvas></div></div>
+      <div class="divider"></div>
+      <div class="chart-head" style="margin-bottom:14px">Millionaire year — sensitivity to return rate</div>
+      <div class="chart-wrap h200"><canvas id="chart-sensitivity"></canvas></div>
+    </div>
+
+    <!-- EXTRAS -->
+    <div class="panel" id="panel-extras">
+      <div class="page-header"><div class="page-eyebrow">Additional Tools</div><div class="page-title">Extras <em>&amp; advanced modeling</em></div></div>
+
+      <!-- TIER 1: Backdoor Roth -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-1">Tier 1</span><div class="extras-title">Backdoor Roth IRA tracker</div></div>
+        <div class="extras-body">
+          <p class="extras-desc">At your MAGI ($136,817 with max 401(k)), your $7,500 traditional IRA contribution is non-deductible AND gains are taxed as ordinary income on withdrawal. A backdoor Roth conversion gets you tax-free growth for the same contribution.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Annual traditional IRA contribution</label><input id="br-contrib" type="number" value="7500" step="500" oninput="renderBackdoorRoth()"></div>
+            <div class="extras-input"><label>Years until FI withdrawal</label><input id="br-years" type="number" value="10" step="1" oninput="renderBackdoorRoth()"></div>
+            <div class="extras-input"><label>Existing traditional IRA balance ($)</label><input id="br-existing" type="number" value="0" step="1000" oninput="renderBackdoorRoth()"><div class="note">Triggers pro-rata rule if &gt;0</div></div>
+            <div class="extras-input"><label>Ordinary income rate at withdrawal (%)</label><input id="br-withdrawal-rate" type="number" value="22" step="1" oninput="renderBackdoorRoth()"></div>
+          </div>
+          <div class="metrics" id="br-metrics"></div>
+          <div class="extras-note" id="br-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 1: Tax-loss harvesting -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-1">Tier 1</span><div class="extras-title">Tax-loss harvesting calculator</div></div>
+        <div class="extras-body">
+          <p class="extras-desc">Harvest realized losses against capital gains, plus up to $3,000/year against ordinary income. Wash-sale rule blocks buying substantially identical securities within 30 days before or after the sale.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Unrealized losses in taxable account ($)</label><input id="tlh-losses" type="number" value="0" step="500" oninput="renderTLH()"></div>
+            <div class="extras-input"><label>Realized gains this year ($)</label><input id="tlh-gains" type="number" value="0" step="500" oninput="renderTLH()"></div>
+            <div class="extras-input"><label>Ordinary income rate (%)</label><input id="tlh-ord-rate" type="number" value="24" step="1" oninput="renderTLH()"></div>
+            <div class="extras-input"><label>LTCG rate (%)</label><input id="tlh-ltcg-rate" type="number" value="15" step="1" oninput="renderTLH()"></div>
+          </div>
+          <div class="metrics" id="tlh-metrics"></div>
+          <div class="extras-note" id="tlh-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 1: Cash flow / emergency fund -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-1">Tier 1</span><div class="extras-title">Cash flow &amp; emergency fund</div></div>
+        <div class="extras-body">
+          <p class="extras-desc">How many months of COL your liquid cash covers, and the opportunity cost of over-funding (cash at 4.5% HYSA vs 11% expected market return).</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>High-yield savings balance ($)</label><input id="ef-cash" type="number" value="15000" step="500" oninput="renderEF()"></div>
+            <div class="extras-input"><label>Checking / liquid balance ($)</label><input id="ef-checking" type="number" value="5000" step="500" oninput="renderEF()"></div>
+            <div class="extras-input"><label>Target emergency fund (months)</label><input id="ef-target-months" type="number" value="6" step="1" oninput="renderEF()"></div>
+            <div class="extras-input"><label>HYSA APY (%)</label><input id="ef-apy" type="number" value="4.5" step="0.1" oninput="renderEF()"></div>
+          </div>
+          <div class="metrics" id="ef-metrics"></div>
+          <div class="extras-note" id="ef-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 3: Sensitivity matrix -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-3">Tier 3</span><div class="extras-title">FI year sensitivity matrix</div></div>
+        <div class="extras-body">
+          <p class="extras-desc">How your FI year shifts across return rate × SWR combinations. Other assumptions from the Assumptions panel.</p>
+          <div id="sensitivity-matrix"></div>
+        </div>
+      </div>
+
+      <!-- TIER 3: Monte Carlo -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-3">Tier 3</span><div class="extras-title">Monte Carlo FI projection</div></div>
+        <div class="extras-body">
+          <p class="extras-desc">1,000 simulated scenarios using historical S&amp;P return distributions (approximate mean 10%, standard deviation 16%). Produces probability bands around your FI year rather than a single point estimate.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Simulations</label><input id="mc-runs" type="number" value="1000" step="100" min="100" max="5000" oninput="renderMonteCarlo()"></div>
+            <div class="extras-input"><label>Return volatility (σ %)</label><input id="mc-vol" type="number" value="16" step="1" oninput="renderMonteCarlo()"></div>
+            <div class="extras-input"><label>Target year horizon</label><input id="mc-horizon" type="number" value="25" step="1" oninput="renderMonteCarlo()"></div>
+            <div class="extras-input"><label></label><button class="extras-btn" onclick="renderMonteCarlo()">Run simulation</button></div>
+          </div>
+          <div class="metrics" id="mc-metrics"></div>
+          <div class="chart-wrap h260"><canvas id="chart-montecarlo"></canvas></div>
+          <div class="extras-note" id="mc-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 3: Portfolio allocation -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-3">Tier 3</span><div class="extras-title">Portfolio allocation breakdown</div></div>
+        <div class="extras-body">
+          <p class="extras-desc">Account-by-account balances for asset-location optimization. Bonds in tax-deferred, growth in taxable/Roth is the general pattern.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Taxable brokerage ($)</label><input id="pa-taxable" type="number" value="348000" step="1000" oninput="renderAllocation()"></div>
+            <div class="extras-input"><label>Traditional 401(k) ($)</label><input id="pa-401k" type="number" value="180000" step="1000" oninput="renderAllocation()"></div>
+            <div class="extras-input"><label>Traditional IRA ($)</label><input id="pa-ira" type="number" value="35000" step="1000" oninput="renderAllocation()"></div>
+            <div class="extras-input"><label>Roth IRA ($)</label><input id="pa-roth" type="number" value="6000" step="1000" oninput="renderAllocation()"></div>
+            <div class="extras-input"><label>HSA ($)</label><input id="pa-hsa" type="number" value="0" step="1000" oninput="renderAllocation()"></div>
+            <div class="extras-input"><label>Cash / HYSA ($)</label><input id="pa-cash" type="number" value="20000" step="1000" oninput="renderAllocation()"></div>
+          </div>
+          <div class="metrics" id="pa-metrics"></div>
+          <div class="chart-wrap h260"><canvas id="chart-allocation"></canvas></div>
+          <div class="extras-note" id="pa-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 2: Neuradaptive transition -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-2">Tier 2</span><div class="extras-title">Neuradaptive full-time transition modeler</div><span class="extras-tag">Simplified</span></div>
+        <div class="extras-body">
+          <p class="extras-desc">Compare current compensation (Sanmai + contracts) against hypothetical full-time Neuradaptive offer. Equity modeled as expected value = shares × strike-discounted FMV × exit probability.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Offered salary ($)</label><input id="nt-salary" type="number" value="180000" step="5000" oninput="renderNeuradaptive()"></div>
+            <div class="extras-input"><label>Equity grant ($ value at grant)</label><input id="nt-equity" type="number" value="500000" step="10000" oninput="renderNeuradaptive()"></div>
+            <div class="extras-input"><label>Vesting years</label><input id="nt-vest" type="number" value="4" step="1" oninput="renderNeuradaptive()"></div>
+            <div class="extras-input"><label>Exit probability (%)</label><input id="nt-exit-prob" type="number" value="30" step="5" oninput="renderNeuradaptive()"></div>
+            <div class="extras-input"><label>Exit multiple</label><input id="nt-multiple" type="number" value="5" step="0.5" oninput="renderNeuradaptive()"></div>
+            <div class="extras-input"><label>Years to exit</label><input id="nt-years-to-exit" type="number" value="7" step="1" oninput="renderNeuradaptive()"></div>
+          </div>
+          <div class="metrics" id="nt-metrics"></div>
+          <div class="extras-note" id="nt-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 2: Housing rent vs buy -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-2">Tier 2</span><div class="extras-title">Bay Area rent vs buy</div><span class="extras-tag">Simplified</span></div>
+        <div class="extras-body">
+          <p class="extras-desc">Current rent is structurally excellent. This models the cost of trading it for ownership. Does not include HOA, appliance replacements, or homeowners insurance.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Purchase price ($)</label><input id="rb-price" type="number" value="1200000" step="25000" oninput="renderRentBuy()"></div>
+            <div class="extras-input"><label>Down payment (%)</label><input id="rb-down" type="number" value="20" step="5" oninput="renderRentBuy()"></div>
+            <div class="extras-input"><label>Mortgage rate (%)</label><input id="rb-rate" type="number" value="6.5" step="0.25" oninput="renderRentBuy()"></div>
+            <div class="extras-input"><label>Property tax rate (%)</label><input id="rb-proptax" type="number" value="1.1" step="0.1" oninput="renderRentBuy()"></div>
+            <div class="extras-input"><label>Annual appreciation (%)</label><input id="rb-appreciation" type="number" value="3" step="0.5" oninput="renderRentBuy()"></div>
+            <div class="extras-input"><label>Years held</label><input id="rb-years" type="number" value="10" step="1" oninput="renderRentBuy()"></div>
+          </div>
+          <div class="metrics" id="rb-metrics"></div>
+          <div class="extras-note" id="rb-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 2: 529 placeholder -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-2">Tier 2</span><div class="extras-title">529 education fund</div><span class="extras-tag">Placeholder · activate when relevant</span></div>
+        <div class="extras-body">
+          <p class="extras-desc">Superfunding exception lets you contribute 5 years of gift exclusion at once ($95K single in 2026) without using lifetime estate exemption. California does not offer a state income tax deduction on 529 contributions. Inputs below model a standard annual contribution strategy.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Annual 529 contribution ($)</label><input id="ed-annual" type="number" value="0" step="500" oninput="renderEducation()"></div>
+            <div class="extras-input"><label>Years until beneficiary age 18</label><input id="ed-years" type="number" value="18" step="1" oninput="renderEducation()"></div>
+            <div class="extras-input"><label>Expected return (%)</label><input id="ed-return" type="number" value="7" step="0.5" oninput="renderEducation()"></div>
+          </div>
+          <div class="metrics" id="ed-metrics"></div>
+          <div class="extras-note" id="ed-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 2: Health insurance placeholder -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-2">Tier 2</span><div class="extras-title">Post-FI health insurance (ACA)</div><span class="extras-tag">Simplified</span></div>
+        <div class="extras-body">
+          <p class="extras-desc">After leaving W-2 employment, ACA premium tax credits phase out above 400% FPL. Keeping MAGI under ~$60K single at FI could save $8-15K/year in unsubsidized premiums. This interacts with Roth conversion strategy.</p>
+          <div class="extras-grid">
+            <div class="extras-input"><label>Target MAGI at FI ($)</label><input id="hi-magi" type="number" value="55000" step="1000" oninput="renderHealthInsurance()"></div>
+            <div class="extras-input"><label>Unsubsidized premium ($/mo)</label><input id="hi-unsubsidized" type="number" value="650" step="50" oninput="renderHealthInsurance()"></div>
+            <div class="extras-input"><label>State</label><input id="hi-state" type="text" value="CA" oninput="renderHealthInsurance()"></div>
+          </div>
+          <div class="metrics" id="hi-metrics"></div>
+          <div class="extras-note" id="hi-note"></div>
+        </div>
+      </div>
+
+      <!-- TIER 4: State relocation placeholder -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-4">Tier 4</span><div class="extras-title">State relocation modeler</div><span class="extras-tag">Planned feature</span></div>
+        <div class="extras-body">
+          <p class="extras-desc">California's 9.3%+ marginal rate, 1% MHSA over $1M, and 13.3% top rate are uniquely costly. Moving to Texas, Washington, Florida, or Nevada at or near FI eliminates state income tax entirely. A full implementation would model: moving costs, establishment of domicile requirements (183-day rule for most states, CA's aggressive retention rules), Prop 13 loss if selling CA property, and compounded tax savings over 20+ years.</p>
+        </div>
+      </div>
+
+      <!-- TIER 4: Social Security placeholder -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-4">Tier 4</span><div class="extras-title">Social Security projection</div><span class="extras-tag">Planned feature</span></div>
+        <div class="extras-body">
+          <p class="extras-desc">At 35+ years from full retirement age (67), Social Security modeling has high uncertainty. Near-term relevance is minimal. A future implementation would estimate PIA (Primary Insurance Amount) from your earnings record, factor in the 2034 trust fund depletion scenario (currently projected to reduce benefits to 77% of scheduled), and model claim-age tradeoffs (62 vs 67 vs 70).</p>
+        </div>
+      </div>
+
+      <!-- TIER 4: Estate planning placeholder -->
+      <div class="extras-section">
+        <div class="extras-header"><span class="extras-badge tier-4">Tier 4</span><div class="extras-title">Estate planning &amp; beneficiaries</div><span class="extras-tag">Planned feature</span></div>
+        <div class="extras-body">
+          <p class="extras-desc">Federal estate exemption is $15M per person in 2026 (OBBBA). California has no state estate tax. A future implementation would track: beneficiary designations across all accounts, revocable living trust structure, healthcare directive + POA documentation status, and step-up basis implications for taxable brokerage at death.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+const S = { files:[], budgetData:{}, tsData:[], currentYear:null, charts:{} };
+
+const DEFAULTS = {
+  salary:            {label:'Sanmai salary (current year, 2026)',    value:153316.67},
+  salaryFuture:      {label:'Sanmai salary (future years, 2027+)',   value:153600},
+  consulting:        {label:'Neuradaptive consulting (annual)',      value:7000  },
+  wellcomeLeap:      {label:'Wellcome LEAP (pending contract)',      value:0     },
+  journalism:        {label:'Neurotech Reports (annual)',            value:1000  },
+  monthlyVOO:        {label:'Total monthly investment (all buckets)', value:7000  },
+  max401k:           {label:'Max traditional 401(k) annually',       value:24500 },
+  maxIRA:            {label:'Max traditional IRA annually',          value:7500  },
+  iraMatchRate:      {label:'IRA match % (Robinhood Gold)',          value:3     },
+  returnRate:        {label:'Annual return rate % (nominal)',        value:11    },
+  inflationRate:     {label:'Inflation rate % (already in return)',  value:3     },
+  colGrowthRate:     {label:'Annual COL growth %',                   value:3.5   },
+  annualCOL:         {label:'Annual cost of living',                 value:40594 },
+  rentMonthly:       {label:'Monthly rent + utilities',              value:1300  },
+  taxRate:           {label:'Effective tax rate (%)',                value:32    },
+  withdrawalTaxDrag: {label:'LTCG withdrawal tax drag (%)',          value:20    },
+  swrRate:           {label:'Safe withdrawal rate (%)',              value:5     },
+  portfolio:         {label:'Current total portfolio',               value:569000},
+  taxable:           {label:'Taxable / accessible ($)',              value:348000},
+  birthYear:         {label:'Birth year (for age display)',          value:1993  }
+};
+
+const SCHEMA_VERSION = 5;
+function loadA(){
+  try{
+    const s=JSON.parse(localStorage.getItem('sr_a')||'{}');
+    const version=parseInt(localStorage.getItem('sr_a_version')||'1');
+    // One-time migration when schema bumps: drop stale keys so new defaults apply
+    if(version<SCHEMA_VERSION){
+      // v2: bumped monthlyVOO default from 3600 to 9000, corrected birthYear from 1994 to 1993
+      delete s.monthlyVOO;
+      delete s.birthYear;
+      // v3: split Sanmai salary into current vs future years; corrected Neuradaptive to $7K pending contracts; added Wellcome LEAP placeholder; added max 401k/IRA
+      delete s.salary;
+      delete s.consulting;
+      // v4: corrected monthly investment to $7000 actual average
+      delete s.monthlyVOO;
+      // v5: SWR bumped from 4% to 5% (user can cut costs or pick up contract work if needed)
+      delete s.swrRate;
+      localStorage.setItem('sr_a',JSON.stringify(s));
+      localStorage.setItem('sr_a_version',String(SCHEMA_VERSION));
+    }
+    const r={};
+    for(const[k,d]of Object.entries(DEFAULTS))r[k]={...d,value:s[k]!==undefined?s[k]:d.value};
+    return r;
+  }catch{return{...DEFAULTS};}
+}
+function saveA(){const v={};for(const k of Object.keys(DEFAULTS)){const e=document.getElementById('a-'+k);if(e)v[k]=parseFloat(e.value)||0;}localStorage.setItem('sr_a',JSON.stringify(v));localStorage.setItem('sr_a_version',String(SCHEMA_VERSION));const b=document.getElementById('save-badge');b.classList.add('show');setTimeout(()=>b.classList.remove('show'),1800);}
+function getA(k){const e=document.getElementById('a-'+k);return e?(parseFloat(e.value)||0):(loadA()[k]?.value||0);}
+
+function fmt(n,sh=false){if(n===undefined||n===null||isNaN(n))return'—';if(sh){if(Math.abs(n)>=1e6)return'$'+(n/1e6).toFixed(1)+'M';if(Math.abs(n)>=1e3)return'$'+(n/1e3).toFixed(0)+'K';}return'$'+Math.abs(Math.round(n)).toLocaleString();}
+function pct(n){return Math.round(n*100)+'%';}
+function sign(n,sh=false){return(n>=0?'+':'-')+fmt(Math.abs(n),sh);}
+function dayOfYear(d=new Date()){const s=new Date(d.getFullYear(),0,0);return Math.floor((d-s)/86400000);}
+function isLeap(y){return(y%4===0&&y%100!==0)||y%400===0;}
+function daysInYear(y){return isLeap(y)?366:365;}
+function yearProgress(year){const today=new Date();const cy=today.getFullYear();const diy=daysInYear(year);if(year<cy)return{phase:'complete',frac:1,days:diy,diy,label:'Final'};if(year>cy)return{phase:'future',frac:0,days:0,diy,label:'Projected'};const doy=dayOfYear(today);return{phase:'current',frac:doy/diy,days:doy,diy,label:`Day ${doy} of ${diy}`};}
+
+const GOLD='#b8860b',DG='#11241D',LG='#4a7c6a';
+const CD={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'rgba(220,239,232,0.55)',font:{size:11,family:"'Karla',sans-serif"},padding:12}},tooltip:{backgroundColor:'#162820',borderColor:'rgba(220,239,232,0.1)',borderWidth:0.5,titleColor:'rgba(220,239,232,0.9)',bodyColor:'rgba(220,239,232,0.6)',padding:9,callbacks:{label:ctx=>' '+fmt(ctx.raw,true)}}},scales:{x:{grid:{color:'rgba(220,239,232,0.04)'},ticks:{color:'rgba(220,239,232,0.4)',font:{size:11}}},y:{grid:{color:'rgba(220,239,232,0.04)'},ticks:{color:'rgba(220,239,232,0.4)',font:{size:11},callback:v=>fmt(v,true)}}}};
+
+function dc(id){if(S.charts[id]){S.charts[id].destroy();delete S.charts[id];}}
+function mc(id,cfg){dc(id);const ctx=document.getElementById(id);if(!ctx)return;const o=cfg.options||{};cfg.options={...CD,...o,plugins:{...CD.plugins,...(o.plugins||{})},scales:cfg.type==='doughnut'?undefined:{...CD.scales,...(o.scales||{})}};S.charts[id]=new Chart(ctx,cfg);}
+
+function parseSheet(ws){const rng=XLSX.utils.decode_range(ws['!ref']||'A1');const rows=[];for(let r=rng.s.r;r<=rng.e.r;r++){const row=[];for(let c=rng.s.c;c<=rng.e.c;c++){const cell=ws[XLSX.utils.encode_cell({r,c})];row.push(cell?cell.v:null);}rows.push(row);}return rows;}
+
+function parseBudget(rows,year){
+  const sv=(r,c)=>{if(!rows[r]||rows[r][c]==null)return 0;const v=parseFloat(rows[r][c]);return isNaN(v)?0:v;};
+  const annualCOL=sv(2,8),takehome=sv(5,2),investOut=Math.abs(sv(5,1)),housing=sv(5,4);
+  const monthlyTH=sv(6,2),weeklyTH=sv(7,2),dailyTH=sv(8,2),dailyCOL=sv(5,8);
+  const stockDaily=sv(6,8),stockMonthly=sv(7,8),pctInvested=sv(9,14);
+  const creditCard=Math.abs(sv(3,11)),initialInv=sv(4,2);
+  const balances=[];
+  for(let i=12;i<rows.length;i++){if(rows[i]&&rows[i][1]===true&&rows[i][2]!=null){const v=parseFloat(rows[i][2]);if(!isNaN(v))balances.push(v);}}
+  return{year,annualCOL,takehome,investOut,housing,monthlyTH,weeklyTH,dailyTH,dailyCOL,stockDaily,stockMonthly,pctInvested,creditCard,initialInv,balances};
+}
+
+function parseTS(rows){
+  const res=[];
+  for(let i=4;i<rows.length;i++){
+    const r=rows[i];if(!r||r[0]==null)continue;
+    const yr=parseInt(r[0]);if(isNaN(yr)||yr<2000||yr>2100)continue;
+    const sv=c=>{const v=parseFloat(r[c]);return isNaN(v)?0:v;};
+    res.push({year:yr,age:parseInt(r[1])||null,total:sv(3),nonretire:sv(5),taxadv:sv(7),retire:sv(10),contrib:sv(13),passive:sv(14),earnings:sv(15),notes:r[17]?String(r[17]).trim():''});
+  }
+  return res;
+}
+
+function processWB(wb){
+  let fb=false,ft=false;
+  for(const name of wb.SheetNames){
+    const ws=wb.Sheets[name];const rows=parseSheet(ws);
+    const bm=name.match(/Budget\s*['']?(\d{2,4})/i);
+    if(bm){let yr=parseInt(bm[1]);if(yr<100)yr+=2000;S.budgetData[yr]=parseBudget(rows,yr);fb=true;}
+    if(name.toLowerCase().includes('time series')||name.toLowerCase().includes('stock')){const ts=parseTS(rows);if(ts.length>0){S.tsData=ts;ft=true;}}
+  }
+  return{fb,ft};
+}
+
+function handleFiles(files){
+  Array.from(files).forEach(file=>{
+    if(!file.name.match(/\.xlsx?$/i))return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const data=new Uint8Array(e.target.result);
+      const wb=XLSX.read(data,{type:'array',cellDates:true});
+      processWB(wb);
+      if(!S.files.find(f=>f.name===file.name))S.files.push({name:file.name});
+      renderFileList();refreshAll();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function removeFile(name){S.files=S.files.filter(f=>f.name!==name);S.budgetData={};S.tsData=[];renderFileList();refreshAll();}
+
+function renderFileList(){
+  document.getElementById('fileList').innerHTML=S.files.map(f=>`<div class="file-tag"><span>${f.name.length>22?f.name.slice(0,20)+'…':f.name}</span><span class="rm" onclick="removeFile('${f.name}')">×</span></div>`).join('');
+}
+
+document.addEventListener('dragover',e=>{e.preventDefault();document.getElementById('dragOverlay').classList.add('show');});
+document.addEventListener('dragleave',e=>{if(e.clientX===0&&e.clientY===0)document.getElementById('dragOverlay').classList.remove('show');});
+document.addEventListener('drop',e=>{e.preventDefault();document.getElementById('dragOverlay').classList.remove('show');handleFiles(e.dataTransfer.files);});
+
+function showPanel(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  setTimeout(()=>{
+    if(id==='overview')renderOverview();
+    if(id==='budget')renderBudget();
+    if(id==='projections')renderProjections();
+    if(id==='taxes')renderTaxes();
+    if(id==='assumptions')renderAssumptions();
+    if(id==='extras')renderExtras();
+  },30);
+}
+
+function refreshAll(){const a=document.querySelector('.panel.active')?.id?.replace('panel-','');if(a)showPanel(a);}
+
+function flowRows(arr){return arr.map(([l,v,c])=>`<div class="flow-row"><span class="flow-label">${l}</span><span class="flow-val ${c}">${v>=0?'':'-'}${fmt(Math.abs(v))}</span></div>`).join('');}
+
+// OVERVIEW
+function renderOverview(){
+  const hasTS=S.tsData.length>0,hasBud=Object.keys(S.budgetData).length>0,has=hasTS||hasBud;
+  document.getElementById('ov-empty').style.display=has?'none':'block';
+  document.getElementById('ov-content').style.display=has?'block':'none';
+  if(!has)return;
+  const yrs=Object.keys(S.budgetData).map(Number).sort();
+  const todayYear=new Date().getFullYear();
+  const latestYear=S.budgetData[todayYear]?todayYear:yrs[yrs.length-1];
+  const d=S.budgetData[latestYear]||{};
+  const yp=latestYear?yearProgress(latestYear):null;
+  // Year-progress banner
+  if(yp&&latestYear){
+    const pctFrac=Math.round(yp.frac*100);
+    const fillClass=yp.phase==='complete'?'complete':'';
+    const tagClass=yp.phase==='complete'?'complete':(yp.phase==='future'?'future':'');
+    document.getElementById('ov-year-status').innerHTML=`<div class="year-status"><span class="phase-tag ${tagClass}">${latestYear} ${yp.label}</span><div class="status-label">Year elapsed</div><div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pctFrac}%"></div></div><div class="status-frac">${pctFrac}%</div></div>`;
+  } else {document.getElementById('ov-year-status').innerHTML='';}
+  // YTD cards for current year
+  const ytdSec=document.getElementById('ov-ytd-section');
+  if(yp&&yp.phase==='current'&&d.takehome){
+    ytdSec.style.display='block';
+    const ytdEarned=(d.takehome||0)*yp.frac;
+    const ytdSpent=(d.annualCOL||0)*yp.frac;
+    const ytdInvested=(d.investOut||0)*yp.frac;
+    const ytdHousing=(d.housing||0)*yp.frac;
+    const remEarned=(d.takehome||0)-ytdEarned;
+    const remSpent=(d.annualCOL||0)-ytdSpent;
+    const remInvested=(d.investOut||0)-ytdInvested;
+    document.getElementById('ov-ytd-cards').innerHTML=`
+      <div class="ytd-card"><div class="ytd-label">Earned to date</div><div class="ytd-val">${fmt(ytdEarned)}</div><div class="ytd-sub">of ${fmt(d.takehome)} plan · <span class="remaining">${Math.round(d.takehome?ytdEarned/d.takehome*100:0)}% of plan</span></div></div>
+      <div class="ytd-card"><div class="ytd-label">Spent to date</div><div class="ytd-val">${fmt(ytdSpent)}</div><div class="ytd-sub">of ${fmt(d.annualCOL)} plan · <span class="remaining">${Math.round(d.annualCOL?ytdSpent/d.annualCOL*100:0)}% of plan</span></div></div>
+      <div class="ytd-card"><div class="ytd-label">Invested to date</div><div class="ytd-val">${fmt(ytdInvested)}</div><div class="ytd-sub">of ${fmt(d.investOut)} plan · <span class="remaining">${Math.round(d.investOut?ytdInvested/d.investOut*100:0)}% of plan</span></div></div>
+      <div class="ytd-card"><div class="ytd-label">Housing + car to date</div><div class="ytd-val">${fmt(ytdHousing)}</div><div class="ytd-sub">of ${fmt(d.housing)} plan · <span class="remaining">${Math.round(d.housing?ytdHousing/d.housing*100:0)}% of plan</span></div></div>`;
+  } else if(yp&&yp.phase==='complete'&&d.takehome){
+    ytdSec.style.display='block';
+    document.getElementById('ov-ytd-cards').innerHTML=`
+      <div class="ytd-card complete"><div class="ytd-label">${latestYear} earned</div><div class="ytd-val">${fmt(d.takehome)}</div><div class="ytd-sub">Final take-home</div></div>
+      <div class="ytd-card complete"><div class="ytd-label">${latestYear} spent</div><div class="ytd-val">${fmt(d.annualCOL)}</div><div class="ytd-sub">Cost of living</div></div>
+      <div class="ytd-card complete"><div class="ytd-label">${latestYear} invested</div><div class="ytd-val">${fmt(d.investOut)}</div><div class="ytd-sub">${d.pctInvested?pct(d.pctInvested)+' of take-home':'Deployed capital'}</div></div>`;
+  } else {ytdSec.style.display='none';}
+  const port=getA('portfolio')||(hasTS?S.tsData[0]?.total:0);
+  const net=(d.dailyTH||0)-(d.dailyCOL||0);
+  document.getElementById('ov-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total portfolio</div><div class="metric-value gold">${fmt(port,true)}</div><div class="metric-sub">All accounts</div></div>
+    <div class="metric"><div class="metric-label">Daily take-home</div><div class="metric-value pos">${d.dailyTH?fmt(d.dailyTH):'—'}</div><div class="metric-sub">${latestYear||''} avg</div></div>
+    <div class="metric"><div class="metric-label">Daily cost of living</div><div class="metric-value">${d.dailyCOL?fmt(d.dailyCOL):'—'}</div><div class="metric-sub">${latestYear||''} avg</div></div>
+    <div class="metric"><div class="metric-label">Daily net</div><div class="metric-value ${net>=0?'pos':'neg'}">${sign(net)}</div><div class="metric-sub">Before investments</div></div>
+    <div class="metric"><div class="metric-label">Monthly stock income</div><div class="metric-value gold">${fmt(d.stockMonthly,true)}</div><div class="metric-sub">Nonretirement</div></div>
+    <div class="metric"><div class="metric-label">% take-home invested</div><div class="metric-value">${d.pctInvested?pct(d.pctInvested):'—'}</div><div class="metric-sub">${latestYear||''}</div></div>`;
+  document.getElementById('daily-flows').innerHTML=flowRows([
+    ['Daily take-home',d.dailyTH||0,'pos'],
+    ['Daily cost of living',-(d.dailyCOL||0),'neg'],
+    ['Daily stock income',d.stockDaily||0,'gold'],
+    ['Net daily',net,net>=0?'pos':'neg']]);
+  const sal=getA('salary'),salFuture=getA('salaryFuture'),con=getA('consulting'),wl=getA('wellcomeLeap'),jrn=getA('journalism');
+  const rows=[
+    ['Sanmai (Senior QE II, 2026)',sal,'neutral'],
+    ['Neuradaptive (Strategy)',con,'neutral']];
+  if(wl>0)rows.push(['Wellcome LEAP (pending)',wl,'neutral']);
+  else rows.push(['Wellcome LEAP (contract pending)',0,'neutral']);
+  rows.push(['Neurotech Reports (Editor)',jrn,'neutral']);
+  rows.push(['Gross total (2026)',sal+con+wl+jrn,'gold']);
+  rows.push(['Gross total (steady-state)',salFuture+con+wl+jrn,'gold']);
+  rows.push(['Earned income minus taxes (2026)',(sal+con+wl+jrn)*(1-getA('taxRate')/100),'pos']);
+  document.getElementById('income-sources').innerHTML=flowRows(rows);
+  if(hasTS){
+    const today_=new Date().getFullYear();
+    // Slice from a couple years before current to show recent context, then include all future data
+    const startIdx=Math.max(0,S.tsData.findIndex(r=>r.year>=today_-2));
+    const relevant=S.tsData.slice(startIdx>=0?startIdx:0);
+    // Extend with projection if the uploaded data runs out before year+25
+    const extended=[...relevant];
+    const ret_=getA('returnRate')/100||0.11;
+    const monthlyInv=getA('monthlyVOO')||0;
+    const max401kA=getA('max401k')||0,maxIRAa=getA('maxIRA')||0,matchRate=(getA('iraMatchRate')||0)/100;
+    const baseContrib=monthlyInv*12;
+    // IRA match applies to whatever goes into IRA (after 401(k) is filled)
+    const iraFundingA=Math.max(0,Math.min(maxIRAa,baseContrib-max401kA));
+    const iraMatchA=iraFundingA*matchRate;
+    const annualContrib=baseContrib+iraMatchA;
+    while(extended.length<25){
+      const last=extended[extended.length-1];
+      if(!last)break;
+      extended.push({year:last.year+1,age:last.age?last.age+1:null,total:last.total*(1+ret_)+annualContrib,_projected:true});
+    }
+    const d20=extended.slice(0,25);
+    const firstProjIdx=d20.findIndex(r=>r._projected);
+    // Split into actual vs projected to show dashed continuation
+    const actualData=d20.map((r,i)=>r._projected?null:r.total);
+    const projectedData=d20.map((r,i)=>r._projected||(firstProjIdx>0&&i===firstProjIdx-1)?r.total:null);
+    mc('chart-portfolio',{type:'line',data:{labels:d20.map(r=>r.year),datasets:[
+      {label:'Uploaded data (from Excel)',data:actualData,borderColor:GOLD,backgroundColor:'rgba(184,134,11,0.10)',fill:true,tension:0.35,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:GOLD,borderWidth:2.5,spanGaps:false},
+      {label:`Projected (${(ret_*100).toFixed(0)}% return, ${fmt(annualContrib,true)}/yr)`,data:projectedData,borderColor:LG,borderDash:[6,5],backgroundColor:'rgba(74,124,106,0.06)',fill:true,tension:0.15,pointRadius:2.5,pointStyle:'circle',pointBackgroundColor:'rgba(17,36,29,1)',pointBorderColor:LG,pointBorderWidth:1.5,borderWidth:2,spanGaps:false}
+    ]}});
+  }
+  const noteMS=S.tsData.filter(r=>r.notes&&r.notes.length>3).slice(0,6);
+  const defaultMS=[{year:2030,age:36,notes:'Financial independence: passive income covers Bay Area cost of living',total:1452999},{year:2033,age:39,notes:'Millionaire by 40 — liquid assets',total:2192898},{year:2034,age:40,notes:'Cash cushion + yield shield year — work becomes optional',total:2488116}];
+  const ms=noteMS.length>0?noteMS:defaultMS;
+  document.getElementById('milestones').innerHTML=ms.map(m=>`<div class="milestone"><div class="milestone-year">${m.year}</div><div class="milestone-age">Age ${m.age||'—'}</div><div class="milestone-text">${m.notes}</div><div class="milestone-val">${fmt(m.total,true)}</div></div>`).join('');
+}
+
+// BUDGET
+function renderBudget(){
+  const yrs=Object.keys(S.budgetData).map(Number).sort();
+  const has=yrs.length>0;
+  document.getElementById('bud-empty').style.display=has?'none':'block';
+  document.getElementById('bud-content').style.display=has?'block':'none';
+  if(!has)return;
+  if(!S.currentYear||!S.budgetData[S.currentYear]){const todayYear=new Date().getFullYear();S.currentYear=S.budgetData[todayYear]?todayYear:yrs[yrs.length-1];}
+  document.getElementById('year-tabs').innerHTML=yrs.map(y=>`<button class="year-tab ${y===S.currentYear?'active':''}" onclick="S.currentYear=${y};renderBudget()">${y}</button>`).join('');
+  const d=S.budgetData[S.currentYear];
+  const yp=yearProgress(S.currentYear);
+  const pctFrac=Math.round(yp.frac*100);
+  const fillClass=yp.phase==='complete'?'complete':'';
+  const tagClass=yp.phase==='complete'?'complete':(yp.phase==='future'?'future':'');
+  document.getElementById('bud-year-status').innerHTML=`<div class="year-status"><span class="phase-tag ${tagClass}">${S.currentYear} ${yp.label}</span><div class="status-label">Year elapsed</div><div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pctFrac}%"></div></div><div class="status-frac">${pctFrac}%</div></div>`;
+  // YTD cards by phase
+  const ytdSec=document.getElementById('bud-ytd-section');
+  if(yp.phase==='current'){
+    ytdSec.style.display='block';
+    const ytdEarned=(d.takehome||0)*yp.frac,ytdSpent=(d.annualCOL||0)*yp.frac,ytdInv=(d.investOut||0)*yp.frac,ytdHouse=(d.housing||0)*yp.frac,ytdCC=(d.creditCard||0)*yp.frac;
+    document.getElementById('bud-ytd-cards').innerHTML=`
+      <div class="ytd-card"><div class="ytd-label">Earned YTD</div><div class="ytd-val">${fmt(ytdEarned)}</div><div class="ytd-sub">${pctFrac}% of ${fmt(d.takehome)}</div></div>
+      <div class="ytd-card"><div class="ytd-label">Spent YTD</div><div class="ytd-val">${fmt(ytdSpent)}</div><div class="ytd-sub">${pctFrac}% of ${fmt(d.annualCOL)}</div></div>
+      <div class="ytd-card"><div class="ytd-label">Invested YTD</div><div class="ytd-val">${fmt(ytdInv)}</div><div class="ytd-sub">${pctFrac}% of ${fmt(d.investOut)}</div></div>
+      <div class="ytd-card"><div class="ytd-label">Housing + car YTD</div><div class="ytd-val">${fmt(ytdHouse)}</div><div class="ytd-sub">${pctFrac}% of ${fmt(d.housing)}</div></div>
+      <div class="ytd-card"><div class="ytd-label">Credit card YTD</div><div class="ytd-val">${fmt(ytdCC)}</div><div class="ytd-sub">${pctFrac}% of ${fmt(d.creditCard)}</div></div>`;
+  } else if(yp.phase==='complete'){
+    ytdSec.style.display='block';
+    document.getElementById('bud-ytd-cards').innerHTML=`
+      <div class="ytd-card complete"><div class="ytd-label">${S.currentYear} earned</div><div class="ytd-val">${fmt(d.takehome)}</div><div class="ytd-sub">Final</div></div>
+      <div class="ytd-card complete"><div class="ytd-label">${S.currentYear} spent</div><div class="ytd-val">${fmt(d.annualCOL)}</div><div class="ytd-sub">Final</div></div>
+      <div class="ytd-card complete"><div class="ytd-label">${S.currentYear} invested</div><div class="ytd-val">${fmt(d.investOut)}</div><div class="ytd-sub">Final</div></div>
+      <div class="ytd-card complete"><div class="ytd-label">Housing + car</div><div class="ytd-val">${fmt(d.housing)}</div><div class="ytd-sub">Final</div></div>`;
+  } else {ytdSec.style.display='none';}
+  document.getElementById('bud-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Annual take-home</div><div class="metric-value pos">${fmt(d.takehome)}</div><div class="metric-sub">${fmt(d.monthlyTH)}/month</div></div>
+    <div class="metric"><div class="metric-label">Annual cost of living</div><div class="metric-value">${fmt(d.annualCOL)}</div><div class="metric-sub">${fmt(d.dailyCOL)}/day</div></div>
+    <div class="metric"><div class="metric-label">Invested this year</div><div class="metric-value gold">${fmt(d.investOut)}</div><div class="metric-sub">${d.pctInvested?pct(d.pctInvested):'—'} of take-home</div></div>
+    <div class="metric"><div class="metric-label">Housing + car/yr</div><div class="metric-value">${fmt(d.housing)}</div><div class="metric-sub">${d.takehome?pct(d.housing/d.takehome):'—'} of take-home</div></div>
+    <div class="metric"><div class="metric-label">Monthly stock income</div><div class="metric-value gold">${fmt(d.stockMonthly,true)}</div><div class="metric-sub">From nonretirement</div></div>
+    <div class="metric"><div class="metric-label">Initial investments</div><div class="metric-value">${fmt(d.initialInv,true)}</div><div class="metric-sub">Start of year</div></div>`;
+  document.getElementById('annual-flow').innerHTML=flowRows([
+    ['Take-home pay',d.takehome,'pos'],
+    ['Cost of living',-(d.annualCOL||0),'neg'],
+    ['Investments deployed',-(d.investOut||0),'neg'],
+    ['Net (after investments)',d.takehome-d.annualCOL,(d.takehome-d.annualCOL)>=0?'pos':'neg']]);
+  document.getElementById('period-flow').innerHTML=flowRows([
+    ['Daily take-home',d.dailyTH,'pos'],
+    ['Daily cost of living',d.dailyCOL,'neg'],
+    ['Daily net',d.dailyTH-d.dailyCOL,(d.dailyTH-d.dailyCOL)>=0?'pos':'neg'],
+    ['Weekly take-home',d.weeklyTH,'neutral'],
+    ['Monthly take-home',d.monthlyTH,'neutral'],
+    ['Monthly stock income',d.stockMonthly,'gold']]);
+  const otherLiving=Math.max(0,(d.annualCOL||0)-(d.housing||0));
+  mc('chart-donut',{type:'doughnut',data:{labels:['Housing & car','Other living','Investments','Credit card'],datasets:[{data:[d.housing||0,otherLiving,d.investOut||0,d.creditCard||0],backgroundColor:[DG,LG,GOLD,'#2d5a4a'],borderWidth:0}]},options:{plugins:{legend:{position:'right',labels:{color:'rgba(220,239,232,0.55)',font:{size:11},padding:10}}}}});
+  const allYrs=Object.keys(S.budgetData).map(Number).sort();
+  mc('chart-yoy',{type:'bar',data:{labels:allYrs.map(String),datasets:[{label:'Take-home',data:allYrs.map(y=>S.budgetData[y]?.takehome||0),backgroundColor:DG},{label:'Cost of living',data:allYrs.map(y=>S.budgetData[y]?.annualCOL||0),backgroundColor:LG},{label:'Investments',data:allYrs.map(y=>S.budgetData[y]?.investOut||0),backgroundColor:GOLD}]}});
+  if(d.balances&&d.balances.length>0){
+    const yp2=yearProgress(S.currentYear);
+    const n=d.balances.length;
+    let cut=n;
+    if(yp2.phase==='current'){cut=Math.min(n,Math.max(1,Math.round(n*yp2.frac)));}
+    else if(yp2.phase==='future'){cut=0;}
+    const actual=d.balances.map((v,i)=>i<=cut?v:null);
+    const projected=d.balances.map((v,i)=>i>=cut?v:null);
+    const legend=yp2.phase==='current'?`Balance (actual through day ${cut} of ${n}, then projected)`:(yp2.phase==='complete'?'Balance (final)':'Balance (projected)');
+    mc('chart-balance',{type:'line',data:{labels:d.balances.map((_,i)=>i+1),datasets:[{label:yp2.phase==='future'?legend:'Actual',data:actual,borderColor:LG,backgroundColor:'rgba(74,124,106,0.12)',fill:true,tension:0.25,pointRadius:0,spanGaps:false},{label:'Projected',data:projected,borderColor:'rgba(184,134,11,0.75)',borderDash:[5,4],backgroundColor:'rgba(184,134,11,0.05)',fill:yp2.phase==='future',tension:0.25,pointRadius:0,spanGaps:false,hidden:yp2.phase==='complete'}]},options:{scales:{x:{ticks:{maxTicksLimit:12}}},plugins:{legend:{display:yp2.phase==='current',labels:{color:'rgba(220,239,232,0.55)',font:{size:11}}}}}});
+  }
+}
+
+// LIVE OFF CAPITAL GAINS — FI CROSSOVER PROJECTION
+// Projects portfolio growth (contributions + returns) against three FI thresholds inflated forward.
+// Thresholds: 25x COL (conservative, 4% SWR), COL/real_return (balanced, preserves purchasing power),
+// COL/nominal_return (aggressive, just covers COL nominally while eroding real value).
+// Uses Excel Budget sheet annualCOL when available for specific years; otherwise grows COL by colGrowthRate.
+function computeFIProjection(){
+  const nominal=getA('returnRate')/100||0.11;
+  const inflation=getA('inflationRate')/100||0.03;
+  const colGrowth=getA('colGrowthRate')/100||0.035;
+  const realReturn=Math.max(0.001,(1+nominal)/(1+inflation)-1);
+  const taxDrag=Math.max(0,Math.min(0.5,getA('withdrawalTaxDrag')/100))||0.20;
+  const swr=Math.max(0.01,Math.min(0.10,getA('swrRate')/100))||0.04;
+  // Gross-up factor: to net $X post-tax from selling shares (realizing LTCG), gross withdrawal = X / (1 - taxDrag)
+  const grossUp=1/(1-taxDrag);
+  const startYear=new Date().getFullYear();
+  const birthYear=getA('birthYear')||1994;
+  let startPortfolio=getA('portfolio')||0;
+  if(S.tsData&&S.tsData.length>0){
+    const tsNow=S.tsData.find(r=>r.year===startYear)||S.tsData[0];
+    if(tsNow&&tsNow.total>0)startPortfolio=tsNow.total;
+  }
+  const budgetYears=Object.keys(S.budgetData||{}).map(Number).sort();
+  const latestBudget=budgetYears.length?S.budgetData[budgetYears[budgetYears.length-1]]:null;
+  const annualContribBudget=latestBudget?.investOut||0;
+  const monthlyInv=getA('monthlyVOO')||0;
+  const maxIRA=getA('maxIRA')||0;
+  const iraMatchRate=getA('iraMatchRate')/100||0;
+  // IRA match: 3% on IRA contributions (up to $7,500) added as free portfolio growth
+  const iraMatch=Math.min(monthlyInv*12,getA('max401k')+maxIRA)>=getA('max401k')?maxIRA*iraMatchRate:Math.max(0,(monthlyInv*12-getA('max401k'))*iraMatchRate);
+  const annualContribAssump=monthlyInv*12+iraMatch;
+  const annualContrib=annualContribBudget>0?annualContribBudget+iraMatch:annualContribAssump;
+  const colOverrides={};
+  if(S.budgetData){for(const[yr,d] of Object.entries(S.budgetData)){if(d?.annualCOL>0)colOverrides[yr]=d.annualCOL;}}
+  const startCOL=colOverrides[startYear]||getA('annualCOL')||40594;
+  const MAX_YEARS=41;
+  const rows=[];
+  let portfolio=startPortfolio,col=startCOL,contrib=annualContrib;
+  // Pre-tax thresholds (assume no capital-gains drag)
+  let fiCons=null,fiReal=null,fiAggr=null,fiSwr=null;
+  // Post-tax thresholds (gross up COL by 1/(1-taxDrag) to account for LTCG paid when selling)
+  let fiConsTax=null,fiRealTax=null,fiSwrTax=null;
+  for(let i=0;i<MAX_YEARS;i++){
+    const year=startYear+i;
+    const age=year-birthYear;
+    if(colOverrides[year])col=colOverrides[year];
+    else if(i>0)col=col*(1+colGrowth);
+    // Pre-tax thresholds: assumes no tax on withdrawals
+    const tCons=col*25, tBal=col/realReturn, tAgg=col/nominal, tSwr=col/swr;
+    // Post-tax thresholds: gross up by 1/(1-taxDrag) since every $1 of COL requires $1/(1-drag) sold
+    const tConsTax=col*grossUp*25, tBalTax=(col*grossUp)/realReturn, tSwrTax=(col*grossUp)/swr;
+    if(portfolio>=tCons&&fiCons===null)fiCons={year,age,portfolio,col,threshold:tCons};
+    if(portfolio>=tBal&&fiReal===null)fiReal={year,age,portfolio,col,threshold:tBal};
+    if(portfolio>=tAgg&&fiAggr===null)fiAggr={year,age,portfolio,col,threshold:tAgg};
+    if(portfolio>=tSwr&&fiSwr===null)fiSwr={year,age,portfolio,col,threshold:tSwr};
+    if(portfolio>=tConsTax&&fiConsTax===null)fiConsTax={year,age,portfolio,col,threshold:tConsTax};
+    if(portfolio>=tBalTax&&fiRealTax===null)fiRealTax={year,age,portfolio,col,threshold:tBalTax};
+    if(portfolio>=tSwrTax&&fiSwrTax===null)fiSwrTax={year,age,portfolio,col,threshold:tSwrTax};
+    // Net sustainable withdrawal at this portfolio level (what capital gains can actually fund, post-tax)
+    const sustainablePostTax=portfolio*swr*(1-taxDrag);
+    rows.push({year,age,portfolio,col,tConservative:tCons,tBalanced:tBal,tAggressive:tAgg,tSwr,tConsTax,tBalTax,tSwrTax,sustainablePostTax,fromExcel:!!colOverrides[year]});
+    const stillAccum=!fiConsTax||year<fiConsTax.year;
+    portfolio=portfolio*(1+nominal)+(stillAccum?contrib:0);
+    if(stillAccum)contrib=contrib*(1+colGrowth);
+  }
+  return {rows,fiCons,fiReal,fiAggr,fiSwr,fiConsTax,fiRealTax,fiSwrTax,nominal,inflation,colGrowth,realReturn,taxDrag,swr,grossUp,startPortfolio,annualContrib,startCOL,hasColOverrides:Object.keys(colOverrides).length>0};
+}
+
+function renderFIProjection(){
+  const metricsEl=document.getElementById('fi-metrics');
+  if(!metricsEl)return;
+  const p=computeFIProjection();
+  const today=new Date().getFullYear();
+  const fmtYear=fi=>fi?`${fi.year}`:'>40 yrs';
+  const fmtAge=fi=>fi?`Age ${fi.age}`:'';
+  const fmtDelta=fi=>fi?`${fi.year-today} yrs away`:'';
+  const dragPct=Math.round(p.taxDrag*100);
+  const swrPct=(p.swr*100).toFixed(1);
+  metricsEl.innerHTML=`
+    <div class="metric"><div class="metric-label">Can live off gains (post-tax)</div><div class="metric-value gold">${fmtYear(p.fiSwrTax)}</div><div class="metric-sub">${fmtAge(p.fiSwrTax)} · ${fmtDelta(p.fiSwrTax)} · ${swrPct}% SWR grossed up for ${dragPct}% LTCG</div></div>
+    <div class="metric"><div class="metric-label">Conservative FI (post-tax, 25×)</div><div class="metric-value gold">${fmtYear(p.fiConsTax)}</div><div class="metric-sub">${fmtAge(p.fiConsTax)} · ${fmtDelta(p.fiConsTax)} · Trinity 4% with tax drag</div></div>
+    <div class="metric"><div class="metric-label">Balanced FI (post-tax, real)</div><div class="metric-value gold">${fmtYear(p.fiRealTax)}</div><div class="metric-sub">${fmtAge(p.fiRealTax)} · ${fmtDelta(p.fiRealTax)} · Preserves purchasing power</div></div>
+    <div class="metric"><div class="metric-label">Pre-tax FI (ignores LTCG)</div><div class="metric-value">${fmtYear(p.fiCons)}</div><div class="metric-sub">${fmtAge(p.fiCons)} · 25× COL · unrealistic if selling shares</div></div>
+    <div class="metric"><div class="metric-label">Real return rate</div><div class="metric-value">${(p.realReturn*100).toFixed(2)}%</div><div class="metric-sub">${pct(p.nominal)} nominal ÷ ${pct(p.inflation)} inflation</div></div>
+    <div class="metric"><div class="metric-label">Starting COL / portfolio</div><div class="metric-value">${fmt(p.startCOL,true)} / ${fmt(p.startPortfolio,true)}</div><div class="metric-sub">COL grows ${(p.colGrowth*100).toFixed(1)}%/yr${p.hasColOverrides?' (Excel overrides)':''}</div></div>`;
+  const labels=p.rows.map(r=>r.year);
+  mc('chart-fi-thresholds',{type:'line',data:{labels,datasets:[
+    {label:'Portfolio projection',data:p.rows.map(r=>r.portfolio),borderColor:GOLD,backgroundColor:'rgba(184,134,11,0.10)',fill:true,tension:0.25,pointRadius:0,borderWidth:2.5},
+    {label:`Post-tax ${swrPct}% SWR threshold (realistic)`,data:p.rows.map(r=>r.tSwrTax),borderColor:'#e05c5c',borderDash:[2,3],fill:false,tension:0.1,pointRadius:0,borderWidth:1.8},
+    {label:'Post-tax balanced (COL ÷ real return)',data:p.rows.map(r=>r.tBalTax),borderColor:LG,borderDash:[5,4],fill:false,tension:0.1,pointRadius:0,borderWidth:1.5},
+    {label:'Pre-tax 25× COL (ignores LTCG)',data:p.rows.map(r=>r.tConservative),borderColor:'rgba(220,239,232,0.35)',borderDash:[1,4],fill:false,tension:0.1,pointRadius:0,borderWidth:1.1}
+  ]},options:{scales:{y:{ticks:{callback:v=>fmt(v,true)}}},plugins:{tooltip:{callbacks:{title:ctx=>`Year ${labels[ctx[0].dataIndex]} (Age ${p.rows[ctx[0].dataIndex].age})`,label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw,true)}`}}}}});
+  const notes=[];
+  notes.push(`Post-tax FI: portfolio × ${swrPct}% withdrawal × (1 − ${dragPct}% tax drag) must cover projected COL that year`);
+  if(p.fiSwrTax)notes.push(`At year ${p.fiSwrTax.year}, portfolio of ~${fmt(p.fiSwrTax.portfolio,true)} can sustainably fund ${fmt(p.fiSwrTax.col,true)} COL after LTCG taxes on sales`);
+  const taxable=getA('taxable')||0,totalPort=p.startPortfolio;
+  if(taxable>0&&taxable<totalPort*0.9)notes.push(`Caveat: ~${fmt(totalPort-taxable,true)} is in retirement accounts locked until 59.5; pre-59.5 FI needs bridge strategy (72(t) / Roth ladder) or the ${fmt(taxable,true)} taxable portion alone must cover the gap`);
+  if(p.hasColOverrides)notes.push(`COL from Excel Budget sheets used for specific years; ${(p.colGrowth*100).toFixed(1)}% growth applied otherwise`);
+  else notes.push(`Upload Excel Budget sheets (Budget '27, '28, etc.) to override COL for specific years`);
+  document.getElementById('fi-note').innerHTML='Interpretation: '+notes.join(' · ');
+}
+
+// PROJECTIONS
+function renderProjections(){
+  renderFIProjection();
+  const has=S.tsData.length>0;
+  document.getElementById('proj-empty').style.display=has?'none':'block';
+  document.getElementById('proj-content').style.display=has?'block':'none';
+  if(!has)return;
+  // Build projected COL trajectory for each time-series year: Excel overrides where present, else compound at colGrowthRate
+  const colGrowth=getA('colGrowthRate')/100||0.035;
+  const taxDrag=Math.max(0,Math.min(0.5,getA('withdrawalTaxDrag')/100))||0.20;
+  const swr=Math.max(0.01,Math.min(0.10,getA('swrRate')/100))||0.04;
+  const colOverrides={};
+  if(S.budgetData){for(const[yr,d] of Object.entries(S.budgetData)){if(d?.annualCOL>0)colOverrides[yr]=d.annualCOL;}}
+  const startYear=S.tsData[0]?.year||new Date().getFullYear();
+  const anchorCOL=colOverrides[startYear]||getA('annualCOL')||40594;
+  const colForYear={};
+  let running=anchorCOL;
+  S.tsData.forEach((r,i)=>{
+    if(colOverrides[r.year])running=colOverrides[r.year];
+    else if(i>0)running=running*(1+colGrowth);
+    colForYear[r.year]=running;
+  });
+  const col=colForYear[startYear]||anchorCOL;
+  const d10=S.tsData.slice(0,10);
+  const mM=S.tsData.find(r=>r.total>=1e6);
+  // FI signal: passive income meets that year's (growing) COL, post-tax
+  const mFI=S.tsData.find(r=>r.passive*(1-taxDrag)>=colForYear[r.year]);
+  const m10=S.tsData.find(r=>r.total>=1e7);
+  document.getElementById('proj-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Millionaire year</div><div class="metric-value gold">${mM?mM.year:'—'}</div><div class="metric-sub">${mM?'Age '+mM.age:''}</div></div>
+    <div class="metric"><div class="metric-label">Passive ≥ COL (post-tax)</div><div class="metric-value gold">${mFI?mFI.year:'—'}</div><div class="metric-sub">Against growing ${(colGrowth*100).toFixed(1)}%/yr COL</div></div>
+    <div class="metric"><div class="metric-label">$10M year</div><div class="metric-value gold">${m10?m10.year:'—'}</div><div class="metric-sub">${m10?'Age '+m10.age:''}</div></div>
+    <div class="metric"><div class="metric-label">5-yr projection</div><div class="metric-value">${fmt(S.tsData[4]?.total||0,true)}</div><div class="metric-sub">${(S.tsData[0]?.year||2026)+5}</div></div>
+    <div class="metric"><div class="metric-label">10-yr projection</div><div class="metric-value">${fmt(S.tsData[9]?.total||0,true)}</div><div class="metric-sub">${(S.tsData[0]?.year||2026)+10}</div></div>
+    <div class="metric"><div class="metric-label">Max passive income</div><div class="metric-value">${fmt(Math.max(...S.tsData.map(r=>r.passive)),true)}</div><div class="metric-sub">Projected peak</div></div>`;
+  mc('chart-stacked',{type:'bar',data:{labels:d10.map(r=>r.year+''),datasets:[{label:'Non-retirement',data:d10.map(r=>r.nonretire),backgroundColor:LG,stack:'s'},{label:'Tax-advantaged',data:d10.map(r=>r.taxadv),backgroundColor:DG,stack:'s'},{label:'Retirement',data:d10.map(r=>r.retire),backgroundColor:GOLD,stack:'s'}]},options:{scales:{x:{stacked:true,grid:{color:'rgba(220,239,232,0.04)'},ticks:{color:'rgba(220,239,232,0.4)',font:{size:11}}},y:{stacked:true,grid:{color:'rgba(220,239,232,0.04)'},ticks:{color:'rgba(220,239,232,0.4)',font:{size:11},callback:v=>fmt(v,true)}}}}});
+  // Passive income (post-tax) vs COL trajectory (growing)
+  mc('chart-passive',{type:'line',data:{labels:d10.map(r=>r.year),datasets:[
+    {label:'Passive income (post-tax)',data:d10.map(r=>r.passive*(1-taxDrag)),borderColor:GOLD,backgroundColor:'rgba(184,134,11,0.08)',fill:true,tension:0.3,pointRadius:3},
+    {label:`Projected COL (grows ${(colGrowth*100).toFixed(1)}%/yr)`,data:d10.map(r=>colForYear[r.year]),borderColor:'rgba(220,239,232,0.35)',borderDash:[5,4],fill:false,pointRadius:0,borderWidth:1.5},
+    {label:`Portfolio × ${(swr*100).toFixed(1)}% SWR post-tax`,data:d10.map(r=>r.total*swr*(1-taxDrag)),borderColor:LG,borderDash:[2,3],fill:false,pointRadius:0,borderWidth:1.5}
+  ]}});
+  mc('chart-contrib',{type:'bar',data:{labels:d10.map(r=>r.year),datasets:[{label:'Annual contributions',data:d10.map(r=>r.contrib),backgroundColor:GOLD}]}});
+}
+
+// ASSUMPTIONS
+function renderAssumptions(){
+  const saved=loadA();
+  document.getElementById('assumptions-grid').innerHTML=Object.entries(saved).map(([k,a])=>`<div class="assumption-row"><span class="assumption-label">${a.label}</span><input class="assumption-input" id="a-${k}" type="number" step="${a.value%1!==0?'0.01':'1'}" value="${a.value}" onchange="saveA();updateAssumptionsMetrics()"></div>`).join('');
+  updateAssumptionsMetrics();
+}
+
+function updateAssumptionsMetrics(){
+  updateCurrentIncome();
+  updateRunway();
+}
+
+function updateCurrentIncome(){
+  const sal=getA('salary'),salFuture=getA('salaryFuture'),con=getA('consulting'),wl=getA('wellcomeLeap'),jrn=getA('journalism');
+  const max401k=getA('max401k'),maxIRA=getA('maxIRA');
+  const tax=getA('taxRate')/100;
+  const col=getA('annualCOL');
+  const monthly=getA('monthlyVOO');
+  const grossCurrent=sal+con+wl+jrn;
+  const grossFuture=salFuture+con+wl+jrn;
+  const earnedMinusTaxes=grossCurrent*(1-tax);
+  const dn=(earnedMinusTaxes/365)-(col/365);
+  // MAGI = gross - traditional 401(k) (pre-tax). Traditional IRA at her AGI is non-deductible (above $91K single phase-out), so it doesn't reduce MAGI.
+  const magi=grossCurrent-max401k;
+  // Traditional IRA deductibility check (2026 single covered by workplace plan: $81K-$91K phase-out)
+  const iraDeductible=magi<=91000;
+  const effectiveDeduction=max401k+(iraDeductible?maxIRA:0);
+  // Get FSA from tax panel if filled
+  let fsaAmount=0;
+  try{const inp=getTaxInputs();if(inp?.fsaEnabled)fsaAmount=inp.pretaxFSA||0;}catch(e){}
+  const totalPreTax=effectiveDeduction+fsaAmount;
+  const finalAgi=grossCurrent-totalPreTax;
+  document.getElementById('current-income-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Gross income (2026)</div><div class="metric-value pos">${fmt(grossCurrent)}</div><div class="metric-sub">Sanmai ${fmt(sal,true)} + Neuradaptive ${fmt(con,true)}${wl?' + LEAP '+fmt(wl,true):''} + NTR ${fmt(jrn,true)}</div></div>
+    <div class="metric"><div class="metric-label">Gross income (steady-state)</div><div class="metric-value pos">${fmt(grossFuture)}</div><div class="metric-sub">Sanmai ${fmt(salFuture,true)} + contracts</div></div>
+    <div class="metric"><div class="metric-label">Earned income minus taxes</div><div class="metric-value">${fmt(earnedMinusTaxes)}</div><div class="metric-sub">${Math.round(tax*100)}% effective rate</div></div>
+    <div class="metric"><div class="metric-label">Daily net after COL</div><div class="metric-value ${dn>=0?'pos':'neg'}">${sign(dn)}</div><div class="metric-sub">Before investments</div></div>
+    <div class="metric"><div class="metric-label">Pre-tax deductions</div><div class="metric-value">${fmt(totalPreTax)}</div><div class="metric-sub">${fmt(max401k,true)} 401(k)${iraDeductible?' + '+fmt(maxIRA,true)+' IRA':''}${fsaAmount?' + '+fmt(fsaAmount,true)+' FSA':''}</div></div>
+    <div class="metric"><div class="metric-label">MAGI (post-401k)</div><div class="metric-value">${fmt(magi)}</div><div class="metric-sub">${iraDeductible?'Traditional IRA deductible':'Traditional IRA non-deductible (>$91K single)'}</div></div>
+    <div class="metric"><div class="metric-label">Estimated AGI</div><div class="metric-value">${fmt(finalAgi)}</div><div class="metric-sub">After 401(k)${fsaAmount?' + FSA':''}${iraDeductible?' + IRA':''}</div></div>
+    <div class="metric"><div class="metric-label">Monthly investment</div><div class="metric-value">${fmt(monthly)}</div><div class="metric-sub">${fmt(monthly*12)}/yr · 401(k) → IRA → taxable</div></div>`;
+  // Allocation breakdown: $7K/mo front-loaded fills 401(k) first ($24,500), then IRA ($7,500), then taxable brokerage
+  const annualBudget=monthly*12;
+  const iraMatchRate=getA('iraMatchRate')/100||0;
+  const to401k=Math.min(annualBudget,max401k);
+  const remaining1=annualBudget-to401k;
+  const toIRA=Math.min(remaining1,maxIRA);
+  const remaining2=remaining1-toIRA;
+  const toTaxable=Math.max(0,remaining2);
+  const iraMatch=toIRA*iraMatchRate;
+  const totalDeployed=to401k+toIRA+toTaxable+iraMatch;
+  // Calculate which month each bucket fills up
+  const m401Full=to401k>0?Math.ceil(to401k/monthly):null;
+  const mIRAFull=toIRA>0&&to401k>=max401k?Math.ceil((to401k+toIRA)/monthly):null;
+  const allocRows=[
+    ['Total monthly contribution × 12',annualBudget,'neutral'],
+    [`→ Traditional 401(k)${m401Full?` (maxed ~month ${m401Full})`:''}`,to401k,to401k>=max401k?'gold':'neutral'],
+    [`→ Traditional IRA${mIRAFull?` (maxed ~month ${mIRAFull})`:(toIRA>0?' (partial)':' (not reached)')}`,toIRA,toIRA>=maxIRA?'gold':'neutral'],
+    [`→ Taxable brokerage (rest of year)`,toTaxable,'neutral'],
+    [`+ Robinhood IRA match (${iraMatchRate*100}% on contributions)`,iraMatch,'pos'],
+    ['Total capital deployed per year',totalDeployed,'gold']
+  ];
+  document.getElementById('allocation-breakdown').innerHTML=flowRows(allocRows);
+}
+
+function updateRunway(){
+  const ret=getA('returnRate')/100;
+  const inflation=getA('inflationRate')/100||0.03;
+  const colGrowth=getA('colGrowthRate')/100||0.035;
+  const col=getA('annualCOL'),port=getA('portfolio'),tax_=getA('taxable');
+  const taxDrag=Math.max(0,Math.min(0.5,getA('withdrawalTaxDrag')/100))||0.20;
+  // Generic year-by-year simulator: returns years until balance exhausts
+  function simulate(startBal,startCOL,returnRate,costGrowth,applyTaxDrag){
+    let bal=startBal,c=startCOL;
+    for(let yr=0;yr<200;yr++){
+      if(bal<=0)return yr;
+      const withdrawal=applyTaxDrag?c/(1-taxDrag):c;
+      bal=bal*(1+returnRate)-withdrawal;
+      c*=(1+costGrowth);
+    }
+    return '∞';
+  }
+  const rwTotalRealistic=simulate(port,col,ret,colGrowth,true);
+  const rwTaxable=simulate(tax_,col,ret,colGrowth,false);
+  const rwSpendOnly=simulate(port,col,0,colGrowth,false);
+  document.getElementById('runway-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Runway (total, post-tax)</div><div class="metric-value gold">${rwTotalRealistic===Infinity||rwTotalRealistic==='∞'?'∞':rwTotalRealistic+' yrs'}</div><div class="metric-sub">${fmt(port,true)} @ ${Math.round(ret*100)}% w/ ${Math.round(taxDrag*100)}% LTCG drag</div></div>
+    <div class="metric"><div class="metric-label">Runway (taxable only, pre-59.5)</div><div class="metric-value gold">${rwTaxable===Infinity||rwTaxable==='∞'?'∞':rwTaxable+' yrs'}</div><div class="metric-sub">${fmt(tax_,true)} bridge · ${Math.round(ret*100)}% growth</div></div>
+    <div class="metric"><div class="metric-label">Runway (spend only, no returns)</div><div class="metric-value gold">${rwSpendOnly===Infinity||rwSpendOnly==='∞'?'∞':rwSpendOnly+' yrs'}</div><div class="metric-sub">${fmt(port,true)} at COL ${(colGrowth*100).toFixed(1)}%/yr growth</div></div>`;
+  // Drawdown chart: total portfolio year-by-year with growing COL and tax drag
+  const bals=[],labs=[];let b=port,cc=col;
+  for(let i=0;i<=30;i++){labs.push(new Date().getFullYear()+i);bals.push(Math.max(0,Math.round(b)));b=Math.max(0,b*(1+ret)-cc/(1-taxDrag));cc=cc*(1+colGrowth);}
+  mc('chart-drawdown',{type:'line',data:{labels:labs,datasets:[{label:'Total portfolio drawdown (post-tax, growing COL)',data:bals,borderColor:'#e05c5c',backgroundColor:'rgba(224,92,92,0.07)',fill:true,tension:0.3,pointRadius:2}]}});
+  // Millionaire year sensitivity — flatten to uniform gold, use label to indicate currently-selected rate. Include IRA match.
+  const rates=[5,7,9,11,13,15];
+  const baseAC=getA('monthlyVOO')*12;
+  const iraMatchAC=Math.max(0,Math.min(getA('maxIRA'),baseAC-getA('max401k')))*(getA('iraMatchRate')/100||0);
+  const ac=baseAC+iraMatchAC;
+  const millYrs=rates.map(r=>{const rr=r/100;let bl=port,yr=0;while(bl<1e6&&yr<40){bl=bl*(1+rr)+ac;yr++;}return yr<40?new Date().getFullYear()+yr:null;});
+  const tgt=Math.round(ret*100);
+  const labels=rates.map(r=>r===tgt?r+'% ★ current':r+'%');
+  mc('chart-sensitivity',{type:'bar',data:{labels,datasets:[{label:'Millionaire year',data:millYrs.map(y=>y||0),backgroundColor:GOLD,borderColor:rates.map(r=>r===tgt?'#FFFFFF':'transparent'),borderWidth:rates.map(r=>r===tgt?2:0)}]},options:{scales:{y:{min:Math.min(...millYrs.filter(Boolean))-3,ticks:{callback:v=>v,color:'rgba(220,239,232,0.4)',font:{size:11}}}},plugins:{tooltip:{callbacks:{label:ctx=>ctx.raw?` Year ${ctx.raw}`:' >40 years'}}}}});
+}
+
+// ==== TAX PLANNING ====
+// ============================================================================
+// TAX PARAMETERS
+// ============================================================================
+// Federal 2026: IRS Rev. Proc. 2025-32, Notice 2025-67, Rev. Proc. 2025-19, OBBBA (P.L. 119-21).
+// California 2026: FTB has NOT yet published; shown values are TY2025 per FTB 2025 Form 540 Tax Rate Schedules.
+// CA 2026 expected from FTB in Aug-Sep 2026 after CA Dept of Finance CCPI certification.
+// California does NOT conform to OBBBA (SB 711 conformity date = Jan 1, 2025).
+//
+// Remote overlay: TAX_DATA_URL points to a JSON file hosted via jsDelivr from a public GitHub repo.
+// On load, the app attempts a 3-second fetch. If it succeeds and the year+schemaVersion match, remote
+// values override embedded ones. If it fails, the embedded values below are used silently.
+// To maintain: fork/create a repo with tax-params.json at the path below, edit as IRS/FTB publish updates.
+const TAX_DATA_URL = 'https://cdn.jsdelivr.net/gh/sharenarice/tax-params@main/tax-params.json';
+const TAX_DATA_SCHEMA_VERSION = 1;
+let TAX_DATA_SOURCE = 'embedded';
+let TAX_DATA_FETCHED_AT = null;
+
+const TAX_DATA_EMBEDDED = {
+  2025: {
+    published: true, lastUpdated: '2025-10-09',
+    fed: {
+      stdDed: { single: 15750, mfj: 31500, hoh: 23625, mfs: 15750 },
+      seniorBonus: { amount: 0, phaseoutSingle: 0, phaseoutMfj: 0, phaseoutRate: 0 },
+      brackets: {
+        single: [[0,0.10],[11925,0.12],[48475,0.22],[103350,0.24],[197300,0.32],[250525,0.35],[626350,0.37]],
+        mfj:    [[0,0.10],[23850,0.12],[96950,0.22],[206700,0.24],[394600,0.32],[501050,0.35],[751600,0.37]],
+        hoh:    [[0,0.10],[17000,0.12],[64850,0.22],[103350,0.24],[197300,0.32],[250500,0.35],[626350,0.37]],
+        mfs:    [[0,0.10],[11925,0.12],[48475,0.22],[103350,0.24],[197300,0.32],[250525,0.35],[375800,0.37]]
+      },
+      saltCap: 40000, saltPhaseoutStart: 500000, saltPhaseoutRate: 0.30, saltFloor: 10000,
+      charityAgiFloor: 0, charityAgiCap: 0.60,
+      nonItemizerCharity: { single: 0, mfj: 0, hoh: 0, mfs: 0 },
+      topBracketBenefitCap: null,
+      retirement: { k401: 23500, ira: 7000, catchup50: 7500, catchup60_63: 11250, iraCatchup: 1000, dcTotal: 70000 },
+      fsa: { healthcare: 3300, carryover: 660, dependentCare: 5000 },
+      hsa: { selfOnly: 4300, family: 8550, catchUp55: 1000 }
+    },
+    ca: {
+      published: true, status: 'Official FTB 2025',
+      stdDed: { single: 5706, mfj: 11412, hoh: 11412, mfs: 5706 },
+      brackets: {
+        single: [[0,0.01],[11079,0.02],[26264,0.04],[41452,0.06],[57542,0.08],[72724,0.093],[371479,0.103],[445771,0.113],[742953,0.123]],
+        mfj:    [[0,0.01],[22158,0.02],[52528,0.04],[82904,0.06],[115084,0.08],[145448,0.093],[742958,0.103],[891542,0.113],[1485906,0.123]],
+        hoh:    [[0,0.01],[22173,0.02],[52530,0.04],[67716,0.06],[83805,0.08],[98990,0.093],[505208,0.103],[606251,0.113],[1010417,0.123]],
+        mfs:    [[0,0.01],[11079,0.02],[26264,0.04],[41452,0.06],[57542,0.08],[72724,0.093],[371479,0.103],[445771,0.113],[742953,0.123]]
+      },
+      mhsaThreshold: 1000000, mhsaRate: 0.01,
+      exemptionCredit: { personal: 153, dependent: 475 },
+      conformsToObbba: false,
+      fsaPreTax: true, hsaPreTax: false
+    }
+  },
+  2026: {
+    published: true, lastUpdated: '2026-04-19',
+    fed: {
+      stdDed: { single: 16100, mfj: 32200, hoh: 24150, mfs: 16100 },
+      seniorBonus: { amount: 6000, phaseoutSingle: 75000, phaseoutMfj: 150000, phaseoutRate: 0.06, sunsetYear: 2028 },
+      brackets: {
+        single: [[0,0.10],[12400,0.12],[50400,0.22],[105700,0.24],[201775,0.32],[256225,0.35],[640600,0.37]],
+        mfj:    [[0,0.10],[24800,0.12],[100800,0.22],[211400,0.24],[403550,0.32],[512450,0.35],[768700,0.37]],
+        hoh:    [[0,0.10],[17700,0.12],[67450,0.22],[103350,0.24],[201775,0.32],[256225,0.35],[640600,0.37]],
+        mfs:    [[0,0.10],[12400,0.12],[50400,0.22],[105700,0.24],[201775,0.32],[256225,0.35],[384350,0.37]]
+      },
+      // OBBBA-derived: $40,000 base + 1% statutory step-up = $40,400 for 2026, phaseout at 30% above $505K MAGI.
+      saltCap: 40400, saltPhaseoutStart: 505000, saltPhaseoutRate: 0.30, saltFloor: 10000,
+      // OBBBA charitable: 0.5% AGI floor for itemizers (new), 60% AGI cap permanent, non-itemizer $1K/$2K cash gifts permanent.
+      charityAgiFloor: 0.005, charityAgiCap: 0.60,
+      nonItemizerCharity: { single: 1000, mfj: 2000, hoh: 1000, mfs: 1000 },
+      // 37%-bracket itemized benefit capped at 35% (applies only when marginal rate = 37%).
+      topBracketBenefitCap: 0.35,
+      retirement: { k401: 24500, ira: 7500, catchup50: 8000, catchup60_63: 11250, iraCatchup: 1100, dcTotal: 72000 },
+      fsa: { healthcare: 3400, carryover: 680, dependentCare: 7500 },
+      hsa: { selfOnly: 4400, family: 8750, catchUp55: 1000 }
+    },
+    ca: {
+      // CA FTB has NOT published 2026 figures as of Apr 19 2026. Expected Aug-Sep 2026.
+      // Values below are TY2025 (most recent official). CA statutory rates (1-12.3%) never change year-to-year.
+      published: false, status: 'FTB 2026 pending (expected Aug 2026); TY2025 values shown',
+      stdDed: { single: 5706, mfj: 11412, hoh: 11412, mfs: 5706 },
+      brackets: {
+        single: [[0,0.01],[11079,0.02],[26264,0.04],[41452,0.06],[57542,0.08],[72724,0.093],[371479,0.103],[445771,0.113],[742953,0.123]],
+        mfj:    [[0,0.01],[22158,0.02],[52528,0.04],[82904,0.06],[115084,0.08],[145448,0.093],[742958,0.103],[891542,0.113],[1485906,0.123]],
+        hoh:    [[0,0.01],[22173,0.02],[52530,0.04],[67716,0.06],[83805,0.08],[98990,0.093],[505208,0.103],[606251,0.113],[1010417,0.123]],
+        mfs:    [[0,0.01],[11079,0.02],[26264,0.04],[41452,0.06],[57542,0.08],[72724,0.093],[371479,0.103],[445771,0.113],[742953,0.123]]
+      },
+      mhsaThreshold: 1000000, mhsaRate: 0.01,
+      exemptionCredit: { personal: 153, dependent: 475 },
+      conformsToObbba: false,
+      fsaPreTax: true, hsaPreTax: false
+    }
+  }
+};
+
+// Mutable copy that the remote overlay updates
+let TAX_DATA = JSON.parse(JSON.stringify(TAX_DATA_EMBEDDED));
+
+function getTaxData(year){
+  if(TAX_DATA[year])return TAX_DATA[year];
+  const years=Object.keys(TAX_DATA).map(Number).sort();
+  const latest=years[years.length-1];
+  const base=TAX_DATA[latest];
+  const n=year-latest;const inf=Math.pow(1.025,n);
+  const r50=v=>Math.round(v/50)*50;const r100=v=>Math.round(v/100)*100;
+  const scaleObj=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,typeof v==='number'?r50(v*inf):v]));
+  const scaleBrackets=bks=>Object.fromEntries(Object.entries(bks).map(([k,b])=>[k,b.map(([t,r])=>[r100(t*inf),r])]));
+  return {
+    published:false, projectedFrom:latest, status:`Projected from ${latest} at 2.5% inflation`,
+    fed:{
+      stdDed:scaleObj(base.fed.stdDed), seniorBonus:base.fed.seniorBonus, brackets:scaleBrackets(base.fed.brackets),
+      saltCap:r100(base.fed.saltCap*inf), saltPhaseoutStart:r100(base.fed.saltPhaseoutStart*inf), saltPhaseoutRate:base.fed.saltPhaseoutRate, saltFloor:base.fed.saltFloor,
+      charityAgiFloor:base.fed.charityAgiFloor, charityAgiCap:base.fed.charityAgiCap,
+      nonItemizerCharity:scaleObj(base.fed.nonItemizerCharity), topBracketBenefitCap:base.fed.topBracketBenefitCap,
+      retirement:scaleObj(base.fed.retirement), fsa:scaleObj(base.fed.fsa), hsa:scaleObj(base.fed.hsa)
+    },
+    ca:{
+      published:false, status:`Projected from ${latest}`,
+      stdDed:scaleObj(base.ca.stdDed), brackets:scaleBrackets(base.ca.brackets),
+      mhsaThreshold:base.ca.mhsaThreshold, mhsaRate:base.ca.mhsaRate,
+      exemptionCredit:base.ca.exemptionCredit, conformsToObbba:false,
+      fsaPreTax:base.ca.fsaPreTax, hsaPreTax:base.ca.hsaPreTax
+    }
+  };
+}
+
+// Remote overlay fetcher: merges remote tax-params.json over embedded data if available.
+// Silently falls back to embedded on any failure. Runs once at page load.
+async function loadRemoteTaxData(){
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(()=>controller.abort(), 3000);
+    const resp = await fetch(TAX_DATA_URL, { signal: controller.signal, cache: 'default' });
+    clearTimeout(timeout);
+    if(!resp.ok) return;
+    const remote = await resp.json();
+    if(!remote || typeof remote !== 'object') return;
+    if(remote.schemaVersion && remote.schemaVersion > TAX_DATA_SCHEMA_VERSION) return;
+    // Expected shape: { schemaVersion: 1, years: { '2026': {fed:{...}, ca:{...}}, '2027': {...} } }
+    if(remote.years && typeof remote.years === 'object'){
+      for(const [yr, data] of Object.entries(remote.years)){
+        if(data && data.fed && data.ca) TAX_DATA[yr] = data;
+      }
+    }
+    TAX_DATA_SOURCE = 'remote';
+    TAX_DATA_FETCHED_AT = remote.lastUpdated || new Date().toISOString().slice(0,10);
+    // Re-render active tax panel with new data
+    if(document.getElementById('panel-taxes')?.classList.contains('active')) renderTaxes();
+    updateTaxDataBadge();
+  } catch(e) {
+    // Silent fallback to embedded. No user-visible error.
+  }
+}
+
+function updateTaxDataBadge(){
+  const el = document.getElementById('tax-data-source');
+  if(!el) return;
+  const td = getTaxData(parseInt(document.getElementById('tax-year')?.value || new Date().getFullYear()));
+  const fedSrc = TAX_DATA_SOURCE === 'remote' ? `remote ${TAX_DATA_FETCHED_AT||''}` : `embedded ${td.lastUpdated||''}`;
+  const caStatus = td.ca?.status || '';
+  el.innerHTML = `<span class="src-item">Data source: <strong>${fedSrc}</strong></span><span class="src-sep">·</span><span class="src-item">California: ${caStatus}</span>`;
+}
+
+function bracketTax(taxable,brackets){if(taxable<=0)return 0;let tax=0;for(let i=0;i<brackets.length;i++){const[th,rt]=brackets[i];const next=i<brackets.length-1?brackets[i+1][0]:Infinity;if(taxable<=th)break;tax+=(Math.min(taxable,next)-th)*rt;}return tax;}
+function marginalRate(taxable,brackets){for(let i=brackets.length-1;i>=0;i--)if(taxable>brackets[i][0])return brackets[i][1];return brackets[0][1];}
+
+function computeFedSaltAllowed(stateTax,propertyTax,agi,fedTd){const raw=stateTax+propertyTax;let cap=fedTd.saltCap;if(agi>fedTd.saltPhaseoutStart){const red=(agi-fedTd.saltPhaseoutStart)*fedTd.saltPhaseoutRate;cap=Math.max(10000,cap-red);}return Math.min(raw,cap);}
+
+// Compute full tax position for given inputs and charity amount.
+// State models: 'ca' (California progressive brackets + 1% MHSA over $1M, independent state itemize decision),
+//               'flat' (simple flat-rate state; state taxable ≈ federal taxable).
+// CA charitable treatment: state itemized = property_tax + charity (no 0.5% floor, 60% AGI cap); compared to CA std deduction.
+function computeTax(inputs,charity){
+  const td=getTaxData(inputs.year);
+  const fs=inputs.filing;
+  const stateMode=inputs.stateMode||'ca';
+  const agi=Math.max(0,inputs.gross-inputs.pretax401k-inputs.pretaxHSA);
+  // State income tax used for federal SALT (computed baseline without charity to avoid circular dependency)
+  let stateTaxBaseline;
+  if(stateMode==='ca'){
+    const caBrackets=td.ca.brackets[fs]||td.ca.brackets.single;
+    const caStdDed=td.ca.stdDed[fs];
+    const caTaxableBase=Math.max(0,agi-caStdDed);
+    stateTaxBaseline=bracketTax(caTaxableBase,caBrackets);
+    if(caTaxableBase>td.ca.mhsaThreshold)stateTaxBaseline+=(caTaxableBase-td.ca.mhsaThreshold)*td.ca.mhsaRate;
+  } else {
+    stateTaxBaseline=agi*(inputs.stateRate/100);
+  }
+  // Federal computation
+  const fedSalt=computeFedSaltAllowed(stateTaxBaseline,inputs.propertyTax,agi,td.fed);
+  const stdDed=td.fed.stdDed[fs];
+  const floor=td.fed.charityAgiFloor*agi;
+  const cap=td.fed.charityAgiCap*agi;
+  const eligibleCharity=Math.min(Math.max(0,charity-floor),cap);
+  const carryforward=Math.max(0,Math.max(0,charity-floor)-cap);
+  const itemized=fedSalt+eligibleCharity;
+  const niCharity=Math.min(charity,td.fed.nonItemizerCharity[fs]);
+  const standardTotal=stdDed+niCharity;
+  const useItemize=itemized>standardTotal;
+  const nonItemizerCharity=useItemize?0:niCharity;
+  const fedDeduction=useItemize?itemized:standardTotal;
+  const fedTaxable=Math.max(0,agi-fedDeduction);
+  const fedTax=bracketTax(fedTaxable,td.fed.brackets[fs]);
+  // State tax final (with charity considered)
+  let stateTax,stateItemized=false,stateDeductionUsed=0,stateCharityDed=0,stateMarginal=0;
+  if(stateMode==='ca'){
+    const caBrackets=td.ca.brackets[fs]||td.ca.brackets.single;
+    const caStdDed=td.ca.stdDed[fs];
+    // CA itemized deduction: property tax + charity (no state-income-tax SALT since state return)
+    const caCharityEligible=Math.min(charity,cap); // 60% AGI cap, no 0.5% floor on CA
+    const caItemizedPossible=inputs.propertyTax+caCharityEligible;
+    stateItemized=caItemizedPossible>caStdDed;
+    stateDeductionUsed=stateItemized?caItemizedPossible:caStdDed;
+    stateCharityDed=stateItemized?caCharityEligible:0;
+    const caTaxable=Math.max(0,agi-stateDeductionUsed);
+    stateTax=bracketTax(caTaxable,caBrackets);
+    if(caTaxable>td.ca.mhsaThreshold)stateTax+=(caTaxable-td.ca.mhsaThreshold)*td.ca.mhsaRate;
+    stateMarginal=marginalRate(caTaxable,caBrackets);
+    if(caTaxable>td.ca.mhsaThreshold)stateMarginal+=td.ca.mhsaRate;
+  } else {
+    const rate=inputs.stateRate/100;
+    const stateTaxableBase=useItemize?Math.max(0,agi-(itemized-fedSalt)):Math.max(0,agi-stdDed);
+    stateTax=stateTaxableBase*rate;
+    stateDeductionUsed=useItemize?(itemized-fedSalt):stdDed;
+    stateCharityDed=useItemize?eligibleCharity:0;
+    stateMarginal=rate;
+  }
+  return {td,stateMode,agi,stdDed,fedSalt,floor,eligibleCharity,carryforward,itemized,useItemize,nonItemizerCharity,fedDeduction,fedTaxable,fedTax,stateTax,stateItemized,stateDeductionUsed,stateCharityDed,totalTax:fedTax+stateTax,charity,fedMarginal:marginalRate(fedTaxable,td.fed.brackets[fs]),stateMarginal};
+}
+
+function getTaxInputs(){
+  const gel=id=>document.getElementById(id);
+  const gv=(id,d=0)=>{const e=gel(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const gstr=(id,d='')=>{const e=gel(id);return e?e.value:d;};
+  const gross=gv('tax-gross-override',0)||(getA('salary')+getA('consulting')+getA('wellcomeLeap')+getA('journalism'));
+  const k401YTD=gv('tax-401k-ytd',0);
+  // Default planned to max 401(k) assumption if user hasn't changed from 0
+  const k401PlannedRaw=gv('tax-401k-planned',0);
+  const k401Planned=k401PlannedRaw>0?k401PlannedRaw:getA('max401k')||0;
+  const iraYTD=gv('tax-ira-ytd',0);
+  const iraPlannedRaw=gv('tax-ira-planned',0);
+  const iraPlanned=iraPlannedRaw>0?iraPlannedRaw:getA('maxIRA')||0;
+  const hsaYTD=0,hsaPlanned=0; // legacy no-ops; HSA removed in favor of FSA
+  const fsaYTD=gv('tax-fsa-ytd',0);
+  const fsaPlanned=gv('tax-fsa-planned',0);
+  const fsaEnabled=gstr('tax-fsa-enabled','yes')==='yes';
+  const charYTD=gv('tax-charity-ytd',0);
+  const charAdd=gv('tax-charity-additional',0);
+  return {
+    year:parseInt(gstr('tax-year','2026')),
+    filing:gstr('tax-filing','single'),
+    age:(parseInt(gstr('tax-year','2026'))||new Date().getFullYear()) - gv('tax-birth-year',1993),
+    birthYear:gv('tax-birth-year',1993),
+    ssClaimAge:gv('tax-ss-age',72),
+    stateMode:gstr('tax-state-mode','ca'),
+    stateRate:gv('tax-state-rate',4.4),
+    hsaCoverage:'none', // HSA removed; FSA used instead
+    fsaEnabled,fsaYTD,fsaPlanned:Math.max(fsaYTD,fsaPlanned),
+    gross,
+    propertyTax:gv('tax-proptax',0),
+    // YTD values
+    k401YTD,iraYTD,hsaYTD,charityYTD:charYTD,
+    // Planned year-end totals (used for AGI calc and itemize decision)
+    k401Planned:Math.max(k401YTD,k401Planned),
+    iraPlanned:Math.max(iraYTD,iraPlanned),
+    hsaPlanned:Math.max(hsaYTD,hsaPlanned),
+    // Legacy names for computeTax: FSA reduces AGI same way HSA did
+    pretax401k:Math.max(k401YTD,k401Planned),
+    pretaxHSA:fsaEnabled?Math.max(fsaYTD,fsaPlanned):0,
+    pretaxFSA:fsaEnabled?Math.max(fsaYTD,fsaPlanned):0,
+    // Total year donation = YTD + additional to model
+    donation:charYTD+charAdd,
+    charityAdditional:charAdd
+  };
+}
+
+function renderTaxes(){
+  const inp=getTaxInputs();
+  const td=getTaxData(inp.year);
+  document.getElementById('tax-year-label').textContent=inp.year+(td.published?'':' (projected)');
+  document.getElementById('tax-ret-year-label').textContent=inp.year+(td.published?'':' (projected)');
+  // Published limits grid
+  const fs=inp.filing;
+  const projClass=td.published?'':'projected';
+  const saltPhaseoutNote=td.fed.saltPhaseoutStart?`Phases out above $${(td.fed.saltPhaseoutStart/1000).toFixed(0)}K AGI`:'';
+  const stateRow=inp.stateMode==='ca'?
+    `<div class="tax-limit ${td.ca.published===false?'projected':projClass}"><div class="tax-limit-label">CA standard deduction</div><div class="tax-limit-value">${fmt(td.ca.stdDed[fs])}</div><div class="tax-limit-sub">${fs.toUpperCase()} filer${td.ca.published===false?' (projected)':''}</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">CA top marginal</div><div class="tax-limit-value">12.30%</div><div class="tax-limit-sub">+1% MHSA over $1M</div></div>`:
+    `<div class="tax-limit ${projClass}"><div class="tax-limit-label">Flat state rate</div><div class="tax-limit-value">${inp.stateRate.toFixed(2)}%</div><div class="tax-limit-sub">Applied to taxable income</div></div>`;
+  document.getElementById('tax-limits-grid').innerHTML=`
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">Federal std deduction</div><div class="tax-limit-value">${fmt(td.fed.stdDed[fs])}</div><div class="tax-limit-sub">${fs.toUpperCase()} filer</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">SALT cap</div><div class="tax-limit-value">${fmt(td.fed.saltCap)}</div><div class="tax-limit-sub">${saltPhaseoutNote}</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">Charity AGI floor</div><div class="tax-limit-value">${(td.fed.charityAgiFloor*100).toFixed(1)}%</div><div class="tax-limit-sub">${td.fed.charityAgiFloor>0?'First '+fmt(td.fed.charityAgiFloor*inp.gross)+' not deductible':'No floor in '+inp.year}</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">Charity AGI cap</div><div class="tax-limit-value">${(td.fed.charityAgiCap*100).toFixed(0)}%</div><div class="tax-limit-sub">Cash to public charity · ${fmt(td.fed.charityAgiCap*inp.gross,true)} for you</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">Non-itemizer charity</div><div class="tax-limit-value">${fmt(td.fed.nonItemizerCharity[fs])}</div><div class="tax-limit-sub">Above-the-line cash gift</div></div>
+    ${stateRow}`;
+  // Retirement limits grid
+  const ret=td.fed.retirement;
+  const age=inp.age;
+  // Catch-up rules (SECURE 2.0): standard catch-up at 50+; enhanced "super" catch-up at 60-63 replaces standard.
+  const k401CatchUp=age>=60&&age<=63?ret.catchup60_63:(age>=50?ret.catchup50:0);
+  const k401Limit=ret.k401+k401CatchUp;
+  const iraLimit=ret.ira+(age>=50?ret.iraCatchup:0);
+  const fsaLimit=inp.fsaEnabled?(td.fed.fsa?.healthcare||0):0;
+  document.getElementById('tax-retirement-grid').innerHTML=`
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">401(k) employee</div><div class="tax-limit-value">${fmt(ret.k401)}</div><div class="tax-limit-sub">${age>=60&&age<=63?'+'+fmt(ret.catchup60_63)+' super catch-up (age '+age+')':(age>=50?'+'+fmt(ret.catchup50)+' catch-up (age '+age+')':'Catch-up at 50+: +'+fmt(ret.catchup50))}</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">IRA</div><div class="tax-limit-value">${fmt(ret.ira)}</div><div class="tax-limit-sub">${age>=50?'+'+fmt(ret.iraCatchup)+' catch-up (age '+age+')':'Catch-up at 50+: +'+fmt(ret.iraCatchup)}</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">Healthcare FSA</div><div class="tax-limit-value">${fmt(td.fed.fsa.healthcare)}</div><div class="tax-limit-sub">Pre-tax · $${td.fed.fsa.carryover} carryover max</div></div>
+    <div class="tax-limit ${projClass}"><div class="tax-limit-label">Dependent Care FSA</div><div class="tax-limit-value">${fmt(td.fed.fsa.dependentCare)}</div><div class="tax-limit-sub">${inp.year>=2026?'OBBBA jumped from $5K':'Pre-OBBBA level'}</div></div>`;
+  // Age-based timeline: show when each tax-relevant age threshold is reached
+  const by=inp.birthYear;
+  const msRow=(age,event,note)=>`<div class="ms-row"><span class="ms-year">${by+age}</span><span class="ms-age">age ${age}</span><span class="ms-event">${event}</span><span class="ms-note">${note||''}</span></div>`;
+  // RMD age: born 1960+ → age 75 (SECURE 2.0); born 1951-1959 → age 73
+  const rmdAge=by>=1960?75:(by>=1951?73:72);
+  const currentYear=new Date().getFullYear();
+  const ssClaim=inp.ssClaimAge;
+  document.getElementById('tax-milestones').innerHTML=
+    msRow(50,'401(k) and IRA catch-up contributions become available',`+$${ret.catchup50}/yr 401(k), +$${ret.iraCatchup}/yr IRA`)+
+    msRow(55,'HSA catch-up becomes available','+$1,000/yr HSA (not FSA) if eligible')+
+    msRow(60,'401(k) super catch-up kicks in','+$11,250/yr 401(k) for ages 60-63 (replaces standard catch-up)')+
+    msRow(64,'Super catch-up ends','Returns to standard +$'+ret.catchup50+'/yr catch-up')+
+    msRow(65,'Senior bonus deduction + Medicare eligibility',`+$${td.fed.seniorBonus?.amount||0} bonus deduction (phases out above $75K MAGI; sunsets 2028)`)+
+    msRow(67,'Full Social Security retirement age','Benefit = 100% of PIA if claimed now')+
+    msRow(70,'Max delayed SS credits','No further benefit increase past this age')+
+    msRow(ssClaim,'Your planned SS claim age',ssClaim>=72?'Delayed past max credits (personal choice)':`Earlier than max-credit age 70`)+
+    msRow(rmdAge,'Required minimum distributions begin',by>=1960?'SECURE 2.0 set RMD age to 75 for those born 1960+':'RMD age 73 per SECURE 2.0');
+  const yp=yearProgress(inp.year);
+  const paceLabel=yp.phase==='current'?`on pace through ${yp.label.toLowerCase()}`:(yp.phase==='complete'?'year complete':'future year');
+  function retRow(name,ytd,planned,limit,extraNote){
+    if(limit<=0)return `<div class="ret-row"><div class="ret-row-head"><span class="ret-row-name">${name}</span><span class="ret-row-limit">Not applicable</span></div><div class="ret-bar-outer"></div><div class="ret-row-stats"><div><div class="ret-stat-label">Status</div><div class="ret-stat-value">${extraNote||'No limit selected'}</div></div></div></div>`;
+    const ytdPct=Math.min(100,100*ytd/limit);
+    const plannedPct=Math.min(100,100*planned/limit);
+    const remainingToLimit=Math.max(0,limit-planned);
+    const remainingYTD=Math.max(0,limit-ytd);
+    const paceYTD=yp.phase==='current'&&yp.frac>0?ytd/yp.frac:null;
+    const paceNote=paceYTD?`(at current pace: ${fmt(paceYTD)} by year-end)`:'';
+    const overLimit=planned>limit;
+    return `<div class="ret-row">
+      <div class="ret-row-head"><span class="ret-row-name">${name}</span><span class="ret-row-limit">${fmt(limit)} limit${age>=50?' (incl. catch-up)':''}</span></div>
+      <div class="ret-bar-outer"><div class="ret-bar-planned" style="width:${plannedPct}%"></div><div class="ret-bar-ytd" style="width:${ytdPct}%"></div></div>
+      <div class="ret-row-stats">
+        <div><div class="ret-stat-label">YTD actual</div><div class="ret-stat-value pos">${fmt(ytd)} (${ytdPct.toFixed(0)}%)</div></div>
+        <div><div class="ret-stat-label">Year-end plan</div><div class="ret-stat-value gold">${fmt(planned)} (${plannedPct.toFixed(0)}%)</div></div>
+        <div><div class="ret-stat-label">Remaining capacity</div><div class="ret-stat-value ${overLimit?'neg':''}">${overLimit?'Over by '+fmt(planned-limit):fmt(remainingToLimit)}</div></div>
+      </div>
+      ${paceNote?`<div style="font-size:10px;color:var(--text3);margin-top:6px">${paceNote}</div>`:''}
+    </div>`;
+  }
+  document.getElementById('tax-retirement-progress').innerHTML=
+    retRow('401(k) employee deferral',inp.k401YTD,inp.k401Planned,k401Limit)+
+    retRow('IRA (traditional or Roth)',inp.iraYTD,inp.iraPlanned,iraLimit)+
+    retRow('Healthcare FSA',inp.fsaYTD,inp.fsaPlanned,fsaLimit,inp.fsaEnabled?'':'FSA not enrolled');
+  // Current position
+  const cur=computeTax(inp,inp.donation);
+  const base=computeTax(inp,0);
+  const savings=base.totalTax-cur.totalTax;
+  const fedSavings=base.fedTax-cur.fedTax;
+  const stateSavings=base.stateTax-cur.stateTax;
+  document.getElementById('tax-position-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">AGI</div><div class="metric-value">${fmt(cur.agi)}</div><div class="metric-sub">After pre-tax contributions</div></div>
+    <div class="metric"><div class="metric-label">Federal tax</div><div class="metric-value">${fmt(cur.fedTax)}</div><div class="metric-sub">Marginal ${pct(cur.fedMarginal)}</div></div>
+    <div class="metric"><div class="metric-label">State tax</div><div class="metric-value">${fmt(cur.stateTax)}</div><div class="metric-sub">Flat ${pct(cur.stateMarginal)}</div></div>
+    <div class="metric"><div class="metric-label">Total tax</div><div class="metric-value gold">${fmt(cur.totalTax)}</div><div class="metric-sub">Fed + state</div></div>
+    <div class="metric"><div class="metric-label">Donation saves</div><div class="metric-value pos">${fmt(savings)}</div><div class="metric-sub">vs no donation</div></div>
+    <div class="metric"><div class="metric-label">True cost per $1</div><div class="metric-value">${inp.donation>0?'$'+(1-savings/inp.donation).toFixed(2):'—'}</div><div class="metric-sub">Net of tax benefit</div></div>`;
+  // Decision banner (scenario = charityYTD + additional modeled)
+  const bEl=document.getElementById('tax-decision-banner');
+  const ytdNote=inp.charityYTD>0?` (${fmt(inp.charityYTD)} already given + ${fmt(inp.charityAdditional)} additional = ${fmt(inp.donation)} total)`:'';
+  if(cur.useItemize){
+    const overStd=cur.itemized-cur.stdDed;
+    bEl.className='decision-banner itemize-wins';
+    bEl.innerHTML=`<div class="decision-headline">Itemizing wins by ${fmt(overStd)} at ${fmt(inp.donation)} total year donation.</div><div class="decision-sub">${ytdNote?'Scenario'+ytdNote+'. ':''}Federal deduction: ${fmt(cur.itemized)} itemized vs ${fmt(cur.stdDed)} standard. You save ${fmt(savings)} total (${fmt(fedSavings)} federal + ${fmt(stateSavings)} state) vs donating $0.${cur.carryforward>0?` ${fmt(cur.carryforward)} exceeds the 60% AGI cap and carries forward up to 5 years.`:''}</div>`;
+  } else {
+    const toItem=cur.stdDed-cur.itemized;
+    const needMore=Math.max(0,toItem+(td.fed.charityAgiFloor*cur.agi));
+    bEl.className='decision-banner standard-wins';
+    bEl.innerHTML=`<div class="decision-headline">Standard deduction wins at ${fmt(inp.donation)} total year donation.</div><div class="decision-sub">${ytdNote?'Scenario'+ytdNote+'. ':''}Federal deduction: ${fmt(cur.stdDed+cur.nonItemizerCharity)} standard (includes ${fmt(cur.nonItemizerCharity)} non-itemizer charity) vs ${fmt(cur.itemized)} itemized. You save ${fmt(savings)} total (${fmt(fedSavings)} federal + ${fmt(stateSavings)} state). Donating ~${fmt(needMore,true)} or more would cross into itemizing.</div>`;
+  }
+  // Path flows
+  document.getElementById('tax-standard-flow').innerHTML=flowRows([
+    ['Federal std deduction',cur.stdDed,'neutral'],
+    ['Non-itemizer charity',cur.nonItemizerCharity,'gold'],
+    ['Total federal deduction',cur.stdDed+cur.nonItemizerCharity,'pos'],
+    ['Federal taxable income',cur.agi-cur.stdDed-cur.nonItemizerCharity,'neutral'],
+    ['State charity subtraction',cur.useItemize?0:cur.stateCharityDed,'gold']]);
+  document.getElementById('tax-itemize-flow').innerHTML=flowRows([
+    ['SALT deductible (capped)',cur.fedSalt,'neutral'],
+    ['Charity above floor',cur.eligibleCharity,'neutral'],
+    ['AGI floor (lost)',-cur.floor,'neg'],
+    ['Total itemized',cur.itemized,cur.useItemize?'pos':'neutral'],
+    ['Carryforward (5 yr)',cur.carryforward,'gold']]);
+  // Savings chart across donation amounts
+  const maxDon=Math.max(200000,Math.round((0.8*cur.agi)/10000)*10000);
+  const step=maxDon/100;
+  const xs=[],ys=[],ysFed=[],costPer=[];
+  for(let d=0;d<=maxDon;d+=step){
+    const p=computeTax(inp,d);
+    const s=base.totalTax-p.totalTax;
+    const sFed=base.fedTax-p.fedTax;
+    xs.push(d);ys.push(s);ysFed.push(sFed);
+    costPer.push(d>0?1-s/d:1);
+  }
+  const nonItemThresh=td.fed.nonItemizerCharity[fs];
+  let breakEven=null;
+  for(let d=0;d<=maxDon;d+=step/5){const p=computeTax(inp,d);if(p.useItemize){breakEven=d;break;}}
+  const agiCap=td.fed.charityAgiCap*cur.agi;
+  // Vertical marker datasets for YTD and current-scenario total
+  const markerDS=(xVal,color,label)=>{
+    if(xVal<=0||xVal>maxDon)return null;
+    const maxY=Math.max(...ys)*1.05||1;
+    return {label,data:xs.map(x=>Math.abs(x-xVal)<step/2?maxY:null),borderColor:color,backgroundColor:color,borderWidth:0,pointRadius:0,showLine:false,type:'bar',barThickness:2,categoryPercentage:1,barPercentage:1};
+  };
+  // Use segment annotation via extra line datasets spanning full Y range where X matches
+  const vlineDS=(xVal,color,dash,label)=>{
+    if(xVal<=0)return null;
+    const idx=xs.findIndex(x=>x>=xVal);
+    if(idx<0)return null;
+    const maxY=Math.max(...ys)*1.1||1;
+    const data=xs.map((_,i)=>i===idx?maxY:(i===idx?0:null));
+    return {label,data,borderColor:color,borderDash:dash,borderWidth:1.5,pointRadius:0,fill:false,showLine:false,pointStyle:'line'};
+  };
+  const datasets=[
+    {label:'Federal + state savings',data:ys,borderColor:GOLD,backgroundColor:'rgba(184,134,11,0.09)',fill:true,tension:0.1,pointRadius:0,borderWidth:2.5},
+    {label:'Federal only',data:ysFed,borderColor:LG,borderDash:[4,3],fill:false,tension:0.1,pointRadius:0,borderWidth:1.5}
+  ];
+  // Plot YTD and scenario-total as scatter points on the savings line itself
+  if(inp.charityYTD>0&&inp.charityYTD<=maxDon){
+    const ytdSavings=base.totalTax-computeTax(inp,inp.charityYTD).totalTax;
+    datasets.push({label:`YTD donated (${fmt(inp.charityYTD,true)})`,data:xs.map((x,i)=>Math.abs(x-inp.charityYTD)<=step?ytdSavings:null),borderColor:'#4caf7d',backgroundColor:'#4caf7d',pointRadius:6,pointHoverRadius:8,showLine:false,borderWidth:0});
+  }
+  if(inp.donation>0&&inp.donation<=maxDon){
+    datasets.push({label:`Year-end scenario (${fmt(inp.donation,true)})`,data:xs.map((x,i)=>Math.abs(x-inp.donation)<=step?savings:null),borderColor:'#F0C318',backgroundColor:'#F0C318',pointRadius:7,pointHoverRadius:9,showLine:false,borderWidth:2,pointStyle:'rectRot'});
+  }
+  mc('chart-charity-savings',{type:'line',data:{labels:xs.map(x=>fmt(x,true)),datasets},options:{scales:{y:{ticks:{callback:v=>fmt(v,true)}}},plugins:{tooltip:{callbacks:{title:ctx=>`Donation: ${fmt(xs[ctx[0].dataIndex],true)}`,label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw,true)}`}}}}});
+  mc('chart-charity-cost',{type:'line',data:{labels:xs.map(x=>fmt(x,true)),datasets:[
+    {label:'Net cost per $1 donated',data:costPer,borderColor:GOLD,backgroundColor:'rgba(184,134,11,0.06)',fill:true,tension:0.1,pointRadius:0,borderWidth:2.5}
+  ]},options:{scales:{y:{min:0,max:1.05,ticks:{callback:v=>'$'+v.toFixed(2)}}},plugins:{tooltip:{callbacks:{title:ctx=>`Donation: ${fmt(xs[ctx[0].dataIndex],true)}`,label:ctx=>` Costs $${ctx.raw.toFixed(3)} per $1 given`}}}}});
+  const notes=[];
+  if(nonItemThresh>0)notes.push(`${fmt(nonItemThresh)} non-itemizer cash gift deduction gives standard filers a small benefit`);
+  if(breakEven!==null)notes.push(`Itemizing beats standard starting around ${fmt(breakEven,true)} in donations`);
+  notes.push(`60% AGI cap at ${fmt(agiCap,true)} — gifts above that carry forward 5 years`);
+  if(td.fed.charityAgiFloor>0)notes.push(`0.5% AGI floor = ${fmt(cur.floor)} (first portion not deductible when itemizing)`);
+  document.getElementById('savings-thresholds-note').innerHTML='Key thresholds: '+notes.join(' · ');
+  // Bunching strategy
+  const totalOver3=inp.donation*3;
+  const evenYear=inp.donation;
+  const evenSingle=computeTax(inp,evenYear);
+  const evenSavings=3*(base.totalTax-evenSingle.totalTax);
+  const bunched1=computeTax(inp,totalOver3);
+  const bunchedSavings=(base.totalTax-bunched1.totalTax);
+  const twoYearDon=totalOver3/2;
+  const twoYear=computeTax(inp,twoYearDon);
+  const twoBunchSavings=2*(base.totalTax-twoYear.totalTax);
+  mc('chart-bunching',{type:'bar',data:{labels:[`Even: ${fmt(evenYear,true)}/yr`,`2-year: ${fmt(twoYearDon,true)} in yrs 1&3`,`Lump: ${fmt(totalOver3,true)} in yr 1`],datasets:[{label:'3-year total tax savings',data:[evenSavings,twoBunchSavings,bunchedSavings],backgroundColor:[LG,DG,GOLD],borderWidth:0}]},options:{scales:{y:{ticks:{callback:v=>fmt(v,true)}}},plugins:{tooltip:{callbacks:{label:ctx=>` 3-yr savings: ${fmt(ctx.raw)}`}}}}});
+  document.getElementById('bunch-even-detail').innerHTML=flowRows([
+    ['Year 1 donation',evenYear,'neutral'],['Year 2 donation',evenYear,'neutral'],['Year 3 donation',evenYear,'neutral'],
+    ['Total donated',totalOver3,'gold'],['3-year tax savings',evenSavings,'pos'],['Effective cost',totalOver3-evenSavings,'neg']]);
+  document.getElementById('bunch-lumpy-detail').innerHTML=flowRows([
+    ['Year 1 donation',totalOver3,'neutral'],['Year 2 donation',0,'neutral'],['Year 3 donation',0,'neutral'],
+    ['Total donated',totalOver3,'gold'],['3-year tax savings',bunchedSavings,'pos'],['Advantage over even',bunchedSavings-evenSavings,bunchedSavings>evenSavings?'pos':'neg'],['Year 1 carryforward',bunched1.carryforward,'gold']]);
+}
+
+// ============================================================================
+// EXTRAS TAB — Advanced modeling tools
+// ============================================================================
+function renderExtras(){
+  renderBackdoorRoth();
+  renderTLH();
+  renderEF();
+  renderSensitivityMatrix();
+  renderMonteCarlo();
+  renderAllocation();
+  renderNeuradaptive();
+  renderRentBuy();
+  renderEducation();
+  renderHealthInsurance();
+}
+
+// --- Backdoor Roth tracker ---
+function renderBackdoorRoth(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const contrib=gv('br-contrib',7500);
+  const years=gv('br-years',10);
+  const existing=gv('br-existing',0);
+  const withdrawalRate=gv('br-withdrawal-rate',22)/100;
+  const ret=getA('returnRate')/100||0.11;
+  // Project value of contributions over time
+  let roth=0, trad=0;
+  for(let y=0;y<years;y++){
+    roth=roth*(1+ret)+contrib;
+    trad=trad*(1+ret)+contrib;
+  }
+  const rothAfterTax=roth; // tax-free
+  const tradAfterTax=existing*Math.pow(1+ret,years)+trad*(1-withdrawalRate*0.5); // rough: basis returned tax-free, gains taxed
+  // More precise: trad = contributions(non-deductible) + growth; basis=contributions, gains=total-basis
+  const tradBasis=contrib*years+existing;
+  const tradGains=trad+existing*Math.pow(1+ret,years)-tradBasis;
+  const tradTax=tradGains*withdrawalRate;
+  const tradNet=trad+existing*Math.pow(1+ret,years)-tradTax;
+  const advantage=rothAfterTax-tradNet;
+  const prorata=existing>0;
+  document.getElementById('br-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Roth value (tax-free)</div><div class="metric-value gold">${fmt(rothAfterTax,true)}</div><div class="metric-sub">Contributions grown ${years} yrs @ ${(ret*100).toFixed(0)}%</div></div>
+    <div class="metric"><div class="metric-label">Non-deductible traditional</div><div class="metric-value">${fmt(tradNet,true)}</div><div class="metric-sub">After ${(withdrawalRate*100).toFixed(0)}% tax on gains</div></div>
+    <div class="metric"><div class="metric-label">Backdoor Roth advantage</div><div class="metric-value gold">${fmt(advantage,true)}</div><div class="metric-sub">Compounded tax savings</div></div>
+    <div class="metric"><div class="metric-label">Pro-rata rule</div><div class="metric-value ${prorata?'neg':'pos'}">${prorata?'TRIGGERED':'Clear'}</div><div class="metric-sub">${prorata?'Existing trad IRA contaminates conversion':'No existing trad IRA, safe to convert'}</div></div>`;
+  const notes=[];
+  notes.push(`Strategy: contribute ${fmt(contrib,true)} to traditional IRA, wait for funds to settle, then convert to Roth IRA (same brokerage). Conversion creates taxable event only on any growth between contribution and conversion (typically ~0 if done within days).`);
+  if(prorata)notes.push(`Pro-rata warning: your existing ${fmt(existing,true)} traditional IRA balance will be blended across the conversion. To execute cleanly, first roll the existing IRA into an employer 401(k) if the plan accepts rollovers, which moves the balance outside the pro-rata calculation.`);
+  notes.push(`Before contributing in January 2026, confirm backdoor Roth remains legal (legislative risk has been discussed but not enacted; step-transaction challenges have been successfully defended).`);
+  document.getElementById('br-note').innerHTML=notes.join(' · ');
+}
+
+// --- Tax-loss harvesting ---
+function renderTLH(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const losses=gv('tlh-losses',0);
+  const gains=gv('tlh-gains',0);
+  const ordRate=gv('tlh-ord-rate',24)/100;
+  const ltcgRate=gv('tlh-ltcg-rate',15)/100;
+  const offsetGains=Math.min(losses,gains);
+  const remainingLosses=Math.max(0,losses-offsetGains);
+  const offsetOrdinary=Math.min(remainingLosses,3000);
+  const carryforward=Math.max(0,remainingLosses-3000);
+  const savedOnGains=offsetGains*ltcgRate;
+  const savedOnOrdinary=offsetOrdinary*ordRate;
+  const totalSaved=savedOnGains+savedOnOrdinary;
+  document.getElementById('tlh-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Offset capital gains</div><div class="metric-value">${fmt(offsetGains,true)}</div><div class="metric-sub">Saves ${fmt(savedOnGains,true)} @ ${(ltcgRate*100).toFixed(0)}%</div></div>
+    <div class="metric"><div class="metric-label">Offset ordinary income</div><div class="metric-value">${fmt(offsetOrdinary,true)}</div><div class="metric-sub">Saves ${fmt(savedOnOrdinary,true)} @ ${(ordRate*100).toFixed(0)}% · $3K/yr cap</div></div>
+    <div class="metric"><div class="metric-label">Total tax saved this year</div><div class="metric-value gold">${fmt(totalSaved,true)}</div><div class="metric-sub">Harvested value</div></div>
+    <div class="metric"><div class="metric-label">Carryforward to next year</div><div class="metric-value">${fmt(carryforward,true)}</div><div class="metric-sub">Indefinite, subject to same rules</div></div>`;
+  document.getElementById('tlh-note').innerHTML=`Wash-sale rule: do not buy the same or substantially identical security within 30 days before or after the loss sale. Swap VOO for VTI or IVV to stay invested while harvesting. Keep track of lot-level basis; Schwab, Fidelity, and Robinhood all expose this in their UI. Harvested losses reduce the cost basis of replacement shares by the disallowed amount if you violate wash-sale inadvertently — so the benefit isn't lost, just deferred.`;
+}
+
+// --- Cash flow / emergency fund ---
+function renderEF(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const cash=gv('ef-cash',15000);
+  const checking=gv('ef-checking',5000);
+  const targetMonths=gv('ef-target-months',6);
+  const apy=gv('ef-apy',4.5)/100;
+  const col=getA('annualCOL')||40594;
+  const monthlyCOL=col/12;
+  const totalLiquid=cash+checking;
+  const monthsCovered=totalLiquid/monthlyCOL;
+  const target=targetMonths*monthlyCOL;
+  const excess=Math.max(0,totalLiquid-target);
+  const shortfall=Math.max(0,target-totalLiquid);
+  const ret=getA('returnRate')/100||0.11;
+  const opportunityCost=excess*(ret-apy);
+  document.getElementById('ef-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Liquid cash</div><div class="metric-value">${fmt(totalLiquid,true)}</div><div class="metric-sub">${fmt(cash,true)} HYSA + ${fmt(checking,true)} checking</div></div>
+    <div class="metric"><div class="metric-label">Months of COL covered</div><div class="metric-value ${monthsCovered>=targetMonths?'pos':'neg'}">${monthsCovered.toFixed(1)}</div><div class="metric-sub">Target: ${targetMonths} months = ${fmt(target,true)}</div></div>
+    <div class="metric"><div class="metric-label">${excess>0?'Excess cash':'Shortfall'}</div><div class="metric-value ${excess>0?'neutral':'neg'}">${fmt(excess>0?excess:shortfall,true)}</div><div class="metric-sub">${excess>0?'Above target':'Below target'}</div></div>
+    <div class="metric"><div class="metric-label">Annual opportunity cost</div><div class="metric-value neg">${fmt(opportunityCost,true)}</div><div class="metric-sub">Excess × (${(ret*100).toFixed(0)}% market − ${(apy*100).toFixed(1)}% HYSA)</div></div>`;
+  const notes=[];
+  if(excess>5000)notes.push(`Excess cash of ${fmt(excess,true)} is costing you ~${fmt(opportunityCost,true)}/year in opportunity cost vs market returns. Consider moving excess to taxable brokerage.`);
+  else if(shortfall>0)notes.push(`${fmt(shortfall,true)} below target. Given your three income streams and professional optionality, 6 months may be conservative — 3-4 months is often adequate for flexible earners.`);
+  else notes.push(`Emergency fund well-calibrated. Your three income streams plus contract optionality reduce the need for a conventional 6-month reserve.`);
+  document.getElementById('ef-note').innerHTML=notes.join(' · ');
+}
+
+// --- Sensitivity matrix ---
+function renderSensitivityMatrix(){
+  const colGrowth=getA('colGrowthRate')/100||0.035;
+  const inflation=getA('inflationRate')/100||0.03;
+  const taxDrag=getA('withdrawalTaxDrag')/100||0.20;
+  const port=getA('portfolio')||569000;
+  const col=getA('annualCOL')||40594;
+  const monthly=getA('monthlyVOO')||7000;
+  const max401k=getA('max401k')||24500;
+  const maxIRA=getA('maxIRA')||7500;
+  const match=Math.max(0,Math.min(maxIRA,monthly*12-max401k))*(getA('iraMatchRate')/100||0);
+  const contrib=monthly*12+match;
+  const startYear=new Date().getFullYear();
+  const grossUp=1/(1-taxDrag);
+  const returnRates=[7,9,11,13];
+  const swrs=[3,3.5,4,4.5,5,5.5];
+  const cells=[];
+  for(const r of returnRates){
+    const row=[];
+    for(const s of swrs){
+      const ret=r/100,swr=s/100;
+      let p=port,c=col,fiYear=null;
+      for(let i=0;i<41;i++){
+        const yr=startYear+i;
+        if(i>0)c=c*(1+colGrowth);
+        const threshold=(c*grossUp)/swr;
+        if(p>=threshold&&!fiYear){fiYear=yr;break;}
+        p=p*(1+ret)+contrib;
+      }
+      row.push(fiYear);
+    }
+    cells.push(row);
+  }
+  // Find min/max for heatmap
+  const allYears=cells.flat().filter(y=>y);
+  const minYr=Math.min(...allYears),maxYr=Math.max(...allYears);
+  const currRet=Math.round(getA('returnRate'));
+  const currSwr=getA('swrRate');
+  let html=`<table class="sensitivity-table"><thead><tr><th>Return ↓ / SWR →</th>${swrs.map(s=>`<th>${s}%${s===currSwr?' ★':''}</th>`).join('')}</tr></thead><tbody>`;
+  cells.forEach((row,i)=>{
+    html+=`<tr><th>${returnRates[i]}%${returnRates[i]===currRet?' ★':''}</th>`;
+    row.forEach(yr=>{
+      if(!yr){html+=`<td>&gt;40yr</td>`;return;}
+      const frac=(yr-minYr)/(maxYr-minYr||1);
+      const cls=frac<0.25?'hot':(frac<0.5?'warm':'');
+      html+=`<td class="${cls}">${yr} (age ${yr-getA('birthYear')})</td>`;
+    });
+    html+=`</tr>`;
+  });
+  html+=`</tbody></table><div class="extras-note" style="margin-top:14px">★ marks your current assumptions. Hot cells (gold) are earliest FI dates; cooler cells require longer horizons. The matrix reveals which variable dominates: moving across a row (SWR) typically shifts FI by 2-3 years per 1% SWR change, while moving down a column (return rate) shifts by 0-1 year per 2% return change at your contribution level. Savings rate and SWR dominate return rate in your situation.</div>`;
+  document.getElementById('sensitivity-matrix').innerHTML=html;
+}
+
+// --- Monte Carlo ---
+function renderMonteCarlo(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const runs=Math.min(5000,Math.max(100,gv('mc-runs',1000)));
+  const vol=gv('mc-vol',16)/100;
+  const horizon=gv('mc-horizon',25);
+  const meanRet=getA('returnRate')/100||0.11;
+  const port=getA('portfolio')||569000;
+  const monthly=getA('monthlyVOO')||7000;
+  const max401k=getA('max401k')||24500;
+  const maxIRA=getA('maxIRA')||7500;
+  const match=Math.max(0,Math.min(maxIRA,monthly*12-max401k))*(getA('iraMatchRate')/100||0);
+  const contrib=monthly*12+match;
+  const col=getA('annualCOL')||40594;
+  const colGrowth=getA('colGrowthRate')/100||0.035;
+  const swr=getA('swrRate')/100||0.05;
+  const taxDrag=getA('withdrawalTaxDrag')/100||0.20;
+  const grossUp=1/(1-taxDrag);
+  const startYear=new Date().getFullYear();
+  // Box-Muller normal sampler
+  function randn(){const u=1-Math.random(),v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+  const fiYears=[];
+  const allPaths=[];
+  for(let sim=0;sim<runs;sim++){
+    let p=port,c=col,fiYear=null;
+    const path=[p];
+    for(let i=0;i<horizon;i++){
+      const yr=startYear+i;
+      if(i>0)c=c*(1+colGrowth);
+      const threshold=(c*grossUp)/swr;
+      if(p>=threshold&&!fiYear)fiYear=yr;
+      // Sample return from normal dist
+      const r=meanRet+vol*randn();
+      p=Math.max(0,p*(1+r)+(fiYear?0:contrib));
+      path.push(p);
+    }
+    fiYears.push(fiYear||(startYear+horizon+1));
+    if(sim<50)allPaths.push(path); // sample paths for viz
+  }
+  fiYears.sort((a,b)=>a-b);
+  const pct=(q)=>fiYears[Math.floor(fiYears.length*q)];
+  const p10=pct(0.10),p50=pct(0.50),p90=pct(0.90);
+  const reachedCount=fiYears.filter(y=>y<=startYear+horizon).length;
+  const successRate=reachedCount/runs;
+  document.getElementById('mc-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Median FI year (50th percentile)</div><div class="metric-value gold">${p50}</div><div class="metric-sub">Age ${p50-getA('birthYear')}</div></div>
+    <div class="metric"><div class="metric-label">Lucky 10th percentile</div><div class="metric-value pos">${p10}</div><div class="metric-sub">Age ${p10-getA('birthYear')} · favorable sequence</div></div>
+    <div class="metric"><div class="metric-label">Unlucky 90th percentile</div><div class="metric-value neg">${p90}</div><div class="metric-sub">Age ${p90-getA('birthYear')} · adverse sequence</div></div>
+    <div class="metric"><div class="metric-label">Success rate within horizon</div><div class="metric-value">${(successRate*100).toFixed(0)}%</div><div class="metric-sub">${reachedCount}/${runs} runs hit FI</div></div>`;
+  // Plot sample paths + percentile bands
+  const labels=[];for(let i=0;i<=horizon;i++)labels.push(startYear+i);
+  const datasets=allPaths.slice(0,30).map((path,i)=>({data:path,borderColor:`rgba(184,134,11,${0.08+i*0.004})`,borderWidth:0.8,pointRadius:0,tension:0.2,fill:false}));
+  // Compute percentile bands across all runs
+  const bands={p10:[],p50:[],p90:[]};
+  // Run a second pass to compute percentiles at each year
+  const pathsAll=[];
+  for(let sim=0;sim<Math.min(runs,500);sim++){
+    let p=port,c=col,fiYearDummy=null;
+    const path=[p];
+    for(let i=0;i<horizon;i++){
+      if(i>0)c=c*(1+colGrowth);
+      const threshold=(c*grossUp)/swr;
+      if(p>=threshold&&!fiYearDummy)fiYearDummy=startYear+i;
+      const r=meanRet+vol*randn();
+      p=Math.max(0,p*(1+r)+(fiYearDummy?0:contrib));
+      path.push(p);
+    }
+    pathsAll.push(path);
+  }
+  for(let i=0;i<=horizon;i++){
+    const vals=pathsAll.map(p=>p[i]).sort((a,b)=>a-b);
+    bands.p10.push(vals[Math.floor(vals.length*0.10)]);
+    bands.p50.push(vals[Math.floor(vals.length*0.50)]);
+    bands.p90.push(vals[Math.floor(vals.length*0.90)]);
+  }
+  mc('chart-montecarlo',{type:'line',data:{labels,datasets:[
+    ...datasets.map(d=>({...d,label:''})),
+    {label:'10th percentile',data:bands.p10,borderColor:'#e05c5c',borderWidth:2,pointRadius:0,tension:0.2,fill:false,borderDash:[4,3]},
+    {label:'Median (50th)',data:bands.p50,borderColor:GOLD,borderWidth:2.5,pointRadius:0,tension:0.2,fill:false},
+    {label:'90th percentile',data:bands.p90,borderColor:LG,borderWidth:2,pointRadius:0,tension:0.2,fill:false,borderDash:[4,3]}
+  ]},options:{plugins:{legend:{labels:{filter:item=>item.text}}}}});
+  document.getElementById('mc-note').innerHTML=`Historical S&P 500 real returns: ~10% mean, ~16% standard deviation. Monte Carlo captures sequence-of-returns risk that the deterministic projection ignores — a 30% loss in year 2 hurts much more than the same loss in year 20. Your median FI year should match your deterministic FI year; the spread between 10th and 90th percentiles reveals your exposure to bad luck.`;
+}
+
+// --- Portfolio allocation ---
+function renderAllocation(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const taxable=gv('pa-taxable',348000);
+  const k401=gv('pa-401k',180000);
+  const ira=gv('pa-ira',35000);
+  const roth=gv('pa-roth',6000);
+  const hsa=gv('pa-hsa',0);
+  const cash=gv('pa-cash',20000);
+  const total=taxable+k401+ira+roth+hsa+cash;
+  const taxDeferred=k401+ira;
+  const taxFree=roth+hsa;
+  const taxableFull=taxable;
+  const preFi=taxable+roth+cash; // accessible before 59.5 (Roth contributions, taxable, cash)
+  document.getElementById('pa-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total across accounts</div><div class="metric-value gold">${fmt(total,true)}</div><div class="metric-sub">All balances</div></div>
+    <div class="metric"><div class="metric-label">Tax-deferred (59.5+)</div><div class="metric-value">${fmt(taxDeferred,true)}</div><div class="metric-sub">${(taxDeferred/total*100).toFixed(0)}% · ordinary income at withdrawal</div></div>
+    <div class="metric"><div class="metric-label">Tax-free (Roth + HSA)</div><div class="metric-value">${fmt(taxFree,true)}</div><div class="metric-sub">${(taxFree/total*100).toFixed(0)}% · best growth location</div></div>
+    <div class="metric"><div class="metric-label">Pre-59.5 accessible</div><div class="metric-value">${fmt(preFi,true)}</div><div class="metric-sub">${(preFi/total*100).toFixed(0)}% · bridge to retirement age</div></div>`;
+  mc('chart-allocation',{type:'doughnut',data:{labels:['Taxable brokerage','Traditional 401(k)','Traditional IRA','Roth IRA','HSA','Cash/HYSA'],datasets:[{data:[taxable,k401,ira,roth,hsa,cash],backgroundColor:[GOLD,'#8b6508','#4a7c6a','#2d5a4a','#3d10bd','#dcefe8'],borderColor:'rgba(17,36,29,1)',borderWidth:2}]},options:{plugins:{legend:{position:'right',labels:{color:'rgba(220,239,232,0.7)',font:{size:11},padding:10}}}}});
+  const notes=[];
+  if(preFi/total<0.3)notes.push(`Only ${(preFi/total*100).toFixed(0)}% of assets accessible before 59.5. If you want pre-59.5 FI, prioritize taxable brokerage contributions over 401(k) beyond the match/max strategy.`);
+  if(taxFree<roth+5000)notes.push(`Roth space is under-utilized. Backdoor Roth conversions and mega-backdoor Roth (if your 401(k) plan supports after-tax contributions) can expand this pool substantially.`);
+  notes.push(`Asset location principle: hold bonds and REITs in tax-deferred (401(k), traditional IRA); hold broad US index funds in taxable (qualified dividends, long-term cap gains); hold highest-growth-expectation assets (small cap, international emerging) in Roth where no tax applies to gains.`);
+  document.getElementById('pa-note').innerHTML=notes.join(' · ');
+}
+
+// --- Neuradaptive transition ---
+function renderNeuradaptive(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const salary=gv('nt-salary',180000);
+  const equity=gv('nt-equity',500000);
+  const vestYears=gv('nt-vest',4);
+  const exitProb=gv('nt-exit-prob',30)/100;
+  const multiple=gv('nt-multiple',5);
+  const yearsToExit=gv('nt-years-to-exit',7);
+  const currentTotal=getA('salary')+getA('consulting')+getA('wellcomeLeap')+getA('journalism');
+  const annualVest=equity/vestYears;
+  const expectedExitValue=equity*multiple*exitProb; // probability-weighted
+  const annualSalaryDelta=salary-currentTotal;
+  const annualVestValue=annualVest; // paper value, not liquid until exit
+  const totalExpectedOverHorizon=(salary*yearsToExit)+expectedExitValue;
+  const currentOverHorizon=currentTotal*yearsToExit;
+  const expectedAdvantage=totalExpectedOverHorizon-currentOverHorizon;
+  document.getElementById('nt-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Salary delta (annual)</div><div class="metric-value ${annualSalaryDelta>=0?'pos':'neg'}">${annualSalaryDelta>=0?'+':''}${fmt(annualSalaryDelta,true)}</div><div class="metric-sub">${fmt(salary,true)} offer vs ${fmt(currentTotal,true)} current</div></div>
+    <div class="metric"><div class="metric-label">Annual equity vesting</div><div class="metric-value">${fmt(annualVestValue,true)}</div><div class="metric-sub">Paper value, illiquid until exit</div></div>
+    <div class="metric"><div class="metric-label">Expected exit value</div><div class="metric-value gold">${fmt(expectedExitValue,true)}</div><div class="metric-sub">${fmt(equity*multiple,true)} × ${(exitProb*100).toFixed(0)}% probability</div></div>
+    <div class="metric"><div class="metric-label">Expected advantage over ${yearsToExit}yr</div><div class="metric-value ${expectedAdvantage>=0?'pos':'neg'}">${expectedAdvantage>=0?'+':''}${fmt(expectedAdvantage,true)}</div><div class="metric-sub">Probability-weighted vs current path</div></div>`;
+  document.getElementById('nt-note').innerHTML=`The expected value calculation treats exit probability linearly, which understates tail risk and option value. Consider: 83(b) election on day-one vesting if equity is in restricted stock (not options); AMT exposure if ISOs; single-point-of-failure risk vs current diversified income. Also model the downside: at 0% exit value, your compensation is ${fmt(salary*yearsToExit,true)} vs current ${fmt(currentOverHorizon,true)} over ${yearsToExit} years — a loss of ${fmt(currentOverHorizon-salary*yearsToExit,true)} if the company fails. The non-financial factors (decision authority, title, strategic control) often dominate these numbers at startup stage.`;
+}
+
+// --- Rent vs Buy ---
+function renderRentBuy(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const price=gv('rb-price',1200000);
+  const downPct=gv('rb-down',20)/100;
+  const rate=gv('rb-rate',6.5)/100;
+  const propTaxRate=gv('rb-proptax',1.1)/100;
+  const appreciation=gv('rb-appreciation',3)/100;
+  const years=gv('rb-years',10);
+  const rentMonthly=getA('rentMonthly')||1300;
+  const returnRate=getA('returnRate')/100||0.11;
+  const downPayment=price*downPct;
+  const loan=price-downPayment;
+  const n=years*12,i=rate/12;
+  const monthlyMortgage=loan*i*Math.pow(1+i,n)/(Math.pow(1+i,n)-1);
+  const monthlyPropTax=price*propTaxRate/12;
+  const monthlyMaintenance=price*0.01/12; // 1% annual rule of thumb
+  const totalMonthlyOwn=monthlyMortgage+monthlyPropTax+monthlyMaintenance;
+  const totalOwnCost=totalMonthlyOwn*12*years;
+  const futureHomeValue=price*Math.pow(1+appreciation,years);
+  // Very approximate: remaining loan after years
+  const yearsLeft=Math.max(0,30-years);
+  const remainingLoan=yearsLeft>0?loan*Math.pow(1+i,years*12)-monthlyMortgage*(Math.pow(1+i,years*12)-1)/i:0;
+  const netEquity=futureHomeValue-Math.max(0,remainingLoan);
+  const netOwnCost=totalOwnCost-(netEquity-downPayment);
+  // Rent scenario: invest down payment at returnRate, pay rent monthly
+  const rentTotal=rentMonthly*12*years;
+  const investedDownPayment=downPayment*Math.pow(1+returnRate,years);
+  const rentOpportunityValue=investedDownPayment-downPayment;
+  const netRentCost=rentTotal-rentOpportunityValue;
+  const advantage=netOwnCost-netRentCost;
+  document.getElementById('rb-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Monthly cost (own)</div><div class="metric-value">${fmt(totalMonthlyOwn)}</div><div class="metric-sub">Mortgage + tax + 1% maint</div></div>
+    <div class="metric"><div class="metric-label">Monthly cost (rent)</div><div class="metric-value">${fmt(rentMonthly)}</div><div class="metric-sub">${((totalMonthlyOwn-rentMonthly)/rentMonthly*100).toFixed(0)}% more to own</div></div>
+    <div class="metric"><div class="metric-label">${years}-yr net cost (own)</div><div class="metric-value">${fmt(netOwnCost,true)}</div><div class="metric-sub">After equity build</div></div>
+    <div class="metric"><div class="metric-label">${years}-yr net cost (rent)</div><div class="metric-value">${fmt(netRentCost,true)}</div><div class="metric-sub">After investing down payment</div></div>
+    <div class="metric"><div class="metric-label">Rent advantage over ${years}yr</div><div class="metric-value ${advantage>=0?'pos':'neg'}">${advantage>=0?'+':''}${fmt(advantage,true)}</div><div class="metric-sub">${advantage>=0?'Renting wins':'Buying wins'}</div></div>`;
+  document.getElementById('rb-note').innerHTML=`Your $1,300/mo rent is structurally exceptional for the Bay Area and is the dominant factor in your FI acceleration. At Bay Area prices, rent-to-price ratios are typically 0.3-0.4% (annual rent / purchase price), where the rule of thumb is that >0.8% favors buying and <0.5% favors renting. The calculation assumes you'd invest the down payment at ${(returnRate*100).toFixed(0)}% — which may be optimistic for a 10-year horizon. Does not include HOA, homeowners insurance, selling costs (~6%), or the quality-of-life friction of moving. Also ignores Prop 13 property tax protection which compounds over time.`;
+}
+
+// --- Education / 529 ---
+function renderEducation(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const annual=gv('ed-annual',0);
+  const years=gv('ed-years',18);
+  const ret=gv('ed-return',7)/100;
+  let bal=0;
+  for(let y=0;y<years;y++)bal=bal*(1+ret)+annual;
+  const contributed=annual*years;
+  const growth=bal-contributed;
+  document.getElementById('ed-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total contributed</div><div class="metric-value">${fmt(contributed,true)}</div><div class="metric-sub">${years} × ${fmt(annual,true)}</div></div>
+    <div class="metric"><div class="metric-label">Tax-free growth</div><div class="metric-value gold">${fmt(growth,true)}</div><div class="metric-sub">Tax-free if used for education</div></div>
+    <div class="metric"><div class="metric-label">Projected balance at age 18</div><div class="metric-value gold">${fmt(bal,true)}</div><div class="metric-sub">At ${(ret*100).toFixed(1)}% return</div></div>
+    <div class="metric"><div class="metric-label">Superfunding (if lump sum)</div><div class="metric-value">${fmt(95000*Math.pow(1+ret,years),true)}</div><div class="metric-sub">$95K today grown at ${(ret*100).toFixed(1)}%</div></div>`;
+  document.getElementById('ed-note').innerHTML=`Placeholder until relevant. OBBBA expanded 529 uses to include registered apprenticeships and student loan repayment (up to $10K lifetime per beneficiary). California does not offer a state tax deduction for 529 contributions (unlike ~30 other states). Secure 2.0 added a $35K lifetime rollover from 529 to Roth IRA for the beneficiary after 15 years, providing a safety valve if education isn't pursued. The superfunding exception lets a single filer contribute 5 years of annual gift exclusion at once ($95K in 2026) without touching lifetime estate exemption.`;
+}
+
+// --- Health insurance ---
+function renderHealthInsurance(){
+  const gv=(id,d=0)=>{const e=document.getElementById(id);if(!e||e.value==='')return d;const v=parseFloat(e.value);return isNaN(v)?d:v;};
+  const magi=gv('hi-magi',55000);
+  const unsubsidized=gv('hi-unsubsidized',650);
+  const fpl2026=15650; // approximate 2026 FPL for single, will be inflation-adjusted
+  const fplPercent=magi/fpl2026*100;
+  // ACA subsidy schedule (simplified, post-IRA extension):
+  // <150% FPL: 0% of income expected contribution
+  // 150-200%: 0-2% sliding
+  // 200-250%: 2-4%
+  // 250-300%: 4-6%
+  // 300-400%: 6-8.5%
+  // 400%+: capped at 8.5% (post-IRA, previously hard cliff)
+  let expectedContribPct;
+  if(fplPercent<=150)expectedContribPct=0;
+  else if(fplPercent<=200)expectedContribPct=0.02*(fplPercent-150)/50;
+  else if(fplPercent<=250)expectedContribPct=0.02+0.02*(fplPercent-200)/50;
+  else if(fplPercent<=300)expectedContribPct=0.04+0.02*(fplPercent-250)/50;
+  else if(fplPercent<=400)expectedContribPct=0.06+0.025*(fplPercent-300)/100;
+  else expectedContribPct=0.085;
+  const expectedAnnualContrib=magi*expectedContribPct;
+  const annualUnsubsidized=unsubsidized*12;
+  const subsidy=Math.max(0,annualUnsubsidized-expectedAnnualContrib);
+  const netPremium=annualUnsubsidized-subsidy;
+  document.getElementById('hi-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">% of Federal Poverty Level</div><div class="metric-value">${fplPercent.toFixed(0)}%</div><div class="metric-sub">2026 FPL single: ${fmt(fpl2026,true)}</div></div>
+    <div class="metric"><div class="metric-label">Expected contribution (% MAGI)</div><div class="metric-value">${(expectedContribPct*100).toFixed(1)}%</div><div class="metric-sub">ACA affordability schedule</div></div>
+    <div class="metric"><div class="metric-label">Annual premium subsidy</div><div class="metric-value gold">${fmt(subsidy,true)}</div><div class="metric-sub">Premium tax credit value</div></div>
+    <div class="metric"><div class="metric-label">Net annual premium</div><div class="metric-value">${fmt(netPremium,true)}</div><div class="metric-sub">${fmt(annualUnsubsidized,true)} gross − subsidy</div></div>`;
+  document.getElementById('hi-note').innerHTML=`Inflation Reduction Act extended the 8.5% cap on ACA contributions through 2025; at this writing, status for 2026+ depends on extension. If the cap sunsets, the cliff at 400% FPL returns — MAGI above that line loses ALL subsidy, potentially $10-15K/year. This makes Roth conversion planning at FI sensitive: converting enough to stay above Medicaid but below 400% FPL can be worth five figures per year. At CA MAGI of ~$55K post-FI, Covered California specifically adds a state subsidy layer. The calculation above is federal only.`;
+}
+// ============================================================================
+// Produces a multi-sheet .xlsx file with computed analysis for discussion with an LLM.
+// All values are derived from the app's compute functions. Raw spreadsheet data never exported.
+function exportSummary(){
+  if(typeof XLSX==='undefined'){alert('Excel library not loaded. Check internet connection.');return;}
+  const wb=XLSX.utils.book_new();
+  const today=new Date().toISOString().slice(0,10);
+  const addSheet=(name,rows)=>{
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb,ws,name.slice(0,31));
+  };
+  const A=loadA();
+  const getVal=k=>A[k]?.value;
+
+  // ========== SHEET 1: Metadata & Assumptions ==========
+  const meta=[
+    ['FINANCE SUMMARY EXPORT'],
+    ['Generated',today],
+    ['Purpose','Summary of computed analysis for strategy discussion. No raw spreadsheet data included.'],
+    [],
+    ['CURRENT ASSUMPTIONS'],
+    ['Parameter','Value']
+  ];
+  for(const[k,v] of Object.entries(A))meta.push([v.label,v.value]);
+  addSheet('Assumptions',meta);
+
+  // ========== SHEET 2: Current Tax Position ==========
+  let inp=null;
+  try{inp=getTaxInputs();}catch(e){}
+  if(inp){
+    const td=getTaxData(inp.year);
+    const base=computeTax(inp,0);
+    const tax=[
+      ['CURRENT TAX POSITION'],
+      ['Tax year',inp.year],
+      ['Filing status',inp.filing],
+      ['State mode',inp.stateMode],
+      ['Age',inp.age],
+      ['Data source: ',td.ca?.status||'Published'],
+      [],
+      ['INCOME & PRE-TAX'],
+      ['Gross income',inp.gross],
+      ['Pre-tax 401(k)',inp.pretax401k],
+      ['Pre-tax Healthcare FSA',inp.pretaxFSA||0],
+      ['AGI',Math.round(base.agi)],
+      [],
+      ['TAX AT $0 DONATION (baseline)'],
+      ['Standard deduction (fed)',base.stdDed],
+      ['Itemized total (fed)',Math.round(base.itemized)],
+      ['SALT allowed (fed)',Math.round(base.fedSalt)],
+      ['Deduction used',base.useItemize?'ITEMIZE':'STANDARD'],
+      ['Federal taxable income',Math.round(base.fedTaxable)],
+      ['Federal tax',Math.round(base.fedTax)],
+      ['Federal marginal rate',(base.fedMarginal*100).toFixed(2)+'%'],
+      ['State tax',Math.round(base.stateTax)],
+      ['State marginal rate',(base.stateMarginal*100).toFixed(2)+'%'],
+      ['Total tax',Math.round(base.totalTax)],
+      ['Effective rate on gross',(base.totalTax/inp.gross*100).toFixed(2)+'%']
+    ];
+    addSheet('Current Tax',tax);
+
+    // ========== SHEET 3: Charitable Impact Table ==========
+    const charity=[
+      ['CHARITABLE DONATION IMPACT'],
+      [`Scenario: total ${inp.year} donation vs. tax savings, ${inp.filing} filing, ${inp.stateMode} state`],
+      [],
+      ['Donation ($)','Path','Federal tax','State tax','Total tax','Tax savings','Cost per $1 net','Carryforward']
+    ];
+    const maxDon=Math.max(50000,Math.round(base.agi*0.6));
+    const steps=[0,500,1000,2500,5000,7500,10000,15000,20000,30000,40000,50000,75000,100000,150000,200000,maxDon];
+    for(const d of steps){
+      if(d>maxDon*1.2)break;
+      const p=computeTax(inp,d);
+      const sav=base.totalTax-p.totalTax;
+      charity.push([
+        d,p.useItemize?'Itemize':'Standard',
+        Math.round(p.fedTax),Math.round(p.stateTax),Math.round(p.totalTax),
+        Math.round(sav),d>0?+(1-sav/d).toFixed(3):'',Math.round(p.carryforward||0)
+      ]);
+    }
+    // Find itemize break-even
+    let breakEven=null;
+    for(let d=0;d<=50000;d+=100){if(computeTax(inp,d).useItemize){breakEven=d;break;}}
+    charity.push([]);
+    charity.push(['KEY INSIGHTS']);
+    charity.push(['Itemize break-even',breakEven?'$'+breakEven.toLocaleString():'beyond $50K']);
+    charity.push(['Federal marginal × state marginal at baseline',((base.fedMarginal+base.stateMarginal)*100).toFixed(2)+'%']);
+    if(td.fed.charityAgiFloor>0)charity.push(['OBBBA 0.5% AGI charitable floor',Math.round(base.agi*td.fed.charityAgiFloor)+' (disallowed, no carryforward)']);
+    charity.push(['Non-itemizer deduction available',td.fed.nonItemizerCharity[inp.filing]||0]);
+    addSheet('Charitable Impact',charity);
+
+    // ========== SHEET 6: Retirement Progress ==========
+    const ret=td.fed.retirement;
+    const fsaLim=inp.fsaEnabled?(td.fed.fsa?.healthcare||0):0;
+    const k401Lim=ret.k401+(inp.age>=50?ret.catchup50:0);
+    const iraLim=ret.ira+(inp.age>=50?ret.iraCatchup:0);
+    const retSheet=[
+      ['RETIREMENT & HEALTHCARE ACCOUNT PROGRESS'],
+      ['Tax year',inp.year],
+      [],
+      ['Account','Annual limit','YTD actual','Year-end plan','Remaining capacity','YTD % of limit','Plan % of limit'],
+      ['401(k) employee',k401Lim,inp.k401YTD,inp.k401Planned,Math.max(0,k401Lim-inp.k401Planned),k401Lim?(inp.k401YTD/k401Lim*100).toFixed(1)+'%':'',k401Lim?(inp.k401Planned/k401Lim*100).toFixed(1)+'%':''],
+      ['IRA',iraLim,inp.iraYTD,inp.iraPlanned,Math.max(0,iraLim-inp.iraPlanned),iraLim?(inp.iraYTD/iraLim*100).toFixed(1)+'%':'',iraLim?(inp.iraPlanned/iraLim*100).toFixed(1)+'%':''],
+      ['Healthcare FSA',fsaLim,inp.fsaYTD,inp.fsaPlanned,Math.max(0,fsaLim-inp.fsaPlanned),fsaLim?(inp.fsaYTD/fsaLim*100).toFixed(1)+'%':'N/A',fsaLim?(inp.fsaPlanned/fsaLim*100).toFixed(1)+'%':'N/A']
+    ];
+    addSheet('Retirement Progress',retSheet);
+
+    // ========== SHEET 7: Key Tax Limits Reference ==========
+    const limits=[
+      ['TAX YEAR '+inp.year+' KEY LIMITS'],
+      [],
+      ['FEDERAL (IRS Rev. Proc. 2025-32, Notice 2025-67, OBBBA)'],
+      ['Standard deduction (Single)',td.fed.stdDed.single],
+      ['Standard deduction (MFJ)',td.fed.stdDed.mfj],
+      ['SALT cap',td.fed.saltCap],
+      ['SALT phaseout starts',td.fed.saltPhaseoutStart],
+      ['SALT phaseout rate',(td.fed.saltPhaseoutRate*100)+'%'],
+      ['SALT floor',td.fed.saltFloor||10000],
+      ['Charity AGI floor',(td.fed.charityAgiFloor*100)+'% of AGI'],
+      ['Charity AGI cap (cash to public)',(td.fed.charityAgiCap*100)+'%'],
+      ['Non-itemizer charity (Single)',td.fed.nonItemizerCharity.single],
+      ['Non-itemizer charity (MFJ)',td.fed.nonItemizerCharity.mfj],
+      ['401(k) employee deferral',td.fed.retirement.k401],
+      ['401(k) catch-up 50+',td.fed.retirement.catchup50],
+      ['401(k) catch-up 60-63',td.fed.retirement.catchup60_63],
+      ['IRA limit',td.fed.retirement.ira],
+      ['IRA catch-up 50+',td.fed.retirement.iraCatchup],
+      ['Healthcare FSA',td.fed.fsa.healthcare],
+      ['FSA carryover max',td.fed.fsa.carryover],
+      ['Dependent Care FSA',td.fed.fsa.dependentCare],
+      ['HSA self-only',td.fed.hsa.selfOnly],
+      ['HSA family',td.fed.hsa.family],
+      ['Senior bonus deduction (age 65+)',td.fed.seniorBonus?.amount||0],
+      [],
+      ['CALIFORNIA'],
+      ['Status',td.ca.status||(td.ca.published?'Published':'Pending')],
+      ['Std deduction (Single)',td.ca.stdDed.single],
+      ['Std deduction (MFJ)',td.ca.stdDed.mfj],
+      ['MHSA/BHST threshold',td.ca.mhsaThreshold],
+      ['MHSA/BHST rate',(td.ca.mhsaRate*100)+'%'],
+      ['Conforms to OBBBA',td.ca.conformsToObbba?'Yes':'No (SB 711 IRC date = Jan 1, 2025)'],
+      ['Personal exemption credit',td.ca.exemptionCredit?.personal||0],
+      ['FSA pre-tax (CA)',td.ca.fsaPreTax?'Yes':'No'],
+      ['HSA pre-tax (CA)',td.ca.hsaPreTax?'Yes':'No']
+    ];
+    addSheet('Tax Limits '+inp.year,limits);
+  }
+
+  // ========== SHEET 4: FI Projection Year-by-Year ==========
+  if(typeof computeFIProjection==='function'){
+    const fi=computeFIProjection();
+    const today_=new Date().getFullYear();
+    const fmtFI=f=>f?`${f.year} (age ${f.age})`:'>40 yrs';
+    const fiSheet=[
+      ['FINANCIAL INDEPENDENCE PROJECTION'],
+      [],
+      ['ASSUMPTIONS'],
+      ['Nominal return',(fi.nominal*100).toFixed(2)+'%'],
+      ['Inflation rate',(fi.inflation*100).toFixed(2)+'%'],
+      ['Real return rate',(fi.realReturn*100).toFixed(2)+'%'],
+      ['COL growth rate',(fi.colGrowth*100).toFixed(2)+'%'],
+      ['LTCG withdrawal tax drag',(fi.taxDrag*100).toFixed(1)+'%'],
+      ['Gross-up factor (1 / (1 - drag))',fi.grossUp.toFixed(3)],
+      ['Safe withdrawal rate',(fi.swr*100).toFixed(1)+'%'],
+      ['Starting portfolio',Math.round(fi.startPortfolio)],
+      ['Starting COL',Math.round(fi.startCOL)],
+      ['Annual contribution',Math.round(fi.annualContrib)],
+      ['COL Excel overrides present',fi.hasColOverrides?'yes':'no'],
+      [],
+      ['MILESTONES (post-tax = realistic since selling shares incurs LTCG)'],
+      ['Can live off gains ('+(fi.swr*100).toFixed(1)+'% SWR × (1-'+(fi.taxDrag*100).toFixed(0)+'% drag))',fmtFI(fi.fiSwrTax)],
+      ['Trinity 25× COL (post-tax, grossed up)',fmtFI(fi.fiConsTax)],
+      ['Balanced real-return (post-tax)',fmtFI(fi.fiRealTax)],
+      [],
+      ['MILESTONES (pre-tax, for reference only)'],
+      ['Trinity 25× COL (pre-tax)',fmtFI(fi.fiCons)],
+      ['SWR threshold (pre-tax)',fmtFI(fi.fiSwr)],
+      [],
+      ['YEAR-BY-YEAR PROJECTION'],
+      ['Year','Age','Portfolio ($)','Projected COL ($)','Post-tax SWR threshold ($)','Post-tax 25× threshold ($)','Sustainable withdrawal post-tax ($)','Excel override?']
+    ];
+    fi.rows.forEach(r=>{
+      fiSheet.push([r.year,r.age,Math.round(r.portfolio),Math.round(r.col),Math.round(r.tSwrTax),Math.round(r.tConsTax),Math.round(r.sustainablePostTax),r.fromExcel?'yes':'no']);
+    });
+    addSheet('FI Projection',fiSheet);
+  }
+
+  // ========== SHEET 5: Runway Analysis ==========
+  const ret_=getVal('returnRate')/100||0.11;
+  const colG_=getVal('colGrowthRate')/100||0.035;
+  const col0=getVal('annualCOL')||40594;
+  const tax0=getVal('taxable')||0;
+  // Year-by-year drawdown with growing COL
+  const drawdown=[
+    ['RUNWAY: IF ALL EARNED INCOME STOPS TODAY'],
+    ['Starting taxable portfolio',tax0],
+    ['Starting annual COL',col0],
+    ['Return rate',(ret_*100).toFixed(2)+'%'],
+    ['COL growth rate',(colG_*100).toFixed(2)+'%'],
+    [],
+    ['Scenario','Years until exhausted'],
+  ];
+  let b=tax0,c=col0,yrWithRet=null;
+  for(let y=0;y<200;y++){if(b<=0){yrWithRet=y;break;}b=b*(1+ret_)-c;c*=(1+colG_);}
+  let b2=tax0,c2=col0,yrSpend=null;
+  for(let y=0;y<200;y++){if(b2<=0){yrSpend=y;break;}b2-=c2;c2*=(1+colG_);}
+  drawdown.push(['With returns ('+(ret_*100).toFixed(0)+'% growth vs '+(colG_*100).toFixed(1)+'% COL inflation)',yrWithRet||'∞']);
+  drawdown.push(['Spend only (no returns)',yrSpend||'∞']);
+  drawdown.push([]);
+  drawdown.push(['YEAR-BY-YEAR DRAWDOWN (with returns)']);
+  drawdown.push(['Year','Age','Portfolio start ($)','COL that year ($)','Return earned ($)','Portfolio end ($)']);
+  b=tax0;c=col0;
+  const birthY=getVal('birthYear')||1993;
+  const startY=new Date().getFullYear();
+  for(let y=0;y<=30;y++){
+    const growth=Math.max(0,b)*ret_;
+    const endBal=Math.max(0,b+growth-c);
+    drawdown.push([startY+y,startY+y-birthY,Math.round(Math.max(0,b)),Math.round(c),Math.round(growth),Math.round(endBal)]);
+    b=endBal;c=c*(1+colG_);
+    if(b<=0&&y>0)break;
+  }
+  addSheet('Runway Drawdown',drawdown);
+
+  // ========== WRITE FILE ==========
+  try{
+    XLSX.writeFile(wb,`finance_summary_${today}.xlsx`);
+  }catch(e){
+    alert('Export failed: '+e.message);
+  }
+}
+
+
+window.addEventListener('load',()=>{
+  // Default tax year selector to current calendar year (falls back to latest embedded year if unavailable)
+  const currentYear=new Date().getFullYear();
+  const yearSel=document.getElementById('tax-year');
+  if(yearSel){
+    const opts=Array.from(yearSel.options).map(o=>parseInt(o.value));
+    const target=opts.includes(currentYear)?currentYear:Math.max(...opts);
+    yearSel.value=String(target);
+  }
+  renderAssumptions();
+  renderOverview();
+  updateTaxDataBadge();
+  // Fire-and-forget remote overlay; silently falls back to embedded on failure
+  loadRemoteTaxData();
+});
+</script>
+</body>
+</html>
