@@ -138,7 +138,7 @@ const ACTS=[
 
 const S=[
   {act:0,
-   title:"A fifth-year student in your lab has produced three strong studies. Her advisor keeps adding experiments before approving submission.",
+   title:"A sixth-year student in your lab has produced three strong studies. Her advisor keeps adding experiments before approving submission.",
    body:"There is no written timeline and no authorship agreement. She says she is fine. You have watched this for two years.",
    choices:[
     {t:"This is a personal situation between her and her advisor. Not your circus, not your monkeys.",out:"bad",d:{a:-5,g:-5,o:-5},
@@ -171,8 +171,8 @@ const S=[
  title:"You are at a networking event. You are standing near the food table for the third time, not because you are hungry but because it gives you something to do. You want to talk to the professionals in the room but you have no idea how to start.",
  body:"The room contains businesspeople, clinicians, lived experience advocates, investors, engineers, and a few researchers. Most of them are catching up with people they already know. Several conversations are deep in field gossip about who is raising money and whose trial just failed. The cheese is good though.",
  choices:[
- {t:"Stay near the edges of the room and wait for a natural opening to appear.",out:"bad",d:{a:-8,g:-3,o:-5},
- fb:"Watching for a natural opening is reasonable, but staying to yourself or spending the whole event with the friend you arrived with means the event produces nothing new. Natural openings rarely materialize without some movement on your part. The person who gets the most out of an event like this is the one who decides to make something happen, even imperfectly. The cheese will still be there when you get back.",
+ {t:"Stay near the edges of the room, or just talk with the friend you came there with.",out:"bad",d:{a:-8,g:-3,o:-5},
+ fb:"Staying to yourself or spending the whole event with the friend you arrived with means the event produces nothing new. New connections rarely materialize without some movement on your part. The person who gets the most out of an event like this is the one who decides to make something happen, even imperfectly. The cheese will still be there when you get back.",
  p:"Watching for a natural opening is fine. Staying to yourself or only talking to people you already know means the event produces nothing new."},
  {t:"Find someone who is alone or between conversations. Ask what brought them to the event and listen more than you talk.",out:"good",d:{a:12,g:10,o:12},
  fb:"This is the move. Approaching someone between conversations with a simple open question is low-pressure and often works surprisingly well. What comes next is what matters: listen for what they are excited or frustrated about and look for a real intersection with something you know or care about. If there is one, say so specifically. If there is not, let the conversation end naturally and connect on LinkedIn. Sometimes you will not realize until months later that someone you briefly met was exactly the right person to know, once you have seen what they pay attention to and what they are building.",
@@ -184,7 +184,7 @@ const S=[
 
   {act:0,
    title:"No matter how much work you finish, your pile of responsibilities keeps growing. You are producing more than ever and feel further behind than ever.",
-   body:"You completed a manuscript, mentored a rotation student, served on a committee, and handled three urgent lab crises this semester. Your advisor has responded to each completed task by adding two more. Your inbox is a horror. Your to-do list is longer now than it was six months ago despite everything you have crossed off. You are starting to experience health problems.",
+   body:"You completed a manuscript, mentored a rotation student, served on a committee, and handled three urgent lab crises this semester. Your advisor has responded to each completed task by adding two more. Your to-do list is longer now than it was six months ago despite everything you have crossed off. You are starting to experience health problems. Also, the lab's printer stopped working again.",
    choices:[
     {t:"Work harder and faster. The backlog will eventually clear if you are productive enough.",out:"bad",d:{a:-8,g:0,o:-8},
      fb:"This pattern does not clear the backlog. In many lab environments, output signals capacity, and capacity gets filled immediately. Working harder does not reduce the pile. It increases the rate at which new items arrive. The finish line is not a fixed point. You need to set boundaries and be firm about them. Without a boundary, your situation worsens.",
@@ -264,11 +264,11 @@ const S=[
     {t:"Accept that senior people do not have time for students and stop trying.",out:"bad",d:{a:-10,g:-5,o:-12},
      fb:"Some senior people do not have time. But the more likely problem is the ask itself. 'Tell me about your journey' and 'any advice for someone like me' are questions that cost the recipient significant effort to answer well and produce answers that may not replicate to your situation. A busy person reads that kind of message and feels the weight of it before deciding not to reply. The ask is not wrong because senior people are indifferent. It is wrong because it is not specific enough to be easy to answer.",
      p:"Vague asks are easy to ignore. Specific asks that are easy to answer are much harder to pass up."},
-    {t:"Keep sending the same kind of outreach to more people. It is a numbers game.",out:"bad",d:{a:-5,g:0,o:-8},
+    {t:"Keep sending the same kind of outreach to more people. It is a numbers game.",out:"bad",d:{a:-5,g:0,o:-3},
      fb:"Sending the same low-yield message to more people produces more of the same results. If the response rate on 48 contacts is near zero, the problem is not volume. Volume without changing the approach just means you are being ignored at scale. The message needs to change before the list gets longer.",
      p:"Scaling a low-yield approach produces more low-yield results. Diagnose the approach before expanding the effort."},
     {t:"Change the ask entirely: ask for specific resources they would have found useful when they were in your position, trying to become someone who improves the world with their knowledge. Then seriously engage with what they share and follow up with what you learned.",out:"good",d:{a:18,g:10,o:16},
-     fb:"This is the move almost no one makes, which is exactly why it works. A specific ask, 'What resources would have helped you most when you were a student trying to figure out how to actually make a difference with your knowledge?' takes the recipient about thirty seconds to answer. It does not ask them to perform their life story. It asks for something concrete they can point to. When you follow up after engaging with what they shared, you have done something that virtually no student ever does. Senior people notice. The conversation that follows is a different kind of conversation.",
+     fb:"This is the move almost no one makes, which is exactly why it works. A specific ask, 'What resources would have helped you most when you were a student trying to figure out how to actually make a difference with your knowledge?' takes the recipient about a minute to answer. It does not ask them to perform their life story. It asks for something concrete they can point to. When you follow up after engaging with what they shared, you have done something that virtually no student ever does. Senior people notice. The conversation that follows is a different kind of conversation.",
      p:"Specific asks that are easy to answer, followed by evidence that you took the answer seriously, are the most reliable way to convert a cold contact into a real relationship."}
    ]},
 
