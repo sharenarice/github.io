@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Sharena's Balloons</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Karla',sans-serif;
+  background:#11241D;
+  color:#dcefe8;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+header{
+  padding:1.25rem 2rem .75rem;
+  border-bottom:0.5px solid rgba(220,239,232,0.15);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  flex-shrink:0;
+  z-index:5;
+}
+h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem;
+  font-weight:500;
+  letter-spacing:-0.01em;
+  color:#dcefe8;
+  line-height:1;
+}
+h1 em{color:#F0C318;font-style:italic;font-weight:400}
+.subtitle{
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(220,239,232,0.85);
+  margin-top:.35rem;
+}
+.hud{
+  display:flex;
+  gap:1.75rem;
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(220,239,232,0.85);
+  align-items:flex-end;
+}
+.hud .num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem;
+  letter-spacing:0;
+  font-style:italic;
+  color:#F0C318;
+  line-height:1;
+  margin-right:.4rem;
+}
+.hud .stat{display:flex;align-items:baseline}
+main{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+}
+#stage{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transform:scaleX(-1);
+  filter:saturate(.65) brightness(.55) contrast(1.05);
+  opacity:.55;
+}
+#canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+#vignette{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(17,36,29,0.85) 100%);
+}
+/* intro overlay */
+.intro{
+  position:absolute;
+  inset:0;
+  background:rgba(17,36,29,0.92);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+  padding:2rem;
+}
+.intro-card{
+  max-width:38rem;
+  text-align:left;
+}
+.intro h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.4rem;
+  font-weight:500;
+  line-height:1.1;
+  margin-bottom:1rem;
+  letter-spacing:-0.01em;
+}
+.intro h2 em{color:#F0C318;font-style:italic;font-weight:400}
+.intro p{
+  font-size:.95rem;
+  line-height:1.6;
+  color:rgba(220,239,232,0.85);
+  margin-bottom:.9rem;
+}
+.intro .note{
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#F0C318;
+  margin-top:1.4rem;
+  margin-bottom:.4rem;
+}
+.intro ul{
+  list-style:none;
+  font-size:.85rem;
+  line-height:1.7;
+  color:rgba(220,239,232,0.78);
+}
+.intro ul li::before{
+  content:"◦ ";
+  color:#F0C318;
+  margin-right:.2rem;
+}
+.start-btn{
+  margin-top:1.8rem;
+  background:#F0C318;
+  color:#11241D;
+  border:none;
+  font-family:'Karla',sans-serif;
+  font-weight:600;
+  font-size:.78rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  padding:.95rem 1.8rem;
+  cursor:pointer;
+  border-radius:2px;
+  transition:transform .15s ease, background .2s ease;
+}
+.start-btn:hover{background:#ffd633;transform:translateY(-1px)}
+.start-btn:disabled{opacity:.6;cursor:wait}
+.loading{
+  margin-top:1rem;
+  font-size:.7rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(220,239,232,0.6);
+  min-height:1rem;
+}
+.error{
+  margin-top:1rem;
+  color:#ff8b6b;
+  font-size:.85rem;
+  line-height:1.5;
+}
+/* warning banner */
+.warning{
+  position:absolute;
+  top:1.25rem;
+  left:50%;
+  transform:translateX(-50%) translateY(-200%);
+  background:rgba(240,195,24,0.95);
+  color:#11241D;
+  padding:.7rem 1.4rem;
+  border-radius:2px;
+  font-size:.72rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:600;
+  z-index:6;
+  transition:transform .35s ease;
+  white-space:nowrap;
+}
+.warning.show{transform:translateX(-50%) translateY(0)}
+footer{
+  padding:.75rem 2rem 1rem;
+  border-top:0.5px solid rgba(220,239,232,0.15);
+  font-size:.65rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(220,239,232,0.55);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-shrink:0;
+  z-index:5;
+}
+footer a{color:rgba(220,239,232,0.75);text-decoration:none}
+footer a:hover{color:#F0C318}
+.float-msg{
+  position:absolute;
+  pointer-events:none;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  color:#F0C318;
+  font-size:1.4rem;
+  opacity:0;
+  transition:transform .9s ease-out, opacity .9s ease-out;
+  z-index:4;
+}
+@media (max-width:760px){
+  header{padding:1rem 1.25rem .6rem}
+  h1{font-size:1.5rem}
+  .hud{gap:1rem}
+  .hud .num{font-size:1.2rem}
+  footer{padding:.6rem 1.25rem .8rem;font-size:.6rem}
+  .intro h2{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Sharena's <em>Balloons</em></h1>
+    <div class="subtitle">A little game about keeping things aloft</div>
+  </div>
+  <div class="hud" id="hud" style="visibility:hidden">
+    <div class="stat"><span class="num" id="bops">0</span><span>bops</span></div>
+    <div class="stat"><span class="num" id="streak">0</span><span>streak</span></div>
+    <div class="stat"><span class="num" id="aloft">5</span><span>aloft</span></div>
+  </div>
+</header>
+
+<main>
+  <div id="stage">
+    <video id="video" playsinline muted autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div id="vignette"></div>
+  </div>
+
+  <div class="warning" id="warning">Camera looks covered</div>
+
+  <div class="intro" id="intro">
+    <div class="intro-card">
+      <h2>Bop the <em>balloons</em>, keep them in the sky.</h2>
+      <p>Five brightly colored balloons drift around your screen. Use your head, shoulders, arms — really anything — to keep them aloft. Bop them hard for a louder, brighter little sound.</p>
+      <p class="note">Best on a laptop</p>
+      <ul>
+        <li>Sit back so your shoulders and arms are fully in frame.</li>
+        <li>Make sure your room is well lit.</li>
+        <li>Headphones or speakers on for the bop sounds.</li>
+      </ul>
+      <button class="start-btn" id="startBtn">Allow camera &amp; begin</button>
+      <div class="loading" id="loading"></div>
+      <div class="error" id="error"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div>Computer vision · MediaPipe Pose · Web Audio</div>
+  <div><a href="/">← back to sharena</a></div>
+</footer>
+
+<script type="module">
+import { PoseLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const intro = document.getElementById('intro');
+const startBtn = document.getElementById('startBtn');
+const loading = document.getElementById('loading');
+const errorEl = document.getElementById('error');
+const hud = document.getElementById('hud');
+const bopsEl = document.getElementById('bops');
+const streakEl = document.getElementById('streak');
+const aloftEl = document.getElementById('aloft');
+const warning = document.getElementById('warning');
+const stage = document.getElementById('stage');
+
+let W = 0, H = 0;
+function resize() {
+  const r = stage.getBoundingClientRect();
+  W = canvas.width = r.width * devicePixelRatio;
+  H = canvas.height = r.height * devicePixelRatio;
+  canvas.style.width = r.width + 'px';
+  canvas.style.height = r.height + 'px';
+}
+window.addEventListener('resize', resize);
+
+/* ---------- Audio ---------- */
+let audioCtx = null;
+let masterGain = null;
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.7;
+  masterGain.connect(audioCtx.destination);
+}
+// Happy major pentatonic-ish notes (C, D, E, G, A) two octaves of variety
+const SCALE = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+
+function playBop(strength, balloonIdx) {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  // pick note based on balloon, plus a small bonus for stronger hits
+  const baseNote = SCALE[balloonIdx % SCALE.length];
+  const noteMul = strength > 0.7 ? 2 : 1;
+  const freq = baseNote * noteMul;
+
+  // two-oscillator "bop": a soft sine + tiny triangle for body
+  const o1 = audioCtx.createOscillator();
+  const o2 = audioCtx.createOscillator();
+  o1.type = 'sine';
+  o2.type = 'triangle';
+  o1.frequency.value = freq;
+  o2.frequency.value = freq * 0.5;
+
+  const g = audioCtx.createGain();
+  // intensity 0..1 -> peak 0.05..0.55
+  const peak = 0.05 + Math.min(1, strength) * 0.5;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(peak, t + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18 + strength * 0.2);
+
+  // little downward pitch chirp for "bop" feel
+  o1.frequency.setValueAtTime(freq * (1 + 0.15 * strength), t);
+  o1.frequency.exponentialRampToValueAtTime(freq, t + 0.09);
+  o2.frequency.setValueAtTime(freq * 0.5 * (1 + 0.1 * strength), t);
+  o2.frequency.exponentialRampToValueAtTime(freq * 0.5, t + 0.09);
+
+  o1.connect(g); o2.connect(g);
+  g.connect(masterGain);
+  o1.start(t); o2.start(t);
+  o1.stop(t + 0.5); o2.stop(t + 0.5);
+
+  // tiny harmonic sparkle for strong hits
+  if (strength > 0.55) {
+    const o3 = audioCtx.createOscillator();
+    o3.type = 'sine';
+    o3.frequency.value = freq * 2;
+    const g3 = audioCtx.createGain();
+    g3.gain.setValueAtTime(0, t);
+    g3.gain.linearRampToValueAtTime(0.15 * strength, t + 0.005);
+    g3.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    o3.connect(g3); g3.connect(masterGain);
+    o3.start(t); o3.stop(t + 0.2);
+  }
+}
+
+function playMiss() {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  o.type = 'sine';
+  const g = audioCtx.createGain();
+  o.frequency.setValueAtTime(380, t);
+  o.frequency.exponentialRampToValueAtTime(180, t + 0.4);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.18, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+  o.connect(g); g.connect(masterGain);
+  o.start(t); o.stop(t + 0.55);
+}
+
+/* ---------- Balloons ---------- */
+const BALLOON_COLORS = [
+  { fill: '#FF5C8A', shine: '#FFB3C9' }, // pink
+  { fill: '#F0C318', shine: '#FFE07A' }, // yellow
+  { fill: '#4FC1E9', shine: '#B6E6F5' }, // sky blue
+  { fill: '#7BD389', shine: '#C8EFCE' }, // mint
+  { fill: '#B388FF', shine: '#E0CCFF' }, // lavender
+];
+
+const balloons = [];
+function spawnBalloon(i, side) {
+  const r = Math.max(34, Math.min(W, H) * 0.055) * devicePixelRatio;
+  const x = side === undefined
+    ? (W * (0.18 + 0.65 * (i / 4)))
+    : (side < 0 ? r * 1.5 : W - r * 1.5);
+  return {
+    i,
+    x,
+    y: H * 0.18,
+    vx: (Math.random() - 0.5) * 1.2 * devicePixelRatio,
+    vy: -1.5 * devicePixelRatio,
+    r,
+    color: BALLOON_COLORS[i],
+    wobble: Math.random() * Math.PI * 2,
+    lastBopAt: 0,
+    squish: 0,
+  };
+}
+
+function resetBalloons() {
+  balloons.length = 0;
+  for (let i = 0; i < 5; i++) balloons.push(spawnBalloon(i));
+}
+
+/* ---------- Pose ---------- */
+let poseLandmarker = null;
+async function initPose() {
+  loading.textContent = 'Loading pose model…';
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+  );
+  poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+      delegate: "GPU"
+    },
+    runningMode: "VIDEO",
+    numPoses: 1,
+    minPoseDetectionConfidence: 0.5,
+    minPosePresenceConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+  });
+}
+
+// landmark indices we care about (MediaPipe Pose):
+// 0 nose, 7/8 ears, 11/12 shoulders, 13/14 elbows, 15/16 wrists,
+// 17-22 hand corners, 23/24 hips
+const TRACK_POINTS = [0, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+
+// each tracked point keeps an x,y,vx,vy from the previous frame
+let lastPoints = new Map();
+let smoothPoints = new Map();
+let lastBrightness = 1;
+let lastShoulderSpan = 0;
+let lastPoseTime = 0;
+let lastTickTime = performance.now();
+let frameCount = 0;
+let camCanvas = null, camCtx = null;
+
+let bops = 0, streak = 0, bestStreak = 0;
+
+const floatMessages = [];
+function flash(text, x, y) {
+  const el = document.createElement('div');
+  el.className = 'float-msg';
+  el.textContent = text;
+  el.style.left = (x / devicePixelRatio) + 'px';
+  el.style.top = (y / devicePixelRatio) + 'px';
+  stage.appendChild(el);
+  requestAnimationFrame(() => {
+    el.style.opacity = '0.9';
+    el.style.transform = 'translate(-50%,-100%) translateY(-40px)';
+    setTimeout(() => {
+      el.style.opacity = '0';
+    }, 600);
+    setTimeout(() => el.remove(), 1500);
+  });
+}
+
+/* ---------- Loop ---------- */
+function step(now) {
+  const dt = Math.min(50, now - lastTickTime); // ms
+  lastTickTime = now;
+  frameCount++;
+
+  // run pose detection if video is ready
+  if (poseLandmarker && video.readyState >= 2) {
+    const result = poseLandmarker.detectForVideo(video, now);
+    updatePoints(result, now);
+  }
+
+  // every ~30 frames, check brightness (low cost)
+  if (frameCount % 20 === 0) checkBrightness();
+
+  // update balloons
+  updateBalloons(dt);
+
+  // draw
+  ctx.clearRect(0, 0, W, H);
+  drawBalloons();
+  drawPose();
+
+  requestAnimationFrame(step);
+}
+
+function updatePoints(result, now) {
+  if (!result.landmarks || result.landmarks.length === 0) {
+    // lost detection — drift previous points to nothing gradually
+    if (now - lastPoseTime > 1500) {
+      showWarning('Step into frame so I can see you');
+    }
+    return;
+  }
+  lastPoseTime = now;
+
+  const lm = result.landmarks[0];
+  // shoulders span (in normalized coords) — used for "too close" check
+  if (lm[11] && lm[12]) {
+    const dx = lm[11].x - lm[12].x;
+    const dy = lm[11].y - lm[12].y;
+    lastShoulderSpan = Math.sqrt(dx*dx + dy*dy);
+  }
+
+  for (const i of TRACK_POINTS) {
+    const p = lm[i];
+    if (!p || p.visibility !== undefined && p.visibility < 0.4) continue;
+    // mirror X to match the flipped video
+    const x = (1 - p.x) * W;
+    const y = p.y * H;
+    const prev = smoothPoints.get(i);
+    let sx = x, sy = y;
+    if (prev) {
+      // EMA smoothing
+      sx = prev.x * 0.55 + x * 0.45;
+      sy = prev.y * 0.55 + y * 0.45;
+    }
+    const last = lastPoints.get(i);
+    const vx = last ? sx - last.x : 0;
+    const vy = last ? sy - last.y : 0;
+    smoothPoints.set(i, { x: sx, y: sy });
+    lastPoints.set(i, { x: sx, y: sy, vx, vy });
+  }
+
+  // adjust warnings
+  // too close: shoulder span > 0.55 of normalized frame
+  if (lastShoulderSpan > 0.55) {
+    showWarning('Scoot back a bit — too close to the camera');
+  } else if (lastBrightness > 0.05) {
+    hideWarning();
+  }
+}
+
+function checkBrightness() {
+  if (!video.videoWidth) return;
+  if (!camCanvas) {
+    camCanvas = document.createElement('canvas');
+    camCanvas.width = 64; camCanvas.height = 36;
+    camCtx = camCanvas.getContext('2d', { willReadFrequently: true });
+  }
+  try {
+    camCtx.drawImage(video, 0, 0, camCanvas.width, camCanvas.height);
+    const d = camCtx.getImageData(0, 0, camCanvas.width, camCanvas.height).data;
+    let sum = 0, varSum = 0;
+    const n = d.length / 4;
+    for (let i = 0; i < d.length; i += 4) {
+      const lum = (d[i] * 0.299 + d[i+1] * 0.587 + d[i+2] * 0.114) / 255;
+      sum += lum;
+    }
+    const mean = sum / n;
+    // variance for "is anything visible" check
+    for (let i = 0; i < d.length; i += 4) {
+      const lum = (d[i] * 0.299 + d[i+1] * 0.587 + d[i+2] * 0.114) / 255;
+      varSum += (lum - mean) * (lum - mean);
+    }
+    const variance = varSum / n;
+    lastBrightness = mean;
+    if (mean < 0.06 || variance < 0.0008) {
+      showWarning('Camera looks covered or the room is too dark');
+    }
+  } catch (e) { /* ignore */ }
+}
+
+let warningTimer = null;
+let currentWarning = '';
+function showWarning(text) {
+  if (currentWarning === text && warning.classList.contains('show')) {
+    clearTimeout(warningTimer);
+    warningTimer = setTimeout(() => warning.classList.remove('show'), 2200);
+    return;
+  }
+  currentWarning = text;
+  warning.textContent = text;
+  warning.classList.add('show');
+  clearTimeout(warningTimer);
+  warningTimer = setTimeout(() => {
+    warning.classList.remove('show');
+    currentWarning = '';
+  }, 2200);
+}
+function hideWarning() { /* let it auto-hide */ }
+
+function updateBalloons(dt) {
+  const dts = dt / 16.6; // normalized frame multiplier
+  let aloft = 0;
+  for (const b of balloons) {
+    if (!b.alive && b.alive !== undefined) continue;
+    aloft++;
+    b.wobble += 0.04 * dts;
+    // soft updraft + gravity
+    b.vy += 0.06 * dts * devicePixelRatio;
+    // gentle horizontal drift
+    b.vx += Math.sin(b.wobble) * 0.04 * dts * devicePixelRatio;
+    // drag
+    b.vx *= Math.pow(0.985, dts);
+    b.vy *= Math.pow(0.985, dts);
+    b.x += b.vx * dts;
+    b.y += b.vy * dts;
+    b.squish *= Math.pow(0.85, dts);
+
+    // collisions with body points
+    for (const i of TRACK_POINTS) {
+      const p = lastPoints.get(i);
+      if (!p) continue;
+      const dx = b.x - p.x;
+      const dy = b.y - p.y;
+      const d2 = dx*dx + dy*dy;
+      const rad = b.r + 18 * devicePixelRatio;
+      if (d2 < rad * rad) {
+        const d = Math.sqrt(d2) || 0.001;
+        const nx = dx / d, ny = dy / d;
+        // velocity of the body point
+        const pv = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        // impart velocity: project body velocity onto normal, add base push
+        const impact = Math.max(0, p.vx * nx + p.vy * ny);
+        const basePush = 4 * devicePixelRatio;
+        const pushMag = basePush + impact * 1.8 + pv * 0.3;
+        b.vx = nx * pushMag + p.vx * 0.4;
+        b.vy = ny * pushMag + p.vy * 0.4 - 1.2 * devicePixelRatio; // small lift bias
+        // separate so we don't double-trigger
+        b.x = p.x + nx * rad;
+        b.y = p.y + ny * rad;
+        b.squish = Math.min(1, 0.3 + pv / (12 * devicePixelRatio));
+        // strength: 0..1 based on body velocity
+        const strength = Math.min(1, pv / (22 * devicePixelRatio));
+        const now = performance.now();
+        if (now - b.lastBopAt > 140) {
+          b.lastBopAt = now;
+          playBop(strength, b.i);
+          bops++;
+          streak++;
+          bopsEl.textContent = bops;
+          streakEl.textContent = streak;
+          if (strength > 0.55) flash('bop!', b.x, b.y);
+        }
+        break;
+      }
+    }
+
+    // walls — bounce off left/right
+    if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * 0.7; }
+    if (b.x > W - b.r) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * 0.7; }
+    // bounce off top softly
+    if (b.y < b.r) { b.y = b.r; b.vy = Math.abs(b.vy) * 0.5; }
+
+    // hit the floor — miss
+    if (b.y > H + b.r) {
+      streak = 0;
+      streakEl.textContent = 0;
+      playMiss();
+      flash('oh no', b.x, H - b.r * 2);
+      // respawn from a random side at top
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const fresh = spawnBalloon(b.i, side);
+      Object.assign(b, fresh);
+    }
+  }
+  aloftEl.textContent = balloons.length;
+}
+
+function drawBalloon(b) {
+  ctx.save();
+  ctx.translate(b.x, b.y);
+  const sq = b.squish;
+  ctx.scale(1 - sq * 0.18, 1 + sq * 0.18);
+  // string
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(220,239,232,0.45)';
+  ctx.lineWidth = 1.2 * devicePixelRatio;
+  ctx.moveTo(0, b.r);
+  ctx.bezierCurveTo(
+    Math.sin(b.wobble) * 6 * devicePixelRatio, b.r + 40 * devicePixelRatio,
+    Math.sin(b.wobble + 1) * 8 * devicePixelRatio, b.r + 70 * devicePixelRatio,
+    0, b.r + 100 * devicePixelRatio
+  );
+  ctx.stroke();
+  // body
+  const grad = ctx.createRadialGradient(-b.r * 0.35, -b.r * 0.4, b.r * 0.1, 0, 0, b.r);
+  grad.addColorStop(0, b.color.shine);
+  grad.addColorStop(0.45, b.color.fill);
+  grad.addColorStop(1, shade(b.color.fill, -0.18));
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, b.r * 0.92, b.r, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // little tie
+  ctx.fillStyle = shade(b.color.fill, -0.22);
+  ctx.beginPath();
+  ctx.moveTo(-b.r * 0.13, b.r * 0.95);
+  ctx.lineTo(b.r * 0.13, b.r * 0.95);
+  ctx.lineTo(0, b.r * 1.12);
+  ctx.closePath();
+  ctx.fill();
+  // shine
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.beginPath();
+  ctx.ellipse(-b.r * 0.32, -b.r * 0.4, b.r * 0.18, b.r * 0.3, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function shade(hex, amt) {
+  const c = parseInt(hex.slice(1), 16);
+  let r = (c >> 16) & 0xff, g = (c >> 8) & 0xff, b = c & 0xff;
+  r = Math.max(0, Math.min(255, Math.round(r + r * amt)));
+  g = Math.max(0, Math.min(255, Math.round(g + g * amt)));
+  b = Math.max(0, Math.min(255, Math.round(b + b * amt)));
+  return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+}
+
+function drawBalloons() {
+  // sort by y so closer (lower) balloons render on top a bit
+  balloons.slice().sort((a, b) => a.y - b.y).forEach(drawBalloon);
+}
+
+function drawPose() {
+  // draw subtle markers on tracked points
+  ctx.fillStyle = 'rgba(240,195,24,0.5)';
+  for (const i of TRACK_POINTS) {
+    const p = smoothPoints.get(i);
+    if (!p) continue;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4 * devicePixelRatio, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // draw skeleton lines for shoulders/arms
+  const links = [[11,13],[13,15],[12,14],[14,16],[11,12],[11,23],[12,24],[23,24]];
+  ctx.strokeStyle = 'rgba(240,195,24,0.35)';
+  ctx.lineWidth = 2 * devicePixelRatio;
+  for (const [a, b] of links) {
+    const pa = smoothPoints.get(a), pb = smoothPoints.get(b);
+    if (!pa || !pb) continue;
+    ctx.beginPath();
+    ctx.moveTo(pa.x, pa.y);
+    ctx.lineTo(pb.x, pb.y);
+    ctx.stroke();
+  }
+}
+
+/* ---------- Init ---------- */
+async function start() {
+  startBtn.disabled = true;
+  errorEl.textContent = '';
+  loading.textContent = 'Requesting camera…';
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false,
+    });
+    video.srcObject = stream;
+    await new Promise(res => video.onloadedmetadata = () => res());
+    await video.play();
+
+    initAudio();
+    await initPose();
+
+    resize();
+    resetBalloons();
+
+    intro.style.transition = 'opacity .5s ease';
+    intro.style.opacity = '0';
+    setTimeout(() => intro.style.display = 'none', 500);
+
+    hud.style.visibility = 'visible';
+    requestAnimationFrame(step);
+  } catch (err) {
+    console.error(err);
+    let msg = err && err.message ? err.message : String(err);
+    if (err && err.name === 'NotAllowedError') {
+      msg = 'Camera permission denied. Reload the page and allow access to play.';
+    } else if (err && err.name === 'NotFoundError') {
+      msg = 'No camera found. This game needs a webcam — try a laptop.';
+    }
+    errorEl.textContent = msg;
+    loading.textContent = '';
+    startBtn.disabled = false;
+  }
+}
+
+startBtn.addEventListener('click', start);
+
+// initial sizing
+resize();
+</script>
+</body>
+</html>
