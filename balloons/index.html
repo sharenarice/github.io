@@ -239,8 +239,6 @@ footer a:hover{color:#F0C318}
   </div>
   <div class="hud" id="hud" style="visibility:hidden">
     <div class="stat"><span class="num" id="bops">0</span><span>bops</span></div>
-    <div class="stat"><span class="num" id="streak">0</span><span>streak</span></div>
-    <div class="stat"><span class="num" id="aloft">5</span><span>aloft</span></div>
   </div>
 </header>
 
@@ -257,6 +255,7 @@ footer a:hover{color:#F0C318}
     <div class="intro-card">
       <h2>Bop the <em>balloons</em>, keep them in the sky.</h2>
       <p>Five brightly colored balloons drift around your screen. Use your head, shoulders, arms — really anything — to keep them aloft. Bop them hard for a louder, brighter little sound.</p>
+      <p>Balloons never pop. If one slips past you, a fresh one drifts down from the sky.</p>
       <p class="note">Best on a laptop</p>
       <ul>
         <li>Sit back so your shoulders and arms are fully in frame.</li>
@@ -287,8 +286,6 @@ const loading = document.getElementById('loading');
 const errorEl = document.getElementById('error');
 const hud = document.getElementById('hud');
 const bopsEl = document.getElementById('bops');
-const streakEl = document.getElementById('streak');
-const aloftEl = document.getElementById('aloft');
 const warning = document.getElementById('warning');
 const stage = document.getElementById('stage');
 
@@ -363,19 +360,20 @@ function playBop(strength, balloonIdx) {
   }
 }
 
-function playMiss() {
+function playSpawn() {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
+  // soft, cheerful "ding" — a fresh balloon arrives
   const o = audioCtx.createOscillator();
   o.type = 'sine';
   const g = audioCtx.createGain();
-  o.frequency.setValueAtTime(380, t);
-  o.frequency.exponentialRampToValueAtTime(180, t + 0.4);
+  o.frequency.setValueAtTime(660, t);
+  o.frequency.exponentialRampToValueAtTime(990, t + 0.18);
   g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(0.18, t + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+  g.gain.linearRampToValueAtTime(0.12, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
   o.connect(g); g.connect(masterGain);
-  o.start(t); o.stop(t + 0.55);
+  o.start(t); o.stop(t + 0.4);
 }
 
 /* ---------- Balloons ---------- */
@@ -388,17 +386,17 @@ const BALLOON_COLORS = [
 ];
 
 const balloons = [];
-function spawnBalloon(i, side) {
+function spawnBalloon(i, fromSky) {
   const r = Math.max(34, Math.min(W, H) * 0.055) * devicePixelRatio;
-  const x = side === undefined
-    ? (W * (0.18 + 0.65 * (i / 4)))
-    : (side < 0 ? r * 1.5 : W - r * 1.5);
+  const x = fromSky
+    ? r * 1.5 + Math.random() * (W - r * 3)
+    : (W * (0.18 + 0.65 * (i / 4)));
   return {
     i,
     x,
-    y: H * 0.18,
+    y: fromSky ? -r * 1.5 : H * 0.18,
     vx: (Math.random() - 0.5) * 1.2 * devicePixelRatio,
-    vy: -1.5 * devicePixelRatio,
+    vy: fromSky ? 1.2 * devicePixelRatio : -1.5 * devicePixelRatio,
     r,
     color: BALLOON_COLORS[i],
     wobble: Math.random() * Math.PI * 2,
@@ -447,7 +445,7 @@ let lastTickTime = performance.now();
 let frameCount = 0;
 let camCanvas = null, camCtx = null;
 
-let bops = 0, streak = 0, bestStreak = 0;
+let bops = 0;
 
 const floatMessages = [];
 function flash(text, x, y) {
@@ -591,10 +589,7 @@ function hideWarning() { /* let it auto-hide */ }
 
 function updateBalloons(dt) {
   const dts = dt / 16.6; // normalized frame multiplier
-  let aloft = 0;
   for (const b of balloons) {
-    if (!b.alive && b.alive !== undefined) continue;
-    aloft++;
     b.wobble += 0.04 * dts;
     // soft updraft + gravity
     b.vy += 0.06 * dts * devicePixelRatio;
@@ -637,9 +632,7 @@ function updateBalloons(dt) {
           b.lastBopAt = now;
           playBop(strength, b.i);
           bops++;
-          streak++;
           bopsEl.textContent = bops;
-          streakEl.textContent = streak;
           if (strength > 0.55) flash('bop!', b.x, b.y);
         }
         break;
@@ -652,19 +645,13 @@ function updateBalloons(dt) {
     // bounce off top softly
     if (b.y < b.r) { b.y = b.r; b.vy = Math.abs(b.vy) * 0.5; }
 
-    // hit the floor — miss
+    // touched the ground — no worries, a fresh balloon drifts down from the sky
     if (b.y > H + b.r) {
-      streak = 0;
-      streakEl.textContent = 0;
-      playMiss();
-      flash('oh no', b.x, H - b.r * 2);
-      // respawn from a random side at top
-      const side = Math.random() < 0.5 ? -1 : 1;
-      const fresh = spawnBalloon(b.i, side);
+      const fresh = spawnBalloon(b.i, true);
       Object.assign(b, fresh);
+      playSpawn();
     }
   }
-  aloftEl.textContent = balloons.length;
 }
 
 function drawBalloon(b) {
