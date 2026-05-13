@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Spotting — A Gentle Eye Therapy</title>
+<meta name="description" content="A calming computer-vision exercise that guides the eyes through gentle spotting therapy. Designed for laptops with a camera.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --dg: #11241D;
+  --dg-deep: #0a1813;
+  --lg: #dcefe8;
+  --lg-soft: rgba(220,239,232,0.75);
+  --lg-faint: rgba(220,239,232,0.35);
+  --gold: #F0C318;
+  --gold-soft: rgba(240,195,24,0.55);
+  --warn: #E89B5F;
+  --serif: 'Cormorant Garamond', serif;
+  --sans: 'Karla', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 50% 30%, #173428 0%, var(--dg) 55%, var(--dg-deep) 100%);
+  color: var(--lg);
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+a { color: inherit; }
+
+/* ─────────────────  Ambient background particles  ───────────────── */
+
+#ambient {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─────────────────  Stage shared layout  ───────────────── */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.9s ease, visibility 0.9s;
+  z-index: 5;
+}
+.stage.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ─────────────────  Welcome stage  ───────────────── */
+
+#welcome .frame {
+  max-width: 720px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+h1.title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(56px, 9vw, 108px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--lg);
+}
+h1.title em {
+  font-style: italic;
+  color: var(--gold);
+  font-weight: 400;
+}
+
+.lede {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(18px, 2vw, 22px);
+  color: var(--lg-soft);
+  line-height: 1.55;
+  max-width: 560px;
+}
+
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+  color: var(--lg-faint);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.notes .row {
+  display: flex; align-items: center; gap: 10px;
+}
+.dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  flex-shrink: 0;
+}
+
+.cta {
+  margin-top: 24px;
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--dg);
+  background: var(--gold);
+  border: none;
+  padding: 18px 44px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+  box-shadow: 0 0 0 0 rgba(240,195,24,0.4);
+}
+.cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px -8px rgba(240,195,24,0.55);
+}
+.cta:active { transform: translateY(0); }
+.cta.ghost {
+  background: transparent;
+  color: var(--lg-soft);
+  border: 0.5px solid rgba(220,239,232,0.3);
+}
+.cta.ghost:hover { color: var(--lg); border-color: var(--lg-soft); }
+
+.fine {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lg-faint);
+  margin-top: 6px;
+}
+
+/* ─────────────────  Loading stage  ───────────────── */
+
+#loading .frame {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.loader-orb {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold) 0%, var(--gold-soft) 30%, transparent 70%);
+  animation: pulse 2.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(0.85); opacity: 0.7; }
+  50%      { transform: scale(1.05); opacity: 1; }
+}
+.loader-msg {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--lg-soft);
+  min-height: 1.6em;
+}
+.loader-sub {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lg-faint);
+}
+
+/* ─────────────────  Error stage  ───────────────── */
+
+#error .frame {
+  max-width: 540px;
+  text-align: center;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 18px;
+}
+#error h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 36px;
+  color: var(--lg);
+}
+#error p {
+  color: var(--lg-soft);
+  font-size: 15px;
+}
+
+/* ─────────────────  Game stage  ───────────────── */
+
+#game {
+  padding: 0;
+}
+#game.active { opacity: 1; }
+
+#playfield {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* gaze indicator — a soft, breathing aura that hovers where the eyes look */
+#gaze {
+  position: absolute;
+  width: 96px; height: 96px;
+  left: 50%; top: 50%;
+  margin-left: -48px; margin-top: -48px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(220,239,232,0.18) 0%, rgba(220,239,232,0.06) 38%, transparent 70%);
+  pointer-events: none;
+  transition: transform 0.18s cubic-bezier(0.22,0.61,0.36,1), opacity 0.4s;
+  opacity: 0;
+  z-index: 4;
+}
+#gaze::after {
+  content: "";
+  position: absolute;
+  inset: 38px;
+  border-radius: 50%;
+  background: rgba(220,239,232,0.4);
+  filter: blur(2px);
+}
+
+.orb {
+  position: absolute;
+  width: 90px; height: 90px;
+  left: 50%; top: 50%;
+  margin-left: -45px; margin-top: -45px;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.5s cubic-bezier(0.22,0.61,0.36,1);
+  z-index: 3;
+}
+.orb .core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 38% 38%,
+      rgba(255,255,255,0.95) 0%,
+      var(--gold) 18%,
+      rgba(240,195,24,0.45) 42%,
+      rgba(240,195,24,0.12) 65%,
+      transparent 80%);
+  animation: orbBreath 4.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(240,195,24,0.45));
+}
+@keyframes orbBreath {
+  0%, 100% { transform: scale(0.92); }
+  50%      { transform: scale(1.08); }
+}
+.orb .progress {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1.2px solid rgba(240,195,24,0.0);
+  transition: border-color 0.15s, transform 0.25s;
+}
+.orb.locking .progress {
+  border-color: rgba(240,195,24,0.55);
+  transform: scale(var(--lock-scale, 1));
+}
+.orb.collected .core {
+  animation: orbBurst 0.9s cubic-bezier(0.22,0.61,0.36,1) forwards;
+}
+.orb.collected .progress { opacity: 0; }
+@keyframes orbBurst {
+  0%   { transform: scale(1.0); opacity: 1; filter: drop-shadow(0 0 18px rgba(240,195,24,0.5)); }
+  40%  { transform: scale(1.5); opacity: 1; filter: drop-shadow(0 0 36px rgba(240,195,24,0.9)); }
+  100% { transform: scale(2.4); opacity: 0; filter: drop-shadow(0 0 50px rgba(240,195,24,0)); }
+}
+
+/* drifting (smooth pursuit) orb has a different breath */
+.orb.drift .core {
+  background:
+    radial-gradient(circle at 38% 38%,
+      rgba(255,255,255,0.85) 0%,
+      var(--lg) 20%,
+      rgba(220,239,232,0.35) 50%,
+      transparent 80%);
+  filter: drop-shadow(0 0 16px rgba(220,239,232,0.35));
+}
+
+/* the central breathing orb */
+#breath {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 260px; height: 260px;
+  margin-left: -130px; margin-top: -130px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(220,239,232,0.10) 0%, rgba(220,239,232,0.04) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+#breath.active { opacity: 1; }
+#breath::after {
+  content: "";
+  position: absolute;
+  inset: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,195,24,0.45) 0%, rgba(240,195,24,0.12) 50%, transparent 80%);
+}
+
+/* ─────────────────  HUD overlays  ───────────────── */
+
+#hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud-tl {
+  position: absolute;
+  top: 28px; left: 32px;
+  display: flex; align-items: center; gap: 18px;
+  pointer-events: auto;
+}
+
+.brand {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+.brand em { font-style: italic; color: var(--lg); }
+
+.hud-tr {
+  position: absolute;
+  top: 28px; right: 32px;
+  display: flex; align-items: center; gap: 18px;
+  pointer-events: auto;
+}
+
+.session-chip {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(17,36,29,0.55);
+  backdrop-filter: blur(8px);
+  border: 0.5px solid rgba(220,239,232,0.15);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lg-soft);
+}
+.session-chip .val {
+  font-family: var(--serif);
+  font-size: 18px;
+  letter-spacing: 0;
+  font-style: italic;
+  color: var(--gold);
+  text-transform: none;
+}
+.session-chip .sep {
+  width: 1px; height: 14px;
+  background: rgba(220,239,232,0.2);
+}
+
+.icon-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(220,239,232,0.2);
+  background: rgba(17,36,29,0.55);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--lg-soft);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.icon-btn:hover {
+  color: var(--gold);
+  border-color: rgba(240,195,24,0.4);
+}
+
+/* camera preview */
+.hud-bl {
+  position: absolute;
+  bottom: 28px; left: 32px;
+  pointer-events: auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.preview-wrap {
+  position: relative;
+  width: 168px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(17,36,29,0.6);
+  border: 0.5px solid rgba(220,239,232,0.15);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 40px -12px rgba(0,0,0,0.5);
+}
+.preview-wrap video {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: scaleX(-1);
+  opacity: 0.85;
+}
+.preview-wrap canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  transform: scaleX(-1);
+}
+.preview-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--lg-faint);
+  padding-left: 4px;
+}
+
+/* the gentle status pill */
+.status-pill {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17,36,29,0.6);
+  backdrop-filter: blur(10px);
+  border: 0.5px solid rgba(232,155,95,0.4);
+  border-radius: 999px;
+  padding: 12px 22px;
+  display: flex; align-items: center; gap: 12px;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.6s, transform 0.6s;
+  z-index: 11;
+}
+.status-pill.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-6px);
+}
+.status-pill .pulse {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--warn);
+  box-shadow: 0 0 14px rgba(232,155,95,0.7);
+  animation: warnPulse 1.8s ease-in-out infinite;
+}
+@keyframes warnPulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+.status-pill .text {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lg);
+}
+
+/* breathing prompt */
+.breath-prompt {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, calc(-50% + 170px));
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--lg-soft);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  text-align: center;
+  pointer-events: none;
+  z-index: 6;
+}
+.breath-prompt.show { opacity: 1; }
+
+/* finished overlay */
+#finished .frame {
+  max-width: 560px;
+  text-align: center;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 22px;
+}
+#finished .summary {
+  display: flex; gap: 36px;
+  margin-top: 12px;
+}
+#finished .summary .stat {
+  display: flex; flex-direction: column; gap: 4px;
+  align-items: center;
+}
+#finished .summary .num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 56px;
+  color: var(--gold);
+  line-height: 1;
+}
+#finished .summary .lbl {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--lg-faint);
+}
+
+/* small screens: simpler layout */
+@media (max-width: 720px) {
+  .hud-tl, .hud-tr { top: 16px; }
+  .hud-tl { left: 16px; }
+  .hud-tr { right: 16px; }
+  .hud-bl { bottom: 16px; left: 16px; }
+  .preview-wrap { width: 120px; }
+  .session-chip { padding: 8px 12px; }
+  h1.title { font-size: 56px; }
+}
+
+/* utility */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<canvas id="ambient"></canvas>
+
+<!-- ─────────  Welcome  ───────── -->
+<section id="welcome" class="stage active">
+  <div class="frame">
+    <span class="eyebrow">An Eye Therapy</span>
+    <h1 class="title"><em>Spotting</em></h1>
+    <p class="lede">
+      A quiet, four-minute exercise that draws the eyes through soft light.
+      Look where the orbs gather. Let your gaze rest a moment. They will fade.
+    </p>
+
+    <div class="notes">
+      <div class="row"><span class="dot"></span> Best on a laptop with a built-in camera</div>
+      <div class="row"><span class="dot"></span> Sit at a comfortable arm's length from the screen</div>
+      <div class="row"><span class="dot"></span> Your camera feed stays on your device — nothing is uploaded</div>
+    </div>
+
+    <button class="cta" id="beginBtn">Allow camera &amp; begin</button>
+    <p class="fine">Press Esc at any time to stop</p>
+  </div>
+</section>
+
+<!-- ─────────  Loading  ───────── -->
+<section id="loading" class="stage">
+  <div class="frame">
+    <div class="loader-orb"></div>
+    <div class="loader-msg" id="loaderMsg">Reaching for the camera…</div>
+    <div class="loader-sub">a moment</div>
+  </div>
+</section>
+
+<!-- ─────────  Error  ───────── -->
+<section id="error" class="stage">
+  <div class="frame">
+    <span class="eyebrow">A pause</span>
+    <h2 id="errorTitle">The camera could not begin.</h2>
+    <p id="errorBody">This experience needs camera access on a laptop or desktop. Please grant permission in your browser and try again.</p>
+    <button class="cta ghost" id="retryBtn">Try again</button>
+  </div>
+</section>
+
+<!-- ─────────  Game  ───────── -->
+<section id="game" class="stage">
+  <div id="playfield">
+    <div id="breath"></div>
+    <div id="gaze"></div>
+  </div>
+</section>
+
+<!-- ─────────  Finished  ───────── -->
+<section id="finished" class="stage">
+  <div class="frame">
+    <span class="eyebrow">Session complete</span>
+    <h1 class="title" style="font-size: clamp(40px, 6vw, 64px);"><em>Rested</em></h1>
+    <p class="lede">Thank you for spending a moment with your eyes.</p>
+    <div class="summary">
+      <div class="stat"><span class="num" id="statOrbs">0</span><span class="lbl">orbs spotted</span></div>
+      <div class="stat"><span class="num" id="statBreaths">0</span><span class="lbl">breaths</span></div>
+      <div class="stat"><span class="num" id="statTime">0:00</span><span class="lbl">time</span></div>
+    </div>
+    <button class="cta" id="againBtn">Begin again</button>
+    <a class="fine" href="/" style="margin-top: 4px;">Return home</a>
+  </div>
+</section>
+
+<!-- ─────────  HUD (shown during game)  ───────── -->
+<div id="hud" class="hidden">
+  <div class="hud-tl">
+    <div class="brand"><em>Spotting</em></div>
+  </div>
+  <div class="hud-tr">
+    <div class="session-chip">
+      <span>Spotted <span class="val" id="hudOrbs">0</span></span>
+      <span class="sep"></span>
+      <span>Time <span class="val" id="hudTime">0:00</span></span>
+    </div>
+    <button class="icon-btn" id="stopBtn" title="End session">
+      <svg width="14" height="14" viewBox="0 0 14 14"><rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor"/></svg>
+    </button>
+  </div>
+  <div class="hud-bl">
+    <div class="preview-wrap">
+      <video id="video" playsinline muted autoplay></video>
+      <canvas id="overlay"></canvas>
+    </div>
+    <div class="preview-label" id="previewLabel">presence</div>
+  </div>
+  <div class="status-pill" id="statusPill">
+    <span class="pulse"></span>
+    <span class="text" id="statusText">Make sure your face is visible</span>
+  </div>
+  <div class="breath-prompt" id="breathPrompt">breathe in…</div>
+</div>
+
+<script type="module">
+import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/vision_bundle.mjs";
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Element refs
+   ═══════════════════════════════════════════════════════════════════════ */
+const $ = (id) => document.getElementById(id);
+
+const stages = {
+  welcome:  $("welcome"),
+  loading:  $("loading"),
+  error:    $("error"),
+  game:     $("game"),
+  finished: $("finished"),
+};
+
+const video    = $("video");
+const overlay  = $("overlay");
+const playfield= $("playfield");
+const gazeEl   = $("gaze");
+const breathEl = $("breath");
+const breathPrompt = $("breathPrompt");
+const statusPill = $("statusPill");
+const statusText = $("statusText");
+const previewLabel = $("previewLabel");
+const hud      = $("hud");
+const hudOrbs  = $("hudOrbs");
+const hudTime  = $("hudTime");
+const loaderMsg= $("loaderMsg");
+const errorTitle = $("errorTitle");
+const errorBody  = $("errorBody");
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Stage switching
+   ═══════════════════════════════════════════════════════════════════════ */
+function showStage(name) {
+  Object.values(stages).forEach(s => s.classList.remove("active"));
+  stages[name].classList.add("active");
+  if (name === "game") hud.classList.remove("hidden");
+  else hud.classList.add("hidden");
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Ambient starfield (drawn to a fullscreen canvas)
+   ═══════════════════════════════════════════════════════════════════════ */
+(function ambient() {
+  const cnv = $("ambient");
+  const ctx = cnv.getContext("2d");
+  let W, H, dpr;
+  const stars = [];
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    W = window.innerWidth;
+    H = window.innerHeight;
+    cnv.width  = W * dpr;
+    cnv.height = H * dpr;
+    cnv.style.width  = W + "px";
+    cnv.style.height = H + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  const COUNT = 90;
+  for (let i = 0; i < COUNT; i++) {
+    stars.push({
+      x: Math.random(),
+      y: Math.random(),
+      r: 0.4 + Math.random() * 1.4,
+      tw: Math.random() * Math.PI * 2,
+      sp: 0.0015 + Math.random() * 0.0025,
+      hue: Math.random() < 0.18 ? "gold" : "soft",
+    });
+  }
+
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      s.tw += s.sp;
+      const alpha = 0.25 + 0.5 * (0.5 + 0.5 * Math.sin(s.tw));
+      const x = s.x * W, y = s.y * H;
+      ctx.beginPath();
+      ctx.arc(x, y, s.r, 0, Math.PI * 2);
+      if (s.hue === "gold") ctx.fillStyle = `rgba(240,195,24,${alpha * 0.6})`;
+      else                   ctx.fillStyle = `rgba(220,239,232,${alpha * 0.45})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Audio: very gentle Web-Audio chimes
+   ═══════════════════════════════════════════════════════════════════════ */
+let audioCtx = null;
+function audio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { return null; }
+  }
+  return audioCtx;
+}
+function chime(freq = 660, dur = 0.8, vol = 0.06) {
+  const c = audio(); if (!c) return;
+  if (c.state === "suspended") c.resume();
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.type = "sine";
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0, c.currentTime);
+  g.gain.linearRampToValueAtTime(vol, c.currentTime + 0.08);
+  g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+  o.connect(g).connect(c.destination);
+  o.start();
+  o.stop(c.currentTime + dur + 0.05);
+}
+const PENTATONIC = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
+function chimeRandom() {
+  const f = PENTATONIC[Math.floor(Math.random() * PENTATONIC.length)];
+  chime(f, 1.4, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MediaPipe + camera lifecycle
+   ═══════════════════════════════════════════════════════════════════════ */
+let faceLandmarker = null;
+let stream = null;
+let rafId = null;
+let running = false;
+let lastVideoTime = -1;
+
+async function startSession() {
+  showStage("loading");
+  loaderMsg.textContent = "Asking your camera kindly…";
+
+  /* 1.  Camera */
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+      audio: false,
+    });
+    video.srcObject = stream;
+    await new Promise((res) => {
+      if (video.readyState >= 1) return res();
+      video.addEventListener("loadedmetadata", res, { once: true });
+    });
+    await video.play();
+  } catch (e) {
+    return showError(
+      "The camera could not begin.",
+      "Please grant camera access in your browser, or try a different browser. " +
+      "Spotting needs a built-in or attached camera to guide your eyes."
+    );
+  }
+
+  /* 2.  Sniff for mobile (we don't refuse — just nudge) */
+  const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+  if (isCoarse) {
+    loaderMsg.textContent = "Made for laptops — adapting gently…";
+    await sleep(1100);
+  }
+
+  /* 3.  MediaPipe model (reuse on subsequent sessions) */
+  if (!faceLandmarker) {
+    loaderMsg.textContent = "Tuning the gaze…";
+    try {
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm"
+      );
+      faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath:
+            "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+          delegate: "GPU",
+        },
+        outputFaceBlendshapes: false,
+        outputFacialTransformationMatrixes: false,
+        runningMode: "VIDEO",
+        numFaces: 1,
+      });
+    } catch (e) {
+      return showError(
+        "The vision model could not load.",
+        "Please check your connection and try again. If this keeps happening, try Chrome, Edge, or Firefox on a laptop."
+      );
+    }
+  }
+
+  loaderMsg.textContent = "A breath…";
+  await sleep(700);
+
+  showStage("game");
+  beginGameLoop();
+}
+
+function showError(title, body) {
+  errorTitle.textContent = title;
+  errorBody.textContent = body;
+  showStage("error");
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function teardown() {
+  running = false;
+  if (rafId) cancelAnimationFrame(rafId);
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Gaze estimation
+   ───────────────────────────────────────────────────────────────────────
+   We combine head pose (where the face is pointed) with iris offset within
+   each eye.  Head pose dominates when the user moves; iris adds precision
+   for small eye-only saccades.  Coordinates are smoothed and re-centered
+   over the first ~3 seconds (auto-calibration to whatever resting pose
+   the user has settled into).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+// MediaPipe face landmark indices we rely on
+const IDX = {
+  noseTip: 1,
+  faceLeft: 234,       // left side of face (user's right)
+  faceRight: 454,
+  faceTop: 10,
+  faceBottom: 152,
+  // eye corners
+  rEyeOuter: 33,  rEyeInner: 133,  rEyeTop: 159, rEyeBottom: 145,
+  lEyeOuter: 263, lEyeInner: 362,  lEyeTop: 386, lEyeBottom: 374,
+  // iris centers (require refined landmarks; FaceLandmarker provides them)
+  rIris: 468,
+  lIris: 473,
+};
+
+// running calibration state
+const cal = {
+  startAt: 0,
+  sumHX: 0, sumHY: 0, n: 0,
+  centerHX: 0, centerHY: 0,
+  ready: false,
+};
+
+// smoothed gaze coords (in 0..1 screen space)
+let smoothX = 0.5, smoothY = 0.5;
+let lastFaceTime = 0;
+let faceVisible = false;
+let tooClose = false;
+let coveredDark = false;
+
+function estimateGaze(landmarks) {
+  // Head yaw proxy: nose tip x relative to face left/right
+  const nose = landmarks[IDX.noseTip];
+  const fl = landmarks[IDX.faceLeft];
+  const fr = landmarks[IDX.faceRight];
+  const ft = landmarks[IDX.faceTop];
+  const fb = landmarks[IDX.faceBottom];
+
+  // face width in normalized image coords (0..1)
+  const faceW = fr.x - fl.x;
+  const faceH = fb.y - ft.y;
+
+  // Head x: where the nose sits between left/right cheeks
+  // 0 = nose at left cheek, 1 = nose at right cheek, 0.5 = centered
+  const headXNorm = (nose.x - fl.x) / Math.max(faceW, 1e-4);
+  const headYNorm = (nose.y - ft.y) / Math.max(faceH, 1e-4);
+
+  // Iris offset within each eye (-0.5..0.5)
+  function eyeOffset(iris, outer, inner, top, bot) {
+    const oi = landmarks[iris];
+    const oo = landmarks[outer];
+    const ii = landmarks[inner];
+    const tt = landmarks[top];
+    const bb = landmarks[bot];
+    const eyeW = Math.abs(oo.x - ii.x);
+    const eyeH = Math.abs(bb.y - tt.y);
+    const cx = (oo.x + ii.x) / 2;
+    const cy = (tt.y + bb.y) / 2;
+    return {
+      ex: (oi.x - cx) / Math.max(eyeW, 1e-4),
+      ey: (oi.y - cy) / Math.max(eyeH, 1e-4),
+    };
+  }
+  const eR = eyeOffset(IDX.rIris, IDX.rEyeOuter, IDX.rEyeInner, IDX.rEyeTop, IDX.rEyeBottom);
+  const eL = eyeOffset(IDX.lIris, IDX.lEyeOuter, IDX.lEyeInner, IDX.lEyeTop, IDX.lEyeBottom);
+  const irisX = (eR.ex + eL.ex) / 2;
+  const irisY = (eR.ey + eL.ey) / 2;
+
+  // Combine head pose + iris.  Head pose normalized to 0..1 around 0.5;
+  // iris is added with a smaller weight because it's noisier.
+  let rawX = headXNorm + irisX * 0.55;
+  let rawY = headYNorm + irisY * 0.55;
+
+  // auto-calibration: collect baseline during first 2 seconds
+  if (!cal.ready) {
+    cal.sumHX += rawX;
+    cal.sumHY += rawY;
+    cal.n += 1;
+    if (performance.now() - cal.startAt > 2000 && cal.n > 20) {
+      cal.centerHX = cal.sumHX / cal.n;
+      cal.centerHY = cal.sumHY / cal.n;
+      cal.ready = true;
+    }
+  }
+
+  // map (rawX - center) → screen position with a gain factor
+  // The video is mirrored on screen, so flip X so "look right" → right edge
+  const gain = 2.6;
+  const gx = 0.5 - (rawX - cal.centerHX) * gain;
+  const gy = 0.5 + (rawY - cal.centerHY) * gain * 1.1;
+
+  return {
+    x: Math.max(-0.1, Math.min(1.1, gx)),
+    y: Math.max(-0.1, Math.min(1.1, gy)),
+    faceW, faceH,
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Frame brightness — used to distinguish "covered camera" from "no face"
+   ═══════════════════════════════════════════════════════════════════════ */
+const brightCanvas = document.createElement("canvas");
+brightCanvas.width = 32; brightCanvas.height = 24;
+const brightCtx = brightCanvas.getContext("2d", { willReadFrequently: true });
+function frameBrightness() {
+  try {
+    brightCtx.drawImage(video, 0, 0, 32, 24);
+    const d = brightCtx.getImageData(0, 0, 32, 24).data;
+    let sum = 0;
+    for (let i = 0; i < d.length; i += 4) {
+      sum += 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+    }
+    return sum / (d.length / 4); // 0..255
+  } catch { return 128; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Game state
+   ═══════════════════════════════════════════════════════════════════════ */
+const SESSION_LENGTH_MS = 4 * 60 * 1000; // 4 minutes
+const BREATH_INTERVAL_MS = 60 * 1000;    // breathing pause every ~60s
+const BREATH_DURATION_MS = 22 * 1000;    // ~22 seconds of breathing
+const LOCK_REQUIRED_MS = 700;            // dwell time to "collect" an orb
+const ORB_RADIUS = 80;                   // px hit radius
+
+const state = {
+  orbs: [],        // active orbs on screen
+  spotted: 0,
+  breaths: 0,
+  startedAt: 0,
+  lastBreathAt: 0,
+  breathing: false,
+  finished: false,
+};
+
+/* spawn an orb at a soft random position, avoiding hard edges */
+function spawnOrb({ drift = false } = {}) {
+  if (state.breathing || state.finished) return;
+  const W = window.innerWidth, H = window.innerHeight;
+  const margin = 140;
+  const x = margin + Math.random() * (W - 2 * margin);
+  const y = margin + Math.random() * (H - 2 * margin);
+
+  const el = document.createElement("div");
+  el.className = "orb" + (drift ? " drift" : "");
+  const core = document.createElement("div"); core.className = "core";
+  const prog = document.createElement("div"); prog.className = "progress";
+  el.appendChild(core); el.appendChild(prog);
+  el.style.transform = `translate(${x - window.innerWidth/2}px, ${y - window.innerHeight/2}px) scale(0.4)`;
+  el.style.opacity = "0";
+  playfield.appendChild(el);
+  requestAnimationFrame(() => {
+    el.style.transition = "transform 1.2s cubic-bezier(0.22,0.61,0.36,1), opacity 1.2s ease";
+    el.style.opacity = "1";
+    el.style.transform = `translate(${x - window.innerWidth/2}px, ${y - window.innerHeight/2}px) scale(1)`;
+  });
+
+  const orb = {
+    el, x, y,
+    vx: drift ? (Math.random() - 0.5) * 0.18 : 0,
+    vy: drift ? (Math.random() - 0.5) * 0.18 : 0,
+    lockMs: 0,
+    drift,
+    born: performance.now(),
+    expires: performance.now() + (drift ? 18000 : 9000),
+    collected: false,
+  };
+  state.orbs.push(orb);
+}
+
+function updateOrbs(dt, gazePx) {
+  for (const orb of state.orbs) {
+    if (orb.collected) continue;
+
+    // drift movement
+    if (orb.drift) {
+      orb.x += orb.vx * dt;
+      orb.y += orb.vy * dt;
+      const m = 120;
+      if (orb.x < m || orb.x > window.innerWidth  - m) orb.vx *= -1;
+      if (orb.y < m || orb.y > window.innerHeight - m) orb.vy *= -1;
+      orb.x = Math.max(m, Math.min(window.innerWidth  - m, orb.x));
+      orb.y = Math.max(m, Math.min(window.innerHeight - m, orb.y));
+      orb.el.style.transition = "transform 0.18s linear, opacity 1.2s ease";
+      orb.el.style.transform = `translate(${orb.x - window.innerWidth/2}px, ${orb.y - window.innerHeight/2}px) scale(1)`;
+    }
+
+    // distance to gaze (if face visible)
+    if (faceVisible && gazePx) {
+      const dx = gazePx.x - orb.x;
+      const dy = gazePx.y - orb.y;
+      const d = Math.hypot(dx, dy);
+      if (d < ORB_RADIUS) {
+        orb.lockMs += dt;
+        orb.el.classList.add("locking");
+        const t = Math.min(1, orb.lockMs / LOCK_REQUIRED_MS);
+        orb.el.style.setProperty("--lock-scale", String(1 + t * 0.25));
+        if (orb.lockMs >= LOCK_REQUIRED_MS) {
+          collectOrb(orb);
+        }
+      } else {
+        orb.lockMs = Math.max(0, orb.lockMs - dt * 0.7);
+        if (orb.lockMs <= 0) orb.el.classList.remove("locking");
+      }
+    }
+
+    // expiry
+    if (performance.now() > orb.expires) {
+      orb.el.style.transition = "opacity 1.4s ease, transform 1.4s ease";
+      orb.el.style.opacity = "0";
+      orb.collected = true;
+      setTimeout(() => orb.el.remove(), 1500);
+    }
+  }
+  // garbage collect
+  state.orbs = state.orbs.filter(o => o.el.isConnected);
+}
+
+function collectOrb(orb) {
+  orb.collected = true;
+  orb.el.classList.add("collected");
+  setTimeout(() => orb.el.remove(), 950);
+  state.spotted++;
+  hudOrbs.textContent = String(state.spotted);
+  chimeRandom();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Breathing pause
+   ═══════════════════════════════════════════════════════════════════════ */
+async function breathingPause() {
+  state.breathing = true;
+  // clear current orbs gently
+  for (const o of state.orbs) {
+    o.el.style.transition = "opacity 1.2s ease, transform 1.2s ease";
+    o.el.style.opacity = "0";
+    o.collected = true;
+    setTimeout(() => o.el.remove(), 1300);
+  }
+  state.orbs = [];
+
+  breathEl.classList.add("active");
+
+  const phases = [
+    { label: "breathe in…",  ms: 4000, scale: 1.35 },
+    { label: "hold…",        ms: 2000, scale: 1.35 },
+    { label: "breathe out…", ms: 5000, scale: 0.85 },
+    { label: "rest…",        ms: 1500, scale: 0.85 },
+  ];
+
+  const cycles = Math.max(1, Math.floor(BREATH_DURATION_MS / phases.reduce((a,p) => a+p.ms, 0)));
+  for (let c = 0; c < cycles; c++) {
+    for (const p of phases) {
+      if (state.finished) break;
+      breathPrompt.textContent = p.label;
+      breathPrompt.classList.add("show");
+      breathEl.style.transition = `transform ${p.ms}ms cubic-bezier(0.45, 0.0, 0.55, 1)`;
+      breathEl.style.transform = `scale(${p.scale})`;
+      await sleep(p.ms);
+    }
+    state.breaths++;
+  }
+
+  breathPrompt.classList.remove("show");
+  breathEl.classList.remove("active");
+  breathEl.style.transform = "";
+  state.breathing = false;
+  state.lastBreathAt = performance.now();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Status messaging
+   ═══════════════════════════════════════════════════════════════════════ */
+let currentStatus = "";
+function setStatus(msg) {
+  if (msg === currentStatus) return;
+  currentStatus = msg;
+  if (msg) {
+    statusText.textContent = msg;
+    statusPill.classList.add("show");
+  } else {
+    statusPill.classList.remove("show");
+  }
+}
+
+function setPresenceLabel(text) {
+  previewLabel.textContent = text;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Overlay (the small camera preview gets a soft face outline)
+   ═══════════════════════════════════════════════════════════════════════ */
+function drawOverlay(landmarks) {
+  const ctx = overlay.getContext("2d");
+  const w = overlay.width = overlay.clientWidth * (window.devicePixelRatio || 1);
+  const h = overlay.height = overlay.clientHeight * (window.devicePixelRatio || 1);
+  ctx.clearRect(0, 0, w, h);
+  if (!landmarks) return;
+  // draw a soft polyline along the face oval (a subset of landmark indices)
+  const oval = [10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109,10];
+  ctx.beginPath();
+  oval.forEach((idx, i) => {
+    const p = landmarks[idx];
+    if (!p) return;
+    const x = p.x * w;
+    const y = p.y * h;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = "rgba(240,195,24,0.6)";
+  ctx.lineWidth = 1.2 * (window.devicePixelRatio || 1);
+  ctx.stroke();
+
+  // iris dots
+  [IDX.rIris, IDX.lIris].forEach((idx) => {
+    const p = landmarks[idx];
+    if (!p) return;
+    ctx.beginPath();
+    ctx.arc(p.x * w, p.y * h, 2.5 * (window.devicePixelRatio || 1), 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(220,239,232,0.95)";
+    ctx.fill();
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Main loop
+   ═══════════════════════════════════════════════════════════════════════ */
+function beginGameLoop() {
+  running = true;
+  state.spotted = 0;
+  state.breaths = 0;
+  state.orbs = [];
+  state.startedAt = performance.now();
+  state.lastBreathAt = state.startedAt;
+  state.finished = false;
+  cal.startAt = performance.now();
+  cal.sumHX = 0; cal.sumHY = 0; cal.n = 0; cal.ready = false;
+  hudOrbs.textContent = "0";
+  lastVideoTime = -1;
+  smoothX = 0.5; smoothY = 0.5;
+  faceVisible = false; tooClose = false; coveredDark = false;
+  currentStatus = "";
+
+  // first orb waits ~3s so auto-calibration can settle
+  setTimeout(() => spawnOrb(), 3200);
+  setTimeout(() => spawnOrb({ drift: true }), 7000);
+
+  let lastT = performance.now();
+  let nextSpawnAt = performance.now() + 7000;
+  let noFaceSince = 0;
+
+  function tick(now) {
+    if (!running) return;
+    const dt = Math.min(60, now - lastT);
+    lastT = now;
+
+    // run face landmarker
+    let landmarks = null;
+    if (video.readyState >= 2 && faceLandmarker && video.currentTime !== lastVideoTime) {
+      lastVideoTime = video.currentTime;
+      const res = faceLandmarker.detectForVideo(video, now);
+      if (res && res.faceLandmarks && res.faceLandmarks.length > 0) {
+        landmarks = res.faceLandmarks[0];
+      }
+    }
+
+    // presence / closeness / coverage
+    if (landmarks) {
+      faceVisible = true;
+      noFaceSince = 0;
+
+      const g = estimateGaze(landmarks);
+      // gentle smoothing — heavier when calibrating
+      const alpha = cal.ready ? 0.32 : 0.5;
+      smoothX = smoothX + (g.x - smoothX) * alpha;
+      smoothY = smoothY + (g.y - smoothY) * alpha;
+
+      // distance check: faceH is the vertical extent of the face in
+      // normalized image coords.  >0.65 means a very large face → too close.
+      tooClose = g.faceH > 0.62;
+      coveredDark = false;
+
+      if (tooClose) {
+        setStatus("Lean back gently — you're close to the camera");
+        setPresenceLabel("too close");
+      } else if (!cal.ready) {
+        setStatus("Settle in — finding your gaze…");
+        setPresenceLabel("calibrating");
+      } else {
+        setStatus("");
+        setPresenceLabel("presence");
+      }
+
+      drawOverlay(landmarks);
+    } else {
+      faceVisible = false;
+      if (noFaceSince === 0) noFaceSince = now;
+      if (now - noFaceSince > 1200) {
+        const b = frameBrightness();
+        if (b < 24) {
+          setStatus("It looks like the camera is covered");
+          setPresenceLabel("covered");
+          coveredDark = true;
+        } else {
+          setStatus("We can't see you — try sitting in front of the camera");
+          setPresenceLabel("waiting");
+          coveredDark = false;
+        }
+      }
+      drawOverlay(null);
+    }
+
+    // place gaze indicator
+    if (faceVisible && !tooClose) {
+      gazeEl.style.opacity = cal.ready ? "1" : "0.35";
+      const px = smoothX * window.innerWidth;
+      const py = smoothY * window.innerHeight;
+      gazeEl.style.transform = `translate(${px - window.innerWidth/2}px, ${py - window.innerHeight/2}px)`;
+
+      const gazePx = { x: px, y: py };
+      if (!state.breathing) updateOrbs(dt, cal.ready ? gazePx : null);
+    } else {
+      gazeEl.style.opacity = "0";
+      if (!state.breathing) updateOrbs(dt, null);
+    }
+
+    // session timer
+    const elapsed = now - state.startedAt;
+    hudTime.textContent = fmtTime(elapsed);
+
+    // breathing pause scheduling
+    if (!state.breathing && now - state.lastBreathAt > BREATH_INTERVAL_MS) {
+      breathingPause();
+    }
+
+    // orb spawning cadence
+    if (!state.breathing && now > nextSpawnAt && state.orbs.length < 3) {
+      const r = Math.random();
+      spawnOrb({ drift: r < 0.32 });
+      nextSpawnAt = now + 3000 + Math.random() * 2500;
+    }
+
+    // session end
+    if (elapsed >= SESSION_LENGTH_MS && !state.finished) {
+      finishSession();
+    }
+
+    rafId = requestAnimationFrame(tick);
+  }
+  rafId = requestAnimationFrame(tick);
+}
+
+function fmtTime(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2, "0")}`;
+}
+
+function finishSession() {
+  state.finished = true;
+  // clear orbs softly
+  for (const o of state.orbs) {
+    o.el.style.transition = "opacity 1s ease";
+    o.el.style.opacity = "0";
+    setTimeout(() => o.el.remove(), 1100);
+  }
+  state.orbs = [];
+  gazeEl.style.opacity = "0";
+
+  $("statOrbs").textContent  = String(state.spotted);
+  $("statBreaths").textContent = String(state.breaths);
+  $("statTime").textContent  = fmtTime(performance.now() - state.startedAt);
+
+  setTimeout(() => {
+    teardown();
+    showStage("finished");
+  }, 900);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Wiring
+   ═══════════════════════════════════════════════════════════════════════ */
+$("beginBtn").addEventListener("click", () => {
+  audio(); // unlock audio on user gesture
+  startSession();
+});
+$("retryBtn").addEventListener("click", () => {
+  showStage("welcome");
+});
+$("againBtn").addEventListener("click", () => {
+  showStage("welcome");
+});
+$("stopBtn").addEventListener("click", () => {
+  finishSession();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (stages.game.classList.contains("active")) finishSession();
+  }
+});
+
+window.addEventListener("beforeunload", teardown);
+</script>
+</body>
+</html>
