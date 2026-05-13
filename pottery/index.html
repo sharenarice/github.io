@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Pottery Wheel — shape clay with your hands</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dg:#11241D;
+  --dg2:#0c1a15;
+  --lg:#dcefe8;
+  --gold:#F0C318;
+  --clay-hi:#F1B486;
+  --clay:#C97043;
+  --clay-mid:#9C4A23;
+  --clay-lo:#5C2814;
+  --serif:'Cormorant Garamond',serif;
+  --sans:'Karla',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--sans);
+  background:radial-gradient(ellipse at 50% 80%,#1a3a2e 0%,var(--dg) 45%,var(--dg2) 100%);
+  color:var(--lg);
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+}
+
+header{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding:1.1rem 2rem .9rem;
+  border-bottom:0.5px solid rgba(220,239,232,0.12);
+  background:rgba(17,36,29,0.7);
+  backdrop-filter:blur(8px);
+  pointer-events:none;
+}
+header > *{pointer-events:auto}
+.title{
+  font-family:var(--serif);
+  font-size:1.65rem;
+  font-weight:500;
+  letter-spacing:-0.01em;
+  line-height:1;
+}
+.title em{color:var(--gold);font-style:italic;font-weight:400}
+.subtitle{
+  font-size:.7rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(220,239,232,0.7);
+  margin-top:.4rem;
+}
+.home-link{
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(220,239,232,0.6);
+  text-decoration:none;
+  border-bottom:1px solid rgba(220,239,232,0.25);
+  padding-bottom:2px;
+  transition:color .2s,border-color .2s;
+}
+.home-link:hover{color:var(--gold);border-color:var(--gold)}
+
+/* Intro overlay */
+#intro{
+  position:fixed;inset:0;z-index:40;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:5rem 1.5rem 2rem;
+  background:radial-gradient(ellipse at 50% 60%,rgba(26,58,46,0.85) 0%,rgba(12,26,21,0.96) 70%);
+  backdrop-filter:blur(2px);
+}
+#intro .panel{
+  max-width:34rem;
+  text-align:center;
+}
+#intro h2{
+  font-family:var(--serif);
+  font-size:clamp(2rem,4.5vw,3.2rem);
+  font-weight:400;
+  letter-spacing:-0.01em;
+  line-height:1.05;
+  color:var(--lg);
+  margin-bottom:.4rem;
+}
+#intro h2 em{color:var(--gold);font-style:italic}
+#intro .tag{
+  font-size:.72rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:1.5rem;
+}
+#intro p{
+  font-size:1rem;
+  line-height:1.65;
+  color:rgba(220,239,232,0.88);
+  margin-bottom:.9rem;
+}
+#intro .note{
+  font-size:.82rem;
+  color:rgba(220,239,232,0.6);
+  font-style:italic;
+  font-family:var(--serif);
+  margin-top:1.2rem;
+  line-height:1.55;
+}
+#intro .startBtn{
+  margin-top:2rem;
+  display:inline-flex;align-items:center;gap:.6rem;
+  background:var(--gold);
+  color:#231a04;
+  border:none;
+  font-family:var(--sans);
+  font-size:.78rem;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  padding:.95rem 1.8rem;
+  border-radius:999px;
+  cursor:pointer;
+  transition:transform .15s,box-shadow .15s,background .15s;
+  box-shadow:0 6px 22px rgba(240,195,24,0.18);
+}
+#intro .startBtn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(240,195,24,0.32);background:#ffd33a}
+#intro .startBtn:disabled{opacity:.55;cursor:default;transform:none;box-shadow:none}
+#intro .err{
+  margin-top:1.2rem;
+  font-size:.85rem;
+  color:#ffb4a2;
+  min-height:1.4em;
+}
+#intro .tips{
+  margin-top:2rem;
+  display:flex;gap:1.4rem;justify-content:center;flex-wrap:wrap;
+  font-size:.74rem;letter-spacing:.06em;
+  color:rgba(220,239,232,0.55);
+}
+#intro .tips span::before{content:"·  ";color:var(--gold);}
+
+/* Game */
+#game{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  padding-top:4.5rem;
+}
+#stage{
+  position:relative;
+  flex:1;
+  overflow:hidden;
+}
+#potCanvas{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  display:block;
+}
+
+/* Webcam preview */
+#preview{
+  position:absolute;
+  right:1.25rem;bottom:1.25rem;
+  width:min(22vw,260px);
+  aspect-ratio:4/3;
+  border-radius:14px;
+  overflow:hidden;
+  background:#000;
+  border:1px solid rgba(220,239,232,0.18);
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
+  z-index:5;
+}
+#video{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  transform:scaleX(-1);
+  filter:saturate(0.9) brightness(0.95);
+}
+#previewOverlay{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  pointer-events:none;
+}
+#previewLabel{
+  position:absolute;left:.6rem;top:.5rem;
+  font-size:.6rem;letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(220,239,232,0.85);
+  background:rgba(0,0,0,0.35);
+  padding:.2rem .5rem;border-radius:99px;
+  backdrop-filter:blur(4px);
+}
+
+/* Status / hints */
+#hint{
+  position:absolute;
+  left:50%;top:1.5rem;
+  transform:translateX(-50%);
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:1.05rem;
+  color:rgba(220,239,232,0.78);
+  letter-spacing:.01em;
+  background:rgba(12,26,21,0.45);
+  padding:.45rem 1.1rem;
+  border-radius:99px;
+  border:1px solid rgba(220,239,232,0.08);
+  backdrop-filter:blur(6px);
+  z-index:4;
+  transition:opacity .4s;
+}
+
+/* Controls */
+#controls{
+  position:absolute;
+  left:1.5rem;bottom:1.5rem;
+  display:flex;flex-direction:column;gap:.55rem;
+  z-index:5;
+}
+.ctrl{
+  font-family:var(--sans);
+  font-size:.7rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--lg);
+  background:rgba(17,36,29,0.65);
+  border:1px solid rgba(220,239,232,0.18);
+  padding:.65rem 1.05rem;
+  border-radius:99px;
+  cursor:pointer;
+  backdrop-filter:blur(6px);
+  transition:all .15s;
+  text-align:left;
+}
+.ctrl:hover{border-color:var(--gold);color:var(--gold)}
+.ctrl.primary{
+  background:var(--gold);color:#231a04;border-color:var(--gold);font-weight:600;
+}
+.ctrl.primary:hover{background:#ffd33a;color:#231a04}
+.ctrl .k{opacity:.55;margin-left:.4rem;font-size:.62rem}
+
+/* Warning */
+#warning{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  background:rgba(28,16,12,0.92);
+  border:1px solid rgba(255,180,162,0.4);
+  color:#ffd9cd;
+  padding:1.2rem 1.6rem;
+  border-radius:14px;
+  font-size:.92rem;
+  letter-spacing:.01em;
+  text-align:center;
+  max-width:22rem;
+  z-index:20;
+  box-shadow:0 14px 36px rgba(0,0,0,0.5);
+  backdrop-filter:blur(6px);
+}
+#warning .wl{
+  font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+  color:#ffb4a2;font-weight:600;display:block;margin-bottom:.5rem;
+}
+
+@media (max-width:720px){
+  #preview{width:34vw}
+  #hint{font-size:.9rem;top:1rem}
+  .title{font-size:1.25rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="title"><em>pottery</em> wheel</div>
+    <div class="subtitle">Shape clay with your hands</div>
+  </div>
+  <a href="/" class="home-link">← Home</a>
+</header>
+
+<!-- Intro / permission gate -->
+<div id="intro">
+  <div class="panel">
+    <div class="tag">A computer vision toy</div>
+    <h2>Throw a pot with <em>your hands</em>.</h2>
+    <p>The wheel is spinning. Hold your hands in front of your webcam, on either side of the clay, and shape the pot by moving them closer to or further from the center.</p>
+    <p class="note">Best on a <strong>laptop</strong> — a wide camera, good light, and a little room behind you to gesture make all the difference.</p>
+    <button id="startBtn" class="startBtn">
+      <span>Turn on camera &amp; start</span>
+      <span aria-hidden="true">→</span>
+    </button>
+    <div class="err" id="errMsg"></div>
+    <div class="tips">
+      <span>Move hands left/right of the pot</span>
+      <span>Raise to shape the neck</span>
+      <span>Lower to widen the base</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main game -->
+<div id="game" hidden>
+  <div id="stage">
+    <canvas id="potCanvas"></canvas>
+    <div id="hint">Bring both hands into frame, on either side of the pot.</div>
+    <div id="preview">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="previewOverlay"></canvas>
+      <div id="previewLabel">You</div>
+    </div>
+    <div id="controls">
+      <button class="ctrl primary" id="fireBtn">Fire in kiln <span class="k">F</span></button>
+      <button class="ctrl" id="resetBtn">Fresh lump of clay <span class="k">R</span></button>
+      <button class="ctrl" id="freezeBtn">Pause wheel <span class="k">space</span></button>
+    </div>
+    <div id="warning" hidden>
+      <span class="wl" id="warnLabel">Heads up</span>
+      <span id="warnMsg"></span>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {
+  HandLandmarker,
+  FilesetResolver,
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/vision_bundle.mjs";
+
+/* -------------------- DOM -------------------- */
+const introEl    = document.getElementById('intro');
+const startBtn   = document.getElementById('startBtn');
+const errMsg     = document.getElementById('errMsg');
+const gameEl     = document.getElementById('game');
+const video      = document.getElementById('video');
+const potCanvas  = document.getElementById('potCanvas');
+const previewOverlay = document.getElementById('previewOverlay');
+const hintEl     = document.getElementById('hint');
+const warningEl  = document.getElementById('warning');
+const warnLabel  = document.getElementById('warnLabel');
+const warnMsg    = document.getElementById('warnMsg');
+const fireBtn    = document.getElementById('fireBtn');
+const resetBtn   = document.getElementById('resetBtn');
+const freezeBtn  = document.getElementById('freezeBtn');
+
+const ctx = potCanvas.getContext('2d');
+const pctx = previewOverlay.getContext('2d');
+
+/* -------------------- Sizing -------------------- */
+let W = 0, H = 0, DPR = 1;
+function resize(){
+  DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  const r = potCanvas.getBoundingClientRect();
+  W = r.width; H = r.height;
+  potCanvas.width  = Math.round(W * DPR);
+  potCanvas.height = Math.round(H * DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+
+  const pr = previewOverlay.getBoundingClientRect();
+  previewOverlay.width  = Math.round(pr.width * DPR);
+  previewOverlay.height = Math.round(pr.height * DPR);
+  pctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+
+/* -------------------- Pottery model -------------------- */
+const N_SLICES = 110;
+const radii  = new Float32Array(N_SLICES);
+const target = new Float32Array(N_SLICES);
+
+function initPot(){
+  // Soft, slightly tapered starting lump
+  for (let i = 0; i < N_SLICES; i++){
+    const t = i / (N_SLICES - 1);     // 0 top → 1 bottom
+    const lump = 0.55 + 0.35 * Math.sin((1 - t) * Math.PI * 0.9) + 0.10 * (1 - t);
+    target[i] = radii[i] = lump;       // normalized radius 0..1
+  }
+}
+initPot();
+
+/* Shaping params */
+const SHAPE_GAIN    = 0.28;  // how strongly hand pulls the slice toward target
+const KERNEL_SIGMA  = 7;     // vertical influence width (in slice units)
+const SMOOTH_RATE   = 0.18;  // radii → target lerp per frame
+const NEIGHBOR_SMOOTH = 0.14; // axial cohesion between adjacent slices
+
+function shapeAt(sliceIdx, normRadius){
+  const lo = Math.max(0, sliceIdx - KERNEL_SIGMA * 3);
+  const hi = Math.min(N_SLICES - 1, sliceIdx + KERNEL_SIGMA * 3);
+  for (let i = lo; i <= hi; i++){
+    const d = i - sliceIdx;
+    const w = Math.exp(-(d*d) / (2 * KERNEL_SIGMA * KERNEL_SIGMA));
+    const g = SHAPE_GAIN * w;
+    target[i] = target[i] * (1 - g) + normRadius * g;
+  }
+}
+
+function relaxRadii(){
+  // axial smoothing: clay can't make instant cliffs
+  const tmp = new Float32Array(N_SLICES);
+  for (let i = 0; i < N_SLICES; i++){
+    const a = target[Math.max(0, i - 1)];
+    const b = target[i];
+    const c = target[Math.min(N_SLICES - 1, i + 1)];
+    tmp[i] = b * (1 - NEIGHBOR_SMOOTH) + (a + c) * 0.5 * NEIGHBOR_SMOOTH;
+  }
+  // clamp + tiny gravity pull toward base width
+  for (let i = 0; i < N_SLICES; i++){
+    let r = tmp[i];
+    if (r < 0.08) r = 0.08;
+    if (r > 1.05) r = 1.05;
+    target[i] = r;
+  }
+  for (let i = 0; i < N_SLICES; i++){
+    radii[i] += (target[i] - radii[i]) * SMOOTH_RATE;
+  }
+}
+
+/* -------------------- Hands -------------------- */
+let handLandmarker = null;
+let lastHandTime = 0;
+let lastHands = []; // array of {pts:[{x,y}...21], cx, cy, bbox:{w,h}}
+
+async function setupHandLandmarker(){
+  const fileset = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.9/wasm"
+  );
+  handLandmarker = await HandLandmarker.createFromOptions(fileset, {
+    baseOptions: {
+      modelAssetPath:
+        "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+      delegate: "GPU",
+    },
+    runningMode: "VIDEO",
+    numHands: 2,
+    minHandDetectionConfidence: 0.5,
+    minHandPresenceConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+  });
+}
+
+/* -------------------- Camera health probe -------------------- */
+const probe = document.createElement('canvas');
+probe.width = 48; probe.height = 36;
+const pbctx = probe.getContext('2d', { willReadFrequently: true });
+let avgLum = 128;
+let lumSamples = 0;
+function sampleBrightness(){
+  if (!video.videoWidth) return;
+  try{
+    pbctx.drawImage(video, 0, 0, probe.width, probe.height);
+    const d = pbctx.getImageData(0, 0, probe.width, probe.height).data;
+    let sum = 0;
+    for (let i = 0; i < d.length; i += 4){
+      sum += 0.2126*d[i] + 0.7152*d[i+1] + 0.0722*d[i+2];
+    }
+    const avg = sum / (d.length / 4);
+    avgLum = avgLum * 0.7 + avg * 0.3;
+    lumSamples++;
+  } catch(e){ /* video not ready */ }
+}
+
+/* -------------------- Camera -------------------- */
+let stream = null;
+async function startCamera(){
+  startBtn.disabled = true;
+  startBtn.querySelector('span').textContent = 'Warming up…';
+  errMsg.textContent = '';
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    errMsg.textContent = "Your browser doesn't support webcam access. Try Chrome, Edge, or Safari on a laptop.";
+    startBtn.disabled = false;
+    startBtn.querySelector('span').textContent = 'Turn on camera & start';
+    return;
+  }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+      audio: false,
+    });
+  } catch(e){
+    let msg = "Couldn't reach the camera. ";
+    if (e && e.name === 'NotAllowedError') msg += "It looks like permission was denied — refresh and allow camera access.";
+    else if (e && e.name === 'NotFoundError') msg += "No camera was found on this device.";
+    else msg += "Try refreshing the page.";
+    errMsg.textContent = msg;
+    startBtn.disabled = false;
+    startBtn.querySelector('span').textContent = 'Turn on camera & start';
+    return;
+  }
+  video.srcObject = stream;
+  await new Promise(res => {
+    if (video.readyState >= 2) return res();
+    video.onloadedmetadata = () => res();
+  });
+  await video.play();
+
+  try {
+    await setupHandLandmarker();
+  } catch(e){
+    errMsg.textContent = "Couldn't load the hand-tracking model. Check your network and try again.";
+    startBtn.disabled = false;
+    startBtn.querySelector('span').textContent = 'Turn on camera & start';
+    return;
+  }
+
+  introEl.style.transition = 'opacity .5s';
+  introEl.style.opacity = '0';
+  setTimeout(() => { introEl.style.display = 'none'; }, 500);
+  gameEl.hidden = false;
+  requestAnimationFrame(() => { resize(); loop(); });
+}
+startBtn.addEventListener('click', startCamera);
+
+/* -------------------- Frame loop -------------------- */
+let wheelAngle = 0;
+let frozen = false;
+let kilnFired = 0;          // 0 → 1 progress
+let kilnFiring = false;
+let kilnStartTime = 0;
+
+const KILN_DURATION = 2600;
+
+function setHint(text, persistent){
+  hintEl.textContent = text;
+  hintEl.style.opacity = text ? '1' : '0';
+  if (!persistent) {
+    clearTimeout(setHint._t);
+    setHint._t = setTimeout(() => hintEl.style.opacity = '0', 3500);
+  }
+}
+
+let warnState = null;   // null | 'dark' | 'close' | 'nohands'
+let darkSince = 0, closeSince = 0, lostSince = 0;
+
+function setWarning(state, label, msg){
+  if (warnState === state) return;
+  warnState = state;
+  if (!state){ warningEl.hidden = true; return; }
+  warnLabel.textContent = label;
+  warnMsg.textContent = msg;
+  warningEl.hidden = false;
+}
+
+function processHands(now){
+  if (!handLandmarker || video.readyState < 2) return;
+  if (now - lastHandTime < 30) return; // ~33 fps cap
+  lastHandTime = now;
+  let result;
+  try { result = handLandmarker.detectForVideo(video, now); }
+  catch(e){ return; }
+
+  const hands = [];
+  if (result && result.landmarks && result.landmarks.length){
+    for (const lm of result.landmarks){
+      // landmarks are normalized 0..1 in the unflipped video frame
+      // We display mirrored, so flip x for screen-space
+      let minx=1,miny=1,maxx=0,maxy=0;
+      const pts = lm.map(p => {
+        const x = 1 - p.x;  // mirrored
+        const y = p.y;
+        if (x<minx) minx=x; if (x>maxx) maxx=x;
+        if (y<miny) miny=y; if (y>maxy) maxy=y;
+        return { x, y };
+      });
+      // Use palm-center (avg of wrist 0 and middle MCP 9) for the shaping point
+      const cx = (pts[0].x + pts[9].x) * 0.5;
+      const cy = (pts[0].y + pts[9].y) * 0.5;
+      hands.push({ pts, cx, cy, bbox: { w: maxx - minx, h: maxy - miny } });
+    }
+  }
+  lastHands = hands;
+
+  // ---- camera health ----
+  if (lumSamples > 4 && avgLum < 22){
+    if (!darkSince) darkSince = now;
+    if (now - darkSince > 1200) setWarning('dark', 'Camera looks covered',
+      'Your camera frame is very dark. Is something covering the lens, or is the room too dim? Move into better light.');
+  } else { darkSince = 0; if (warnState === 'dark') setWarning(null); }
+
+  const close = hands.length && hands.some(h => h.bbox.w > 0.62 || h.bbox.h > 0.78);
+  if (close){
+    if (!closeSince) closeSince = now;
+    if (now - closeSince > 700) setWarning('close', 'A little too close',
+      "You're filling the whole camera frame — try leaning back, or move the laptop a bit further away so the whole pot has room.");
+  } else { closeSince = 0; if (warnState === 'close') setWarning(null); }
+
+  if (!hands.length){
+    if (!lostSince) lostSince = now;
+    if (now - lostSince > 4500 && warnState == null){
+      setHint("Lift both hands into view — palms toward the camera works well.", true);
+    }
+  } else {
+    lostSince = 0;
+    if (hintEl.textContent.startsWith('Lift both hands')) setHint('', false);
+  }
+
+  // ---- shape pottery ----
+  if (warnState) return;
+
+  // Pot frame on screen
+  const cx = W * 0.5;
+  const potTopY    = H * 0.18;
+  const potBaseY   = H * 0.78;
+  const potHeight  = potBaseY - potTopY;
+  const maxR       = Math.min(W * 0.22, potHeight * 0.42);
+  // Hand x relative to pot axis → desired normalized radius
+  for (const h of hands){
+    const hx = h.cx * W;
+    const hy = h.cy * H;
+    if (hy < potTopY - 30 || hy > potBaseY + 30) continue;
+    const t = (hy - potTopY) / potHeight;       // 0..1 from top
+    const sliceIdx = Math.max(0, Math.min(N_SLICES - 1, Math.round(t * (N_SLICES - 1))));
+    const dist = Math.abs(hx - cx);
+    let normR = dist / maxR;
+    // hand outside max radius → user is pulling clay outward
+    if (normR > 1.05) normR = 1.05;
+    if (normR < 0.10) normR = 0.10;
+    shapeAt(sliceIdx, normR);
+  }
+}
+
+/* -------------------- Drawing -------------------- */
+function clayColor(t, lighting, fired){
+  // t: 0 top → 1 bottom
+  // lighting: -1..1 (left-dark, right-dark via curve)
+  // returns rgb triplet array
+  const fade = (a,b,k) => a + (b-a)*k;
+  // base (unfired) clay
+  const baseR = fade(208, 175, t);
+  const baseG = fade(112,  84, t);
+  const baseB = fade( 67,  44, t);
+  // fired = warm glaze pull toward deep ochre with subtle sheen
+  const firR  = fade(220, 142, t);
+  const firG  = fade(150,  64, t);
+  const firB  = fade(  80, 34, t);
+  let r = fade(baseR, firR, fired);
+  let g = fade(baseG, firG, fired);
+  let b = fade(baseB, firB, fired);
+  // lighting curve: bright in middle (cos), dark on edges
+  const l = lighting; // -1..1
+  const shade = Math.cos(l * Math.PI * 0.5);     // 0 at edges, 1 in middle
+  const lift  = (shade - 0.5) * 0.55;            // -0.275..+0.275
+  r = Math.max(0, Math.min(255, r + lift * 110));
+  g = Math.max(0, Math.min(255, g + lift *  85));
+  b = Math.max(0, Math.min(255, b + lift *  60));
+  // a touch of rim darkening
+  return `rgb(${r|0},${g|0},${b|0})`;
+}
+
+function draw(now){
+  ctx.clearRect(0, 0, W, H);
+
+  // ---- backdrop vignette + studio light ----
+  const bg = ctx.createRadialGradient(W*0.5, H*0.85, H*0.1, W*0.5, H*0.85, H*1.2);
+  bg.addColorStop(0, 'rgba(30,66,52,0.55)');
+  bg.addColorStop(0.55, 'rgba(17,36,29,0.0)');
+  bg.addColorStop(1, 'rgba(8,16,12,0.0)');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // ---- studio key light beam from upper-left ----
+  const beam = ctx.createRadialGradient(W*0.25, H*0.05, 10, W*0.4, H*0.5, H*0.9);
+  beam.addColorStop(0, 'rgba(255,235,180,0.10)');
+  beam.addColorStop(1, 'rgba(255,235,180,0)');
+  ctx.fillStyle = beam;
+  ctx.fillRect(0, 0, W, H);
+
+  // ---- pot frame ----
+  const cx = W * 0.5;
+  const potTopY    = H * 0.18;
+  const potBaseY   = H * 0.78;
+  const potHeight  = potBaseY - potTopY;
+  const maxR       = Math.min(W * 0.22, potHeight * 0.42);
+
+  // ---- wheel (drawn before pot but layered carefully) ----
+  drawWheel(cx, potBaseY + 12, maxR * 1.65, wheelAngle);
+
+  // ---- pot ----
+  drawPot(cx, potTopY, potBaseY, maxR, wheelAngle, now);
+
+  // ---- shaping markers where the hands are ----
+  drawHandMarkers(cx, potTopY, potBaseY, maxR);
+
+  // ---- kiln progress ----
+  if (kilnFiring){
+    const elapsed = now - kilnStartTime;
+    kilnFired = Math.min(1, elapsed / KILN_DURATION);
+    drawKilnGlow(cx, potTopY, potBaseY, maxR, kilnFired);
+    if (kilnFired >= 1){
+      kilnFiring = false;
+      setHint("Fired. A beautiful pot — press R for a fresh lump.", false);
+    }
+  } else if (kilnFired > 0 && kilnFired < 1){
+    // shouldn't happen, but just in case
+    kilnFired = 0;
+  }
+}
+
+function drawWheel(cx, cy, radius, angle){
+  // shadow disc under wheel
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, 0.32);
+  const sh = ctx.createRadialGradient(0, 0, 0, 0, 0, radius * 1.3);
+  sh.addColorStop(0, 'rgba(0,0,0,0.55)');
+  sh.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = sh;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 1.3, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  // wheel disc (squashed ellipse)
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, 0.32);
+  // base
+  const grad = ctx.createRadialGradient(-radius*0.35, -radius*0.35, radius*0.1, 0, 0, radius);
+  grad.addColorStop(0, '#3a2f24');
+  grad.addColorStop(0.55, '#241a13');
+  grad.addColorStop(1, '#0c0805');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI*2);
+  ctx.fill();
+
+  // rotating spokes / pie wedges
+  ctx.rotate(angle);
+  for (let i = 0; i < 12; i++){
+    const a0 = (i / 12) * Math.PI * 2;
+    const a1 = a0 + (Math.PI * 2 / 12) * 0.42;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, radius * 0.96, a0, a1);
+    ctx.closePath();
+    ctx.fillStyle = i % 2 === 0 ? 'rgba(255,220,160,0.04)' : 'rgba(255,220,160,0.085)';
+    ctx.fill();
+  }
+  // outer ring
+  ctx.strokeStyle = 'rgba(240,195,24,0.18)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 0.985, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+
+  // wheel rim highlight (3D edge)
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, 0.32);
+  ctx.strokeStyle = 'rgba(220,239,232,0.18)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(0, -2, radius, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPot(cx, topY, baseY, maxR, angle, now){
+  const fired = kilnFired;
+  const H_ = baseY - topY;
+
+  // ---- main pot body ----
+  // build path: down left side, across base, up right side
+  ctx.beginPath();
+  // top-left starting point
+  const r0 = radii[0] * maxR;
+  ctx.moveTo(cx - r0, topY);
+  for (let i = 1; i < N_SLICES; i++){
+    const t = i / (N_SLICES - 1);
+    const y = topY + t * H_;
+    ctx.lineTo(cx - radii[i] * maxR, y);
+  }
+  // across base (a tiny rounded foot)
+  const rBase = radii[N_SLICES-1] * maxR;
+  ctx.lineTo(cx + rBase, baseY);
+  for (let i = N_SLICES - 2; i >= 0; i--){
+    const t = i / (N_SLICES - 1);
+    const y = topY + t * H_;
+    ctx.lineTo(cx + radii[i] * maxR, y);
+  }
+  ctx.closePath();
+  // Clip everything that follows to the pot silhouette
+  ctx.save();
+  ctx.clip();
+
+  // base fill — vertical gradient (top lighter)
+  const vg = ctx.createLinearGradient(0, topY, 0, baseY);
+  if (fired < 0.5){
+    vg.addColorStop(0, '#D38560');
+    vg.addColorStop(0.5, '#B2643C');
+    vg.addColorStop(1, '#6E3417');
+  } else {
+    vg.addColorStop(0, '#D9954A');
+    vg.addColorStop(0.5, '#A0552A');
+    vg.addColorStop(1, '#532712');
+  }
+  ctx.fillStyle = vg;
+  ctx.fillRect(cx - maxR*1.2, topY - 4, maxR*2.4, H_ + 12);
+
+  // horizontal shading per slice (cylindrical lighting)
+  // Use a set of vertical bands across the pot width
+  const BANDS = 28;
+  for (let b = 0; b < BANDS; b++){
+    const u0 = b / BANDS;       // 0..1 across pot width
+    const u1 = (b+1) / BANDS;
+    const lightingU = (u0 + u1) * 0.5 * 2 - 1;     // -1..1
+    const x0 = cx - maxR + u0 * maxR * 2;
+    const x1 = cx - maxR + u1 * maxR * 2;
+    // gradient top to bottom to keep vertical character but multiply with horizontal shade
+    const lg = ctx.createLinearGradient(0, topY, 0, baseY);
+    lg.addColorStop(0, clayColor(0,   lightingU, fired));
+    lg.addColorStop(0.55, clayColor(0.55, lightingU, fired));
+    lg.addColorStop(1,    clayColor(1,    lightingU, fired));
+    ctx.fillStyle = lg;
+    ctx.globalAlpha = 0.85;
+    ctx.fillRect(x0 - 0.5, topY - 4, x1 - x0 + 1, H_ + 12);
+  }
+  ctx.globalAlpha = 1;
+
+  // throw-lines (horizontal striations from the wheel)
+  ctx.strokeStyle = 'rgba(70,28,12,0.25)';
+  ctx.lineWidth = 0.6;
+  for (let i = 4; i < N_SLICES - 2; i += 3){
+    const t = i / (N_SLICES - 1);
+    const y = topY + t * H_;
+    const r = radii[i] * maxR;
+    ctx.beginPath();
+    ctx.moveTo(cx - r, y);
+    ctx.lineTo(cx + r, y);
+    ctx.stroke();
+  }
+
+  // rotating surface features: 4 thumb-prints that wrap around
+  const features = [
+    { angOffset: 0.0, t: 0.32, size: 0.16 },
+    { angOffset: Math.PI * 0.55, t: 0.55, size: 0.14 },
+    { angOffset: Math.PI * 1.10, t: 0.75, size: 0.11 },
+    { angOffset: Math.PI * 1.62, t: 0.20, size: 0.10 },
+  ];
+  for (const f of features){
+    const theta = f.angOffset + angle * 2.4;     // wheel spins fast
+    const cosA = Math.cos(theta);
+    if (cosA <= 0) continue;                      // back side, hidden
+    const idx = Math.round(f.t * (N_SLICES - 1));
+    const r = radii[idx] * maxR;
+    const y = topY + f.t * H_;
+    const x = cx + r * Math.sin(theta);
+    const sx = r * f.size * cosA;
+    const sy = r * f.size * 0.65;
+    ctx.beginPath();
+    ctx.ellipse(x, y, sx, sy, 0, 0, Math.PI*2);
+    const dot = ctx.createRadialGradient(x, y, 0, x, y, Math.max(sx, sy));
+    dot.addColorStop(0, 'rgba(70,28,12,0.45)');
+    dot.addColorStop(1, 'rgba(70,28,12,0)');
+    ctx.fillStyle = dot;
+    ctx.fill();
+  }
+
+  // soft inner-edge darkening on the left & right
+  const edge = ctx.createLinearGradient(cx - maxR, 0, cx + maxR, 0);
+  edge.addColorStop(0, 'rgba(40,16,6,0.55)');
+  edge.addColorStop(0.25, 'rgba(40,16,6,0.0)');
+  edge.addColorStop(0.75, 'rgba(40,16,6,0.0)');
+  edge.addColorStop(1, 'rgba(40,16,6,0.55)');
+  ctx.fillStyle = edge;
+  ctx.fillRect(cx - maxR, topY - 4, maxR*2, H_ + 12);
+
+  // long vertical specular highlight (fixed studio light)
+  const spec = ctx.createLinearGradient(cx - maxR*0.35, 0, cx + maxR*0.1, 0);
+  spec.addColorStop(0, 'rgba(255,235,200,0)');
+  spec.addColorStop(0.55, 'rgba(255,235,200,0.18)');
+  spec.addColorStop(1, 'rgba(255,235,200,0)');
+  ctx.fillStyle = spec;
+  ctx.fillRect(cx - maxR, topY - 4, maxR*2, H_ + 12);
+
+  if (fired > 0){
+    // glaze sheen — extra wet highlight at top
+    const glaze = ctx.createLinearGradient(0, topY, 0, topY + H_*0.55);
+    glaze.addColorStop(0, `rgba(255,220,160,${0.18*fired})`);
+    glaze.addColorStop(1, 'rgba(255,220,160,0)');
+    ctx.fillStyle = glaze;
+    ctx.fillRect(cx - maxR, topY - 4, maxR*2, H_*0.6);
+  }
+
+  ctx.restore();
+
+  // ---- silhouette stroke ----
+  ctx.beginPath();
+  ctx.moveTo(cx - radii[0] * maxR, topY);
+  for (let i = 1; i < N_SLICES; i++){
+    const t = i / (N_SLICES - 1);
+    const y = topY + t * H_;
+    ctx.lineTo(cx - radii[i] * maxR, y);
+  }
+  ctx.lineTo(cx + radii[N_SLICES-1] * maxR, baseY);
+  for (let i = N_SLICES - 2; i >= 0; i--){
+    const t = i / (N_SLICES - 1);
+    const y = topY + t * H_;
+    ctx.lineTo(cx + radii[i] * maxR, y);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = fired > 0.5 ? 'rgba(60,20,8,0.5)' : 'rgba(70,28,12,0.55)';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  // ---- top opening (interior) ----
+  const rTop = radii[0] * maxR;
+  // outer rim (lit)
+  ctx.save();
+  ctx.translate(cx, topY);
+  ctx.scale(1, 0.32);
+  ctx.beginPath();
+  ctx.arc(0, 0, rTop, 0, Math.PI*2);
+  // interior gradient
+  const inG = ctx.createRadialGradient(-rTop*0.2, -rTop*0.2, rTop*0.05, 0, 0, rTop);
+  inG.addColorStop(0, '#3a1809');
+  inG.addColorStop(0.7, '#1a0a04');
+  inG.addColorStop(1, '#000');
+  ctx.fillStyle = inG;
+  ctx.fill();
+  ctx.strokeStyle = fired > 0.5 ? '#d9a865' : '#e9a070';
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawKilnGlow(cx, topY, baseY, maxR, p){
+  // a warm pulse of light over the pot
+  const H_ = baseY - topY;
+  const alpha = (1 - Math.abs(p - 0.55)) * 0.55;
+  const g = ctx.createRadialGradient(cx, (topY + baseY)/2, 5, cx, (topY + baseY)/2, maxR * 4);
+  g.addColorStop(0, `rgba(255,170,80,${alpha})`);
+  g.addColorStop(0.4, `rgba(255,120,40,${alpha*0.4})`);
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function drawHandMarkers(cx, topY, baseY, maxR){
+  if (!lastHands.length) return;
+  for (const h of lastHands){
+    const x = h.cx * W;
+    const y = h.cy * H;
+    // soft glow showing where you're shaping
+    const glow = ctx.createRadialGradient(x, y, 1, x, y, 70);
+    glow.addColorStop(0, 'rgba(240,195,24,0.30)');
+    glow.addColorStop(0.5, 'rgba(240,195,24,0.10)');
+    glow.addColorStop(1, 'rgba(240,195,24,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(x, y, 70, 0, Math.PI*2);
+    ctx.fill();
+    // little ring
+    ctx.strokeStyle = 'rgba(240,195,24,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(x, y, 9, 0, Math.PI*2);
+    ctx.stroke();
+  }
+}
+
+/* -------------------- Preview overlay (skeleton on webcam) -------------------- */
+const HAND_EDGES = [
+  [0,1],[1,2],[2,3],[3,4],
+  [0,5],[5,6],[6,7],[7,8],
+  [5,9],[9,10],[10,11],[11,12],
+  [9,13],[13,14],[14,15],[15,16],
+  [13,17],[17,18],[18,19],[19,20],
+  [0,17],
+];
+function drawPreviewSkeleton(){
+  const pw = previewOverlay.clientWidth;
+  const ph = previewOverlay.clientHeight;
+  pctx.clearRect(0, 0, pw, ph);
+  if (!lastHands.length) return;
+  for (const h of lastHands){
+    pctx.strokeStyle = 'rgba(240,195,24,0.85)';
+    pctx.lineWidth = 2;
+    pctx.beginPath();
+    for (const [a,b] of HAND_EDGES){
+      const pa = h.pts[a], pb = h.pts[b];
+      pctx.moveTo(pa.x * pw, pa.y * ph);
+      pctx.lineTo(pb.x * pw, pb.y * ph);
+    }
+    pctx.stroke();
+    pctx.fillStyle = 'rgba(255,255,255,0.95)';
+    for (const p of h.pts){
+      pctx.beginPath();
+      pctx.arc(p.x * pw, p.y * ph, 2, 0, Math.PI*2);
+      pctx.fill();
+    }
+  }
+}
+
+/* -------------------- Main loop -------------------- */
+let lastFrameTime = 0;
+let lumTimer = 0;
+function loop(){
+  const now = performance.now();
+  const dt = Math.min(50, now - lastFrameTime);
+  lastFrameTime = now;
+
+  if (!frozen) wheelAngle += dt * 0.0042;
+
+  lumTimer += dt;
+  if (lumTimer > 220){ sampleBrightness(); lumTimer = 0; }
+
+  processHands(now);
+  relaxRadii();
+  draw(now);
+  drawPreviewSkeleton();
+
+  requestAnimationFrame(loop);
+}
+
+/* -------------------- Controls -------------------- */
+resetBtn.addEventListener('click', () => {
+  initPot();
+  kilnFired = 0; kilnFiring = false;
+  setHint("Fresh clay on the wheel. Reach in.", false);
+});
+fireBtn.addEventListener('click', () => {
+  if (kilnFiring) return;
+  kilnFiring = true;
+  kilnStartTime = performance.now();
+  setHint("Firing in the kiln…", true);
+});
+freezeBtn.addEventListener('click', () => {
+  frozen = !frozen;
+  freezeBtn.firstChild.textContent = frozen ? 'Resume wheel ' : 'Pause wheel ';
+});
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'r' || e.key === 'R') resetBtn.click();
+  else if (e.key === 'f' || e.key === 'F') fireBtn.click();
+  else if (e.code === 'Space') { e.preventDefault(); freezeBtn.click(); }
+});
+
+/* -------------------- Init -------------------- */
+resize();
+setTimeout(() => setHint('Bring both hands into frame, on either side of the pot.', false), 600);
+</script>
+</body>
+</html>
