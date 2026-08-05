@@ -254,7 +254,7 @@
       <h4>Regulatory Developments</h4>
       <p>Current governmental actions to protect neural data and mental privacy.</p>
     </a>
-    <a class="card hub-card" href="standardsandgovernancechangelog.html">
+    <a class="card hub-card" href="changelog.html">
       <div class="hub-ic"><svg><use href="#ic-doc"/></svg></div>
       <h4>Change Log</h4>
       <p>What was added or revised in each release of this index, and when.</p>
@@ -283,10 +283,16 @@
       <p>Develops shared definitions, data formats, and reporting guidelines for brain-computer interfaces, so researchers, companies, and regulators can compare results and exchange data. <a href="https://www.ibci-cc.org/" target="_blank" rel="noopener">ibci-cc.org</a></p>
     </div>
     <div class="card">
-      <div class="tags"><span class="tag tag-std">Standards</span><span class="tag tag-neutral">Security</span></div>
+      <div class="tags"><span class="tag tag-std">Standards</span></div>
       <h4>IEC</h4>
       <span class="org-sub">International Electrotechnical Commission</span>
-      <p>Sets electrical safety and electromagnetic compatibility requirements through the IEC 60601 and 80601 series, and defines security activities across the health software life cycle through <a href="https://webstore.iec.ch/en/publication/63293" target="_blank" rel="noopener">IEC 81001-5-1</a>. Core to essential performance of stimulators, EEG systems, and neuroimaging devices. <a href="https://www.iec.ch/homepage" target="_blank" rel="noopener">iec.ch</a></p>
+      <p>Sets electrical safety and electromagnetic compatibility requirements through the IEC 60601 and 80601 series, core to essential performance of stimulators, EEG systems, and neuroimaging devices. <a href="https://www.iec.ch/homepage" target="_blank" rel="noopener">iec.ch</a></p>
+    </div>
+    <div class="card">
+      <div class="tags"><span class="tag tag-std">Standards</span><span class="tag tag-reg">Cybersecurity</span></div>
+      <h4><a href="https://webstore.iec.ch/en/publication/63293" target="_blank" rel="noopener">IEC 81001-5-1</a></h4>
+      <span class="org-sub">Health software cybersecurity</span>
+      <p>Defines security activities across the health software life cycle and is seeing growing adoption as the reference standard for medical device cybersecurity. It introduces requirements that complement, rather than replace, existing software development lifecycle practices such as those in ISO 13485 or IEC 62304. <a href="#precedents">More in Learnings from Other Fields</a>.</p>
     </div>
     <div class="card">
       <div class="tags"><span class="tag tag-std">Standards</span></div>
@@ -442,8 +448,8 @@
       <span class="org-sub">2021</span>
       <ul>
         <li>Security activities across the health software product life cycle, from design through post-market maintenance.</li>
-        <li>Supplements IEC 62304 and IEC 82304-1, adapting IEC 62443-4-1 for health software.</li>
-        <li>Closes the cybersecurity gap in MDR Annex I, Section 17.2 and integrates with ISO 14971.</li>
+        <li>Introduces additional cybersecurity requirements that complement existing SDLC practices, such as those in ISO 13485 or IEC 62304, rather than replacing them.</li>
+        <li>Closes the cybersecurity gap in MDR Annex I, Section 17.2, and integrates with ISO 14971.</li>
       </ul>
     </div>
     <div class="card green-card">
@@ -666,7 +672,7 @@
       <p style="margin-top:8px;"><strong style="color:var(--light-green);">With review from:</strong> Diana Saville and Karen Rommelfanger</p>
       <p style="margin-top:8px;"><strong style="color:var(--light-green);">Interviews and perspectives:</strong> Erika Ross Ellison, Daniel Powell, and Blythe Karow</p>
       <p style="margin-top:8px;"><strong style="color:var(--light-green);">Version 2:</strong> Reviewed and published August 2026</p>
-      <p style="margin-top:8px;"><a href="standardsandgovernancechangelog.html">See what changed &rarr;</a></p>
+      <p style="margin-top:8px;"><a href="changelog.html">See what changed &rarr;</a></p>
       <p style="margin-top:8px;">Suggestions welcome at <a href="https://forms.gle/nnjVxFKcfaKxL93s7" target="_blank" rel="noopener">this form</a>.</p>
     </div>
   </div>
