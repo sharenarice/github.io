@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MECHANISMS · A Systems Account of Medical Neurotechnology</title>
+<meta name="description" content="A structural canon for builders, evaluators, and institutions. Five chapters and fifty-five named patterns explaining why medical neurotechnology fails structurally, and what the working versions look like.">
+<link rel="canonical" href="https://sharenarice.com/mechanisms/">
+
+<!-- Social preview -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Sharena Rice">
+<meta property="og:url" content="https://sharenarice.com/mechanisms/">
+<meta property="og:title" content="MECHANISMS · A Systems Account of Medical Neurotechnology">
+<meta property="og:description" content="A structural canon for builders, evaluators, and institutions. Fifty-five named patterns across training, funding, translation, quality, and programs.">
+<meta property="og:image" content="https://sharenarice.com/mechanisms/og-image.png">
+<meta property="og:image:alt" content="MECHANISMS: A Systems Account of Medical Neurotechnology, by Sharena Rice, 2026.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MECHANISMS · A Systems Account of Medical Neurotechnology">
+<meta name="twitter:description" content="A structural canon for builders, evaluators, and institutions.">
+<meta name="twitter:image" content="https://sharenarice.com/mechanisms/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Karla:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark-green:#11241D; --light-green:#dcefe8; --yellow:#F0C318;
+    --white:#FFFFFF; --dark-blue:#00274D; --purple:#3d10bd; --black:#000;
+    --ink:#1a2b24; --muted:#4a5a52; --rule:#d9e4df; --faint:#eef4f1;
+    --teal:#1f6b57;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--white);color:var(--ink);font-family:'Karla',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:var(--purple);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;color:var(--dark-green);line-height:1.08;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .page{max-width:1180px;margin:0 auto;padding:72px 56px;border-bottom:1px solid var(--rule);scroll-margin-top:64px;}
+  .page h2.title{font-size:40px;font-weight:600;margin-bottom:8px;}
+  .page .intro{font-size:16.5px;color:var(--muted);max-width:1000px;line-height:1.6;margin-bottom:8px;}
+  .page .intro.tight{margin-bottom:28px;}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--purple);margin-bottom:14px;}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);}
+  .nav-inner{max-width:1180px;margin:0 auto;padding:13px 56px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .nav-brand{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:19px;color:var(--dark-green);white-space:nowrap;letter-spacing:1.5px;}
+  .nav-links{display:flex;gap:22px;flex-wrap:wrap;font-size:13px;}
+  .nav-links a{color:var(--muted);} .nav-links a:hover{color:var(--dark-green);text-decoration:none;}
+
+  .hero{border-bottom:1px solid var(--rule);}
+  .hero-text{max-width:1180px;margin:0 auto;padding:88px 56px 48px;}
+  .hero h1{font-size:64px;font-weight:600;letter-spacing:4px;margin-bottom:20px;}
+  .hero .sub{font-style:italic;font-family:'Cormorant Garamond',serif;font-size:23px;color:var(--muted);margin-bottom:14px;}
+  .hero .byline{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:1px;margin-bottom:30px;}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{display:inline-block;padding:13px 22px;border-radius:4px;font-size:14px;font-weight:600;border:1.5px solid var(--dark-green);transition:all .15s;cursor:pointer;font-family:'Karla',sans-serif;}
+  .btn-solid{background:var(--dark-green);color:var(--light-green);} .btn-solid:hover{background:#0a1812;text-decoration:none;}
+  .btn-ghost{background:transparent;color:var(--dark-green);} .btn-ghost:hover{background:var(--faint);text-decoration:none;}
+
+  /* spike band: the action-potential brand motif */
+  .spike-band{border-bottom:1px solid var(--rule);}
+  .spike-inner{max-width:1180px;margin:0 auto;padding:0 56px 36px;}
+  .spike-inner svg{display:block;width:100%;height:auto;}
+  .spike-cap{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+
+  .meta-bar{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;background:var(--faint);border:1px solid var(--rule);border-left:4px solid var(--yellow);border-radius:6px;padding:12px 18px;margin:6px 0 26px;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.5px;color:var(--muted);}
+  .meta-bar b{color:var(--dark-green);font-weight:600;}
+
+  .grid{display:grid;gap:22px;}
+  .grid-2{grid-template-columns:repeat(2,1fr);}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-4{grid-template-columns:repeat(4,1fr);}
+
+  .card{border:1px solid var(--rule);border-radius:8px;padding:24px 22px;background:var(--white);transition:border-color .15s,box-shadow .15s,opacity .2s;}
+  .card:hover{border-color:var(--dark-green);box-shadow:0 6px 22px rgba(17,36,29,.07);}
+  .card h3{font-size:21px;font-weight:600;margin-bottom:9px;}
+  .card h4{font-size:18.5px;font-weight:600;margin-bottom:8px;}
+  .card p{font-size:14px;color:var(--muted);margin-bottom:12px;}
+  .card p:last-child{margin-bottom:0;}
+  .card ul{list-style:none;margin-top:4px;}
+  .card li{font-size:13.5px;color:var(--ink);padding:7px 0 7px 20px;position:relative;border-bottom:1px solid var(--faint);}
+  .card li:last-child{border-bottom:none;}
+  .card li::before{content:"\2192";position:absolute;left:0;color:var(--purple);font-weight:700;}
+
+  .green-card{background:var(--light-green);border:none;}
+  .green-card p{color:#2e4138;}
+  .green-card strong{color:var(--dark-green);}
+  .dark-card{background:var(--dark-green);border:none;}
+  .dark-card h3,.dark-card h4{color:var(--yellow);}
+  .dark-card p{color:rgba(220,239,232,.82);}
+  .dark-card p a{color:var(--yellow);}
+
+  .hub-card{background:var(--light-green);border:none;display:block;cursor:pointer;}
+  .hub-card:hover{box-shadow:0 8px 24px rgba(17,36,29,.12);text-decoration:none;transform:translateY(-2px);}
+  .hub-card h4{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .hub-card h4::after{content:"\2193";color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:15px;}
+  .hub-card p{color:#2e4138;margin-bottom:0;}
+  .hub-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--yellow);-webkit-text-stroke:.5px var(--dark-green);line-height:1;margin-bottom:12px;}
+
+  .group-label{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--dark-green);margin:44px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--rule);scroll-margin-top:70px;}
+
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px;}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:20px;font-weight:500;white-space:nowrap;}
+  .tag-ch1{background:var(--dark-blue);color:#fff;}
+  .tag-ch2{background:var(--purple);color:#fff;}
+  .tag-ch3{background:var(--teal);color:#fff;}
+  .tag-ch4{background:var(--yellow);color:var(--dark-green);}
+  .tag-ch5{background:var(--dark-green);color:var(--light-green);}
+  .tag-pos{background:var(--faint);color:var(--teal);border:1px solid var(--rule);}
+
+  /* chapter blocks */
+  .chapter{scroll-margin-top:70px;margin-top:56px;}
+  .chapter:first-of-type{margin-top:0;}
+  .chapter-head{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:baseline;margin-bottom:6px;}
+  .chapter-head .cn{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--yellow);-webkit-text-stroke:1px var(--dark-green);line-height:1;}
+  .chapter-head h3{font-size:30px;font-weight:600;}
+  .chapter-epigraph{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18.5px;color:var(--muted);max-width:860px;margin:4px 0 22px;line-height:1.45;}
+
+  /* mechanism cards: interactive accordions */
+  .mech{border:1px solid var(--rule);border-radius:8px;background:var(--white);margin-bottom:14px;overflow:hidden;transition:border-color .15s,box-shadow .15s;scroll-margin-top:90px;}
+  .mech:hover{border-color:var(--dark-green);}
+  .mech.open{border-color:var(--dark-green);box-shadow:0 6px 22px rgba(17,36,29,.07);}
+  .mech.flash{animation:flash 1.6s ease;}
+  @keyframes flash{0%,60%{box-shadow:0 0 0 3px var(--yellow);border-color:var(--yellow);}100%{box-shadow:none;}}
+  .mech-toggle{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:baseline;padding:20px 22px;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;}
+  .mech-toggle .mn{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--purple);letter-spacing:1px;white-space:nowrap;}
+  .mech-toggle h4{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--dark-green);line-height:1.2;margin:0;}
+  .mech-toggle .chev{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:14px;transition:transform .2s;}
+  .mech.open .mech-toggle .chev{transform:rotate(180deg);}
+  .mech-body{display:none;padding:0 22px 22px;}
+  .mech.open .mech-body{display:block;}
+  .mech-desc{font-size:14.5px;color:var(--muted);max-width:900px;margin-bottom:14px;line-height:1.6;}
+  .mech-subs{list-style:none;margin:2px 0 16px;}
+  .mech-subs li{font-size:13.5px;color:var(--ink);padding:8px 0 8px 22px;position:relative;border-bottom:1px solid var(--faint);}
+  .mech-subs li:last-child{border-bottom:none;}
+  .mech-subs li::before{content:attr(data-id);position:absolute;left:0;top:9px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);}
+  .flip-btn{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:8px 14px;border-radius:20px;border:1px solid var(--rule);background:var(--faint);color:var(--dark-green);cursor:pointer;transition:all .15s;}
+  .flip-btn:hover{border-color:var(--teal);color:var(--teal);}
+  .flip-btn.on{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .counterpart{display:none;margin-top:12px;background:var(--light-green);border-radius:6px;padding:14px 18px;}
+  .counterpart.show{display:block;}
+  .counterpart .cp-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:5px;}
+  .counterpart p{font-size:14px;color:#2e4138;margin:0;line-height:1.55;}
+
+  /* signal finder */
+  .signal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .signal-btn{border:1px solid var(--rule);border-radius:8px;background:var(--white);padding:16px 18px;text-align:left;cursor:pointer;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--ink);line-height:1.35;transition:all .15s;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;}
+  .signal-btn:hover{border-color:var(--dark-green);box-shadow:0 6px 22px rgba(17,36,29,.07);}
+  .signal-btn .goto{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--purple);white-space:nowrap;}
+
+  .callout{margin-top:32px;padding:24px 28px;background:var(--dark-green);border-radius:8px;color:var(--light-green);font-size:15px;line-height:1.6;}
+  .callout strong{color:var(--yellow);font-weight:600;}
+  .callout a{color:var(--yellow);text-decoration:underline;}
+  .callout .q{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;line-height:1.45;}
+
+  /* citation blocks */
+  .cite-box{background:var(--faint);border:1px solid var(--rule);border-radius:6px;padding:16px 18px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start;}
+  .cite-box code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink);line-height:1.6;display:block;}
+  .copy-btn{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:7px 12px;border-radius:4px;border:1px solid var(--rule);background:var(--white);color:var(--dark-green);cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .copy-btn:hover{border-color:var(--dark-green);}
+  .copy-btn.done{background:var(--teal);border-color:var(--teal);color:#fff;}
+
+  footer{padding:72px 56px;background:var(--dark-green);color:var(--light-green);}
+  footer h2{color:var(--yellow);font-size:30px;margin-bottom:20px;}
+  footer h4{color:var(--light-green);font-size:18px;margin:20px 0 8px;}
+  footer p{font-size:14px;color:rgba(220,239,232,.82);max-width:820px;}
+  footer a{color:var(--yellow);}
+  .foot-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:18px;max-width:1180px;margin-left:auto;margin-right:auto;}
+  .license{max-width:1180px;margin:36px auto 0;padding-top:22px;border-top:1px solid rgba(220,239,232,.2);font-size:12.5px;color:rgba(220,239,232,.7);}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}}
+
+  @media(max-width:900px){
+    .hero-text{padding:56px 24px 36px;}
+    .hero h1{font-size:42px;letter-spacing:2px;}
+    .spike-inner{padding:0 24px 26px;}
+    .grid-2,.grid-3,.grid-4,.foot-grid,.signal-grid{grid-template-columns:1fr;}
+    .nav-links{display:none;}
+    .page{padding:48px 24px;}
+    footer{padding:56px 24px;}
+    .chapter-head{grid-template-columns:1fr;gap:4px;}
+    .mech-toggle{grid-template-columns:1fr auto;}
+    .mech-toggle .mn{grid-column:1 / -1;}
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="nav-inner">
+  <span class="nav-brand">MECHANISMS</span>
+  <div class="nav-links">
+    <a href="#about">What This Is</a>
+    <a href="#map">The Map</a>
+    <a href="#signals">Start From a Signal</a>
+    <a href="#chapters">Chapters</a>
+    <a href="#clusters">Stacks</a>
+    <a href="#use">In Conversation</a>
+    <a href="#access">Access</a>
+  </div>
+</div></nav>
+
+<div class="hero">
+  <div class="hero-text">
+    <h1>MECHANISMS</h1>
+    <div class="sub">A Systems Account of Medical Neurotechnology</div>
+    <div class="byline">Sharena Rice, PhD &middot; 2026 &middot; CC BY-NC-SA 4.0</div>
+    <div class="hero-cta">
+      <a class="btn btn-solid" href="MECHANISMS_ASystemsAccountOfMedicalNeurotech_SharenaRice_2026_04_04.pdf" target="_blank" rel="noopener">Download the Canon (PDF)</a>
+      <a class="btn btn-ghost" href="#chapters">Explore the Chapters</a>
+    </div>
+  </div>
+</div>
+
+<div class="spike-band">
+  <div class="spike-inner">
+    <svg viewBox="0 0 1180 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A stylized neural spike waveform crossing a threshold line and branching into three paths">
+      <line x1="0" y1="62" x2="1180" y2="62" stroke="#d9e4df" stroke-width="1" stroke-dasharray="6 6"/>
+      <path d="M 20 78 L 300 78 L 310 84 L 322 16 L 334 74 L 350 88 C 380 90 392 60 420 60 C 448 60 452 82 478 80 C 500 78 510 78 530 78 L 1010 78"
+        stroke="#F0C318" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 1010 78 C 1040 78 1056 44 1082 36" stroke="#F0C318" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <path d="M 1010 78 L 1082 78" stroke="#F0C318" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <path d="M 1010 78 C 1040 78 1056 112 1082 120" stroke="#F0C318" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <circle cx="1082" cy="36" r="4.5" fill="#F0C318"/>
+      <circle cx="1082" cy="78" r="4.5" fill="#F0C318"/>
+    </svg>
+    <div class="spike-cap">Structure shapes outcomes before talent does</div>
+  </div>
+</div>
+
+<!-- WHAT THIS IS -->
+<section class="page" id="about">
+  <div class="kicker">Introduction</div>
+  <h2 class="title">A Structural Canon for Builders, Evaluators, and Institutions</h2>
+  <div class="meta-bar reveal">
+    <span><b>5</b> chapters</span>
+    <span><b>15</b> primary mechanisms</span>
+    <span><b>40</b> sub-mechanisms</span>
+    <span><b>55</b> named patterns</span>
+    <span><b>CC BY-NC-SA 4.0</b></span>
+  </div>
+  <p class="intro tight">Medical neurotechnology asks teams to turn insight into interventions that are scientifically sound, clinically meaningful, reliable in practice, and durable under real-world constraints. In this field, progress is shaped more by structure than by talent or effort. MECHANISMS names the structures: fifty-five patterns that reliably produce similar outcomes under similar institutional conditions, across training, funding, translation, quality, and programs.</p>
+  <div class="grid grid-3 reveal">
+    <div class="card dark-card">
+      <h4>Diagnostic by Design</h4>
+      <p>This canon names causes. It does not prescribe fixes, tell case studies, or assign blame. The patterns are structural: they persist regardless of how talented or motivated the people inside them are. Naming them precisely is the prerequisite for changing them.</p>
+    </div>
+    <div class="card">
+      <h4>What a Mechanism Is</h4>
+      <p>A mechanism is a pattern that reliably produces similar outcomes under similar institutional conditions. Mechanisms are conditional: they activate under specific system states. They are bidirectional: each failure implies a working version. They are actionable: each names where structure would have to change.</p>
+    </div>
+    <div class="card">
+      <h4>Both Directions at Once</h4>
+      <p>Every pattern in this canon has a positive counterpart: what the working version looks like. Each mechanism card below carries a toggle that flips between the failure and the structure worth building. The canon reads as a warning list or a design guide, depending on which side you hold.</p>
+    </div>
+  </div>
+</section>
+
+<!-- THE MAP -->
+<section class="page" id="map">
+  <div class="kicker">Orientation</div>
+  <h2 class="title">Five Chapters, Upstream to Downstream</h2>
+  <p class="intro tight">The chapters run in causal order. Training systems shape the people. Capital shapes the accountability those people inherit. Translation shapes whether knowledge moves. Quality shapes whether learning compounds. Programs shape the institutional layer that funds and evaluates all of it. Later failures usually begin earlier than they surface.</p>
+  <div class="grid grid-3 reveal">
+    <a class="card hub-card" href="#ch1">
+      <div class="hub-num">1</div>
+      <h4>Training Systems</h4>
+      <p>How authority, labor, and judgment get shaped before any product exists.</p>
+    </a>
+    <a class="card hub-card" href="#ch2">
+      <div class="hub-num">2</div>
+      <h4>Funding, Regulation &amp; Advice</h4>
+      <p>How the source of capital decides what gets resolved and what gets deferred.</p>
+    </a>
+    <a class="card hub-card" href="#ch3">
+      <div class="hub-num">3</div>
+      <h4>Translation</h4>
+      <p>How knowledge moves, stalls, and gets distorted between research, engineering, and clinic.</p>
+    </a>
+    <a class="card hub-card" href="#ch4">
+      <div class="hub-num">4</div>
+      <h4>Quality</h4>
+      <p>What makes learning compound across personnel change instead of resetting.</p>
+    </a>
+    <a class="card hub-card" href="#ch5">
+      <div class="hub-num">5</div>
+      <h4>Programs</h4>
+      <p>How program design shapes what gets funded, learned, and built before work begins.</p>
+    </a>
+    <a class="card hub-card" href="#access">
+      <div class="hub-num">&darr;</div>
+      <h4>The Full Canon</h4>
+      <p>Download the complete PDF, cite it, and use it under the open license.</p>
+    </a>
+  </div>
+</section>
+
+<!-- SIGNAL FINDER -->
+<section class="page" id="signals">
+  <div class="kicker">Diagnostic Entry</div>
+  <h2 class="title">Start From What You See</h2>
+  <p class="intro tight">Mechanisms are identified by observable signals. Pick the sentence that sounds like your situation. The page will take you to the pattern behind it.</p>
+  <div class="signal-grid reveal">
+    <button class="signal-btn" data-target="mech-2-4"><span>&ldquo;The story improves faster than the evidence.&rdquo;</span><span class="goto">Mech 2.4 &rarr;</span></button>
+    <button class="signal-btn" data-target="mech-1-2"><span>&ldquo;Capable people stay because leaving is structurally costly.&rdquo;</span><span class="goto">Mech 1.2 &rarr;</span></button>
+    <button class="signal-btn" data-target="mech-4-1"><span>&ldquo;Three engineers give three different answers about one design decision.&rdquo;</span><span class="goto">Mech 4.1 &rarr;</span></button>
+    <button class="signal-btn" data-target="mech-2-2"><span>&ldquo;The pilot never ends. No one can call it.&rdquo;</span><span class="goto">Mech 2.2 &rarr;</span></button>
+    <button class="signal-btn" data-target="mech-5-2"><span>&ldquo;Every milestone was met. The question is still open.&rdquo;</span><span class="goto">Mech 5.2 &rarr;</span></button>
+    <button class="signal-btn" data-target="mech-3-1"><span>&ldquo;The animal study and the human study both succeed and cannot be combined.&rdquo;</span><span class="goto">Mech 3.1 &rarr;</span></button>
+    <button class="signal-btn" data-target="mech-2-3"><span>&ldquo;Advisors are confident. None of them share the downside.&rdquo;</span><span class="goto">Mech 2.3 &rarr;</span></button>
+    <button class="signal-btn" data-target="mech-1-1"><span>&ldquo;The people closest to the work are not in the room where it is decided.&rdquo;</span><span class="goto">Mech 1.1 &rarr;</span></button>
+  </div>
+</section>
+
+<!-- CHAPTERS -->
+<section class="page" id="chapters">
+  <div class="kicker">The Canon</div>
+  <h2 class="title">Fifty-Five Named Patterns</h2>
+  <p class="intro tight">Each primary mechanism expands to show its sub-mechanisms. The Working Version toggle flips any pattern from the failure to the structure worth building. Chapter and mechanism numbering follows the published canon so the site can be cited alongside the PDF.</p>
+
+  <!-- CHAPTER 1 -->
+  <div class="chapter reveal" id="ch1">
+    <div class="chapter-head"><span class="cn">1</span><h3>How Training Systems Shape Authority, Labor, and Judgment</h3></div>
+    <p class="chapter-epigraph">Most downstream failures begin here, before a product exists: in the systems that shape who gets authority, who absorbs risk, and whose judgment is taken seriously.</p>
+
+    <div class="mech" id="mech-1-1">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 1.1</span>
+        <h4>People Gain Deep Expertise Without Gaining Real Decision-Making Authority</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Technical expertise accumulates through training systems that withhold decision authority until a formal transition point. The result is capability without governance exposure: people who understand the work cannot govern it. The gap is a structural feature, not a training deficit.</p>
+        <ul class="mech-subs">
+          <li data-id="1.1a">Preparation extends without exposing people to decisions that have real consequences</li>
+          <li data-id="1.1b">Long evaluation environments train people to guess what evaluators want rather than think independently</li>
+          <li data-id="1.1c">The people closest to the work are structurally excluded from making decisions</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Authority Formation</div>
+          <p>Authority grows alongside expertise. People who understand the work deeply are trusted to make real decisions with significant consequences.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-1-2">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 1.2</span>
+        <h4>Credentialed Systems Create Dependency That Makes Leaving Structurally Costly</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Financial, time-based, and identity costs accumulate faster than real alternatives materialize. Staying is not an endorsement. It is the rational response to a shrinking set of options. Dependency stalls authority formation through limited options rather than lack of ability.</p>
+        <ul class="mech-subs">
+          <li data-id="1.2a">Financial and benefits dependencies make leaving practically impossible</li>
+          <li data-id="1.2b">Undefined advancement criteria keep people waiting indefinitely</li>
+          <li data-id="1.2c">Mission and identity framing substitutes for fair compensation and keeps people from leaving</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Fair Dependency</div>
+          <p>Fair relationships between institutions and people. Individuals have access to the resources they need and keep a clear path to other opportunities.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-1-3">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 1.3</span>
+        <h4>Institutions Become Locked into Behaviors That Keep Them Stable Rather Than Effective</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Funding pressure, reputational cost, diffuse collaboration, and IP rules each reward continuity over correction. The institution optimizes for its own persistence. Effectiveness becomes optional; stability does not.</p>
+        <ul class="mech-subs">
+          <li data-id="1.3a">Individuals adapt their work to whatever gets funded rather than what the problem requires</li>
+          <li data-id="1.3b">Reputation and status make it too costly to disagree or change direction</li>
+          <li data-id="1.3c">Multi-institution collaboration spreads responsibility so broadly that no one can make a decisive call</li>
+          <li data-id="1.3d">University IP ownership and royalty rules create misaligned incentives between inventors and institutions</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Honest Institutions</div>
+          <p>Institutions that stay honest over time. They maintain consistent standards and institutional memory while keeping the ability to change direction based on evidence. Value from intellectual property gets a fair distribution: the researchers who created the work hold a meaningful stake, and the institution supports deployment.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-1-4">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 1.4</span>
+        <h4>Knowledge Does Not Move Across Institutional Boundaries Without Structural Support</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Knowledge optimized for internal audiences cannot be used by people outside the producing system. Visibility and brand-building substitute for the work of making knowledge usable. Valid results become unusable at the boundary.</p>
+        <ul class="mech-subs">
+          <li data-id="1.4a">Knowledge optimized for internal audiences cannot be used by people outside the producing system</li>
+          <li data-id="1.4b">Institutions replace the work of making knowledge usable with visibility and brand-building</li>
+          <li data-id="1.4c">Researchers and decision-makers optimize for different goals, making valid knowledge unusable</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Knowledge Transfer</div>
+          <p>Knowledge that stays complete during transfer. Assumptions are documented, limits are identified, and the criteria for readiness are clear to everyone who uses it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER 2 -->
+  <div class="chapter reveal" id="ch2">
+    <div class="chapter-head"><span class="cn">2</span><h3>How Funding, Regulation, and Advice Shape What Gets Built</h3></div>
+    <p class="chapter-epigraph">Capable teams often fail not because of their skills, but because the structures around them reward deferral over resolution.</p>
+
+    <div class="mech" id="mech-2-1">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 2.1</span>
+        <h4>Who Funds You Determines What You Are Accountable for Before You Spend a Dollar</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">The source of capital determines which risks an organization is required to resolve and which it is permitted to defer. This configuration happens at investment, before any work begins.</p>
+        <ul class="mech-subs">
+          <li data-id="2.1a">Venture capital tracks fundability more than product readiness</li>
+          <li data-id="2.1b">Capital without formal accountability allows organizations to drift indefinitely</li>
+          <li data-id="2.1c">Public and nonprofit funding defines success by participation and compliance rather than delivery</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Capital Accountability</div>
+          <p>Funding structures that require organizations to resolve hard questions instead of demonstrating that activity is occurring.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-2-2">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 2.2</span>
+        <h4>Deferred Decisions Accumulate as Hidden Debt and Surface as Crises</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Internal checks deferred under time pressure accumulate as a design-level problem that surfaces at the worst possible moment. Accountability fails before resources run out.</p>
+        <ul class="mech-subs">
+          <li data-id="2.2a">Organizations get stuck in pilot mode because no one can end the test</li>
+          <li data-id="2.2b">Organizations treat available funding as a substitute for regulatory readiness</li>
+          <li data-id="2.2c">Unresolved organizational problems get offloaded onto a small number of people who absorb them silently</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Resolution</div>
+          <p>Decisions made in logical order. Pilots and tests answer specific questions rather than keeping every option open indefinitely.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-2-3">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 2.3</span>
+        <h4>Advice Without Consequence Alignment Distorts Direction</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Advisors influence decisions without sharing the costs when those decisions fail. Credentials and status outrank the knowledge of people doing the work. When responsibility is spread out, people stop exercising independent judgment and defer.</p>
+        <ul class="mech-subs">
+          <li data-id="2.3a">Advisors influence decisions without sharing the costs when those decisions fail</li>
+          <li data-id="2.3b">Organizations trust credentials and status over the knowledge of people doing the work</li>
+          <li data-id="2.3c">When responsibility is spread out, people stop exercising independent judgment and simply defer</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Advisory Alignment</div>
+          <p>Advisors who share the consequences when their guidance fails. Shared risk keeps advice practical and useful.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-2-4">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 2.4</span>
+        <h4>Commercial Pressure Causes Organizations to Stretch Product Claims Past What the Evidence Supports</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Product language expands one reasonable-sounding word at a time. Each step looks small. The accumulation tells a story the evidence cannot deliver, and correction gets more expensive the longer it waits.</p>
+        <ul class="mech-subs">
+          <li data-id="2.4a">Commercial pressure causes product language to slowly expand past what the evidence supports</li>
+          <li data-id="2.4b">Organizations reframe medical products as wellness tools to avoid regulatory classification</li>
+          <li data-id="2.4c">Organizations construct regulatory justifications after claims are already publicly made</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Claims Discipline</div>
+          <p>Product claims strictly based on current evidence. This builds long-term credibility instead of future risk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER 3 -->
+  <div class="chapter reveal" id="ch3">
+    <div class="chapter-head"><span class="cn">3</span><h3>How Knowledge Moves, Stalls, and Gets Distorted</h3></div>
+    <p class="chapter-epigraph">Research, engineering, and clinical work each generate valid evidence inside their own systems. Without enforced connections, that evidence stays trapped at its origin.</p>
+
+    <div class="mech" id="mech-3-1">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 3.1</span>
+        <h4>Knowledge Cannot Move from Research to Clinical Use Without Enforced Structural Connections</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Clinical, research, and engineering teams each optimize for their own domain. Timelines, incentives, and standards of evidence diverge. Each team does excellent work. The work does not connect.</p>
+        <ul class="mech-subs">
+          <li data-id="3.1a">Clinical, research, and engineering teams each optimize for their own domain and cannot produce usable results together</li>
+          <li data-id="3.1b">Evidence generated after key decisions are already made cannot change those decisions</li>
+          <li data-id="3.1c">Animal and human evidence programs run independently and produce results that cannot be combined</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Translation Coupling</div>
+          <p>Research, clinical practice, and engineering connected through shared accountability and synchronized timelines. Each area informs the work of the others.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-3-2">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 3.2</span>
+        <h4>Committing to Early Signals Before Enough Is Known Forecloses Later Learning</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Weak early results become strategic commitments through storytelling before the evidence warrants it. Measurement choices lock in. The story hardens before the evidence does, and walking it back costs more than never telling it.</p>
+        <ul class="mech-subs">
+          <li data-id="3.2a">Weak early results become strategic commitments through storytelling before the evidence warrants it</li>
+          <li data-id="3.2b">Early measurement choices become locked in and prevent learning from moving forward</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Evidence Discipline</div>
+          <p>Evidence communicated with complete honesty. It specifies what was tested, what remains unknown, and the conditions required for findings to hold.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER 4 -->
+  <div class="chapter reveal" id="ch4">
+    <div class="chapter-head"><span class="cn">4</span><h3>Quality Makes or Breaks Devices</h3></div>
+    <p class="chapter-epigraph">Quality is one of the few structural investments that compresses the effective timeline of medical device development. It is the condition that makes the process possible, not overhead layered on top of it.</p>
+
+    <div class="mech" id="mech-4-1">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 4.1</span>
+        <h4>Quality Systems Preserve the Integrity of Decisions Across Time and Personnel Change</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Quality determines whether a device built under one team can be understood, defended, and operated by another. Absent or misplaced, every transition becomes a restart, and every audit becomes a reconstruction.</p>
+        <ul class="mech-subs">
+          <li data-id="4.1a">Quality cannot be inferred from good intentions, delegated to consultants, or rebuilt after the fact</li>
+          <li data-id="4.1b">Quality authority placed too far from the work cannot govern decisions when it matters</li>
+          <li data-id="4.1c">Skipped quality steps accumulate into costs that eventually exceed what the organization can afford to fix</li>
+          <li data-id="4.1d">Open-source components without clear ownership dissolve the accountability chains quality requires</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Quality Infrastructure</div>
+          <p>Quality systems that preserve decisions over time. Personnel changes become smooth transitions, and audits build on a complete, clear record.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-4-2">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 4.2</span>
+        <h4>Quality Infrastructure Determines Whether a Device Can Be Paid for and Adopted</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Regulatory clearance is one gate among several. Hospitals and payers require evidence the clearance file was never designed to hold. A device prepared only for the regulator stalls at the next gate.</p>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Quality for Deployment</div>
+          <p>Quality infrastructure designed for the entire product lifecycle. It supports everything from initial clearance through clinical use and hospital payment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER 5 -->
+  <div class="chapter reveal" id="ch5">
+    <div class="chapter-head"><span class="cn">5</span><h3>How Programs Shape What Gets Funded, Learned, and Built</h3></div>
+    <p class="chapter-epigraph">A program is not a neutral space for work. It is a set of decisions about what kinds of people, problems, and answers will receive rewards.</p>
+
+    <div class="mech" id="mech-5-1">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 5.1</span>
+        <h4>Program Design Shapes What Participants Do Before Any Results Appear</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Selection criteria, evaluation practices, and permitted risk are set at the design stage. Those incentives dominate what happens regardless of what the program intends.</p>
+        <ul class="mech-subs">
+          <li data-id="5.1a">Who gets selected into a program shapes what problems get worked on before any work begins</li>
+          <li data-id="5.1b">Program affiliation substitutes for evidence of actual progress in how participants are evaluated</li>
+          <li data-id="5.1c">Program structures suppress bold risk-taking by penalizing any deviation from expected paths</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Program Incentives</div>
+          <p>Programs designed to solve the specific problems they were funded to address. Selection rewards the question, evaluation rewards resolution, and principled risk stays survivable.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-5-2">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 5.2</span>
+        <h4>Programs Fail When Time, Resources, and Learning Targets Are Mismatched</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <p class="mech-desc">Milestones signal progress without guaranteeing that real questions were answered. Fixed timelines end before uncertainty resolves, and unfinished problems pass to the next group with no context for where they came from.</p>
+        <ul class="mech-subs">
+          <li data-id="5.2a">Milestones signal progress without guaranteeing that real questions were answered</li>
+          <li data-id="5.2b">Programs spread resources too thin and lack the authority to stop work that is not producing learning</li>
+          <li data-id="5.2c">Fixed program timelines end before uncertainty is resolved and pass unfinished problems to the next group</li>
+        </ul>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version &middot; Matched Design</div>
+          <p>Time, resources, and learning targets sized to the uncertainty the program was built to resolve. Work ends when questions close, not when calendars do.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mech" id="mech-5-3">
+      <button class="mech-toggle" aria-expanded="false">
+        <span class="mn">MECH 5.3</span>
+        <h4>The Specific Structural Conditions That Allow Programs to Produce Real Progress</h4>
+        <span class="chev">&#9660;</span>
+      </button>
+      <div class="mech-body">
+        <div class="tags"><span class="tag tag-pos">Positive Mechanism</span></div>
+        <p class="mech-desc">This mechanism names the working configuration directly: a well-defined problem, real authority to stop unproductive work, and consequences tied to learning. Programs with these conditions produce actual answers and work the next group can build on. The conditions are rare because each one requires giving up a form of institutional comfort.</p>
+        <button class="flip-btn">Show the working version</button>
+        <div class="counterpart">
+          <div class="cp-label">Working version</div>
+          <p>This mechanism is the working version. When the three conditions are present together, the program resolves the questions it was designed to resolve.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STACKS -->
+<section class="page" id="clusters">
+  <div class="kicker">Co-occurrence</div>
+  <h2 class="title">Failures Travel in Stacks</h2>
+  <p class="intro tight">These patterns rarely occur alone. Four combinations appear together often enough to deserve their own names. Recognizing the stack tells you where to act, because the counter-move for a stack differs from the counter-move for any single member.</p>
+  <div class="grid grid-2 reveal">
+    <div class="card">
+      <div class="tags"><span class="tag tag-ch1">1.1</span><span class="tag tag-ch2">2.1</span><span class="tag tag-ch2">2.3</span></div>
+      <h4>The Early-Stage Authority-Accountability Stack</h4>
+      <p>Delayed authority, capital that dictates accountability, and advisors who fill the leadership gap. Common in new organizations where governance is still forming. The result is high activity that resolves no core uncertainty.</p>
+      <p><strong style="color:var(--dark-green)">Counter-move:</strong> establish formal decision-making power before the next funding round.</p>
+    </div>
+    <div class="card">
+      <div class="tags"><span class="tag tag-ch1">1.4</span><span class="tag tag-ch3">3.1</span><span class="tag tag-ch3">3.2</span></div>
+      <h4>The Translation Failure Stack</h4>
+      <p>Knowledge transfer fails, domains stay disconnected, and early signals get overcommitted. Frequent in university spinouts: knowledge built for academics, promises made before translation work has happened.</p>
+      <p><strong style="color:var(--dark-green)">Counter-move:</strong> build translation infrastructure before findings go public.</p>
+    </div>
+    <div class="card">
+      <div class="tags"><span class="tag tag-ch2">2.2</span><span class="tag tag-ch4">4.1</span><span class="tag tag-ch4">4.2</span></div>
+      <h4>The Quality Debt Stack</h4>
+      <p>Deferred decisions, absent quality systems, and failure at the reimbursement stage. Clearance arrives with minimal effort; hospitals and payers then ask for documentation nobody prepared.</p>
+      <p><strong style="color:var(--dark-green)">Counter-move:</strong> build quality to provider and payer standards from the start of development.</p>
+    </div>
+    <div class="card">
+      <div class="tags"><span class="tag tag-ch1">1.3</span><span class="tag tag-ch5">5.1</span><span class="tag tag-ch5">5.2</span></div>
+      <h4>The Program Recycling Stack</h4>
+      <p>Institutional incentive locks, programs with wrong incentives, and mismatched timing. Common in government and foundation initiatives that reward participation to stay legitimate. Unanswered questions pass from one program to the next.</p>
+      <p><strong style="color:var(--dark-green)">Counter-move:</strong> define success as the resolution of specific questions before the program design is final.</p>
+    </div>
+  </div>
+</section>
+
+<!-- IN CONVERSATION -->
+<section class="page" id="use">
+  <div class="kicker">Field Use</div>
+  <h2 class="title">Name the Pattern, Not the Person</h2>
+  <p class="intro tight">The canon is built to be spoken, not only read. Mechanisms give teams a shared vocabulary for problems that would otherwise be discussed as personalities, culture, or bad luck. A pattern named neutrally can be worked on. A person blamed cannot.</p>
+  <div class="grid grid-3 reveal">
+    <div class="card">
+      <h4>For Builders</h4>
+      <p>Use mechanism names to raise structural concerns without accusation. A one-page memo comparing two documents does more than a hallway complaint. The pattern is the subject; no one has to be the villain.</p>
+    </div>
+    <div class="card">
+      <h4>For Evaluators</h4>
+      <p>Use the signals to distinguish real progress from performative progress. Milestones met, papers published, and rounds closed are activity measures. The evaluative question is whether the underlying uncertainty closed.</p>
+    </div>
+    <div class="card">
+      <h4>For Institutions</h4>
+      <p>Use the positive counterparts as design requirements. Each working version describes a structure that can be specified, funded, and audited: authority that grows with expertise, capital that requires resolution, quality that preserves decisions.</p>
+    </div>
+  </div>
+  <div class="callout reveal">
+    <p class="q">When a credentialed organization is not producing judgment at the level its people are capable of, the deeper question is not a broken culture. It is where decision authority sits relative to the people with the most contextual knowledge, and what transition conditions keep it there.</p>
+  </div>
+</section>
+
+<!-- ACCESS -->
+<section class="page" id="access">
+  <div class="kicker">Access</div>
+  <h2 class="title">The Canon Is Free to Use</h2>
+  <p class="intro tight">MECHANISMS is published under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. Share it, adapt it, and build on it for non-commercial purposes, with credit and under the same license.</p>
+  <div class="grid grid-2 reveal">
+    <div class="card dark-card">
+      <h4>Download</h4>
+      <p>The complete canon: five chapters, fifty-five named patterns, and five appendices including the mechanism crosswalk, co-occurrence stacks, and the positive counterpart index.</p>
+      <p><a href="MECHANISMS_ASystemsAccountOfMedicalNeurotech_SharenaRice_2026_04_04.pdf" target="_blank" rel="noopener">Download the PDF &rarr;</a></p>
+    </div>
+    <div class="card">
+      <h4>Cite</h4>
+      <div class="cite-box">
+        <code id="cite-apa">Rice, S. (2026). MECHANISMS: A systems account of medical neurotechnology. Sharena Rice. https://sharenarice.com</code>
+        <button class="copy-btn" data-copy="cite-apa">Copy APA</button>
+      </div>
+      <div class="cite-box">
+        <code id="cite-mla">Rice, Sharena. MECHANISMS: A Systems Account of Medical Neurotechnology. 2026, sharenarice.com.</code>
+        <button class="copy-btn" data-copy="cite-mla">Copy MLA</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="colophon">
+  <div class="foot-grid">
+    <div>
+      <h2>MECHANISMS</h2>
+      <p>A structural canon for builders, evaluators, and institutions. Dedicated to those advancing medical neurotechnology with integrity and purpose.</p>
+      <h4>Author</h4>
+      <p>Sharena Rice, PhD is a neuroscientist and a leader in clinical trials and partnerships, working at the intersection of structural field analysis, translational research, and educational infrastructure in medical neurotechnology. More at <a href="https://sharenarice.com">sharenarice.com</a>.</p>
+    </div>
+    <div>
+      <h4>The Canon</h4>
+      <p><a href="#chapters">Five chapters</a> &middot; <a href="#signals">Signal finder</a> &middot; <a href="#clusters">Co-occurrence stacks</a> &middot; <a href="#access">Download and cite</a></p>
+      <h4>Scope</h4>
+      <p>MECHANISMS is deliberately diagnostic. Companion work carries the intervention and implementation layers: audience-specific translations, interactive experiences, and a rolling resource library at <a href="https://sharenarice.com">sharenarice.com</a>.</p>
+    </div>
+  </div>
+  <div class="license">
+    &copy; 2026 Sharena Rice &middot; Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>. You are free to share and adapt this material for non-commercial purposes, provided you give appropriate credit, indicate if changes were made, and distribute your contributions under the same license.
+  </div>
+</footer>
+
+<script>
+  // Accordion behavior for mechanism cards
+  document.querySelectorAll('.mech-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mech = btn.closest('.mech');
+      const isOpen = mech.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  });
+
+  // Working-version flip
+  document.querySelectorAll('.flip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cp = btn.closest('.mech-body').querySelector('.counterpart');
+      const on = cp.classList.toggle('show');
+      btn.classList.toggle('on', on);
+      btn.textContent = on ? 'Hide the working version' : 'Show the working version';
+    });
+  });
+
+  // Signal finder: scroll to mechanism, open it, flash it
+  document.querySelectorAll('.signal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (!target) return;
+      target.classList.add('open');
+      const toggle = target.querySelector('.mech-toggle');
+      if (toggle) toggle.setAttribute('aria-expanded', 'true');
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.remove('flash');
+      requestAnimationFrame(() => {
+        setTimeout(() => target.classList.add('flash'), 350);
+      });
+      setTimeout(() => target.classList.remove('flash'), 2200);
+    });
+  });
+
+  // Copy citation buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const code = document.getElementById(btn.dataset.copy);
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent.trim());
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('done'); }, 1600);
+      } catch (e) {
+        // Fallback: select the text so the user can copy manually
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  });
+
+  // Reveal on scroll
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>
