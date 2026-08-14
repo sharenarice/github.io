@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="BrainsConnected">
+  <title>BrainsConnected</title>
+  <g fill="none" stroke="#AEB4BB" stroke-width="5" stroke-linecap="round">
+    <path d="M21 40 L46 20"/>
+    <path d="M46 20 L46 48"/>
+    <path d="M21 40 L46 48"/>
+  </g>
+  <circle cx="21" cy="40" r="12.5" fill="#C1694F"/>
+  <circle cx="46" cy="20" r="9.5" fill="#C9A84C"/>
+  <circle cx="46" cy="48" r="7" fill="#8B9199"/>
+</svg>

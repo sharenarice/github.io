@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which Neurotech Should You Try? | BrainsConnected</title>
+<meta name="description" content="A two-minute quiz that points you toward the kind of consumer neurotech worth your attention, plus an honest read on what the evidence actually supports.">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<meta property="og:title" content="Which Neurotech Should You Try? | BrainsConnected">
+<meta property="og:description" content="A two-minute quiz that points you toward the kind of consumer neurotech worth your attention, plus an honest read on the evidence.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bc-core.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap header-row">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BrainsConnected mark">
+        <path d="M20.0 41.0 Q27.4 42.5 28.3 35.0 Q29.3 27.5 36.7 29.0 Q44.0 30.5 45.0 23.0" fill="none" stroke="#C7CBCF" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M45.0 23.0 Q39.3 26.8 44.7 31.0 Q50.0 35.2 44.3 39.0 Q38.7 42.8 44.0 47.0" fill="none" stroke="#C7CBCF" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M20.0 41.0 Q22.9 46.4 28.0 43.0 Q33.1 39.6 36.0 45.0 Q38.9 50.4 44.0 47.0" fill="none" stroke="#C7CBCF" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="19" cy="41" r="11" fill="#C1694F"/>
+        <circle cx="46" cy="22" r="8.5" fill="#C9A84C"/>
+        <circle cx="44" cy="48" r="6" fill="#8B9199"/>
+      </svg>
+      <div class="brand-text">
+        <span class="h1"><span class="brand-brains">Brains</span><span class="brand-connected">Connected</span></span>
+        <p>The Nexus for Consumer Neurotech</p>
+      </div>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="index.html#discover">Discover</a></li>
+        <li><a href="quiz.html" aria-current="page">Quizzes</a></li>
+        <li><a href="resources.html">Resources</a></li>
+        <li><a href="teach.html">Teach</a></li>
+        <li><a href="index.html#connect">Connect</a></li>
+        <li><a class="nav-join" href="https://sharenarice.com/pages/brainsconnected-signup.html">Join us</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="page-hero-inner">
+      <p class="crumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Quizzes</p>
+      <span class="kicker">Two minutes, no email required</span>
+      <h2>There are forty-odd devices out there. <span class="accent">Two of them are for you.</span></h2>
+      <p class="lede">Most neurotech buying guides start with the hardware. This one starts with your Tuesday night. Answer eight questions and we'll tell you which corner of consumer neurotech is worth your attention, what the research actually supports, and what to try before you spend anything.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap-narrow" style="padding-bottom:20px;">
+  <div class="quiz-shell" id="quizShell">
+
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-label" id="progressLabel">1 of 8</span>
+    </div>
+
+    <form id="quizForm" aria-live="polite"></form>
+
+    <div class="quiz-nav">
+      <button type="button" class="link-btn" id="backBtn" disabled>&larr; Back</button>
+      <button type="button" class="link-btn" id="restartBtn" hidden>Start over</button>
+    </div>
+  </div>
+
+  <div id="resultZone" hidden></div>
+</div>
+
+<svg class="wave" viewBox="0 0 1440 52" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M0 26 C240 52 480 0 720 26 C960 52 1200 0 1440 26 L1440 52 L0 52 Z" fill="#EDE1D0"/>
+</svg>
+
+<section style="background:var(--tan-deep); padding: 26px 0 70px;">
+  <div class="wrap-narrow">
+    <span class="kicker">Quiz two</span>
+    <div class="section-heading">
+      <h3>Myth or neuroscience?</h3>
+      <div class="rule"></div>
+    </div>
+    <p style="color:var(--ink-soft); max-width:660px;">Seven claims about the brain. Some are repeated constantly and wrong. One is genuinely unsettled, which is the most interesting kind. Good for a classroom warm-up, a dinner party, or settling an argument with your brother-in-law.</p>
+
+    <div id="tfList" style="margin-top:28px;"></div>
+
+    <p id="tfScore" style="font-weight:700; color:var(--ink); margin-top:22px;" aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="join-band">
+  <div class="wrap">
+    <h3>Compare your results with people who actually own these things</h3>
+    <p>The quiz gives you a direction. The community gives you the part no spec sheet covers: whether the thing still gets worn after week three.</p>
+    <a href="https://sharenarice.com/pages/brainsconnected-signup.html" class="btn-primary">Join the community</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="quiz.html">Quizzes</a>
+      <a href="resources.html">Resources</a>
+      <a href="teach.html">Teach</a>
+      <a href="https://www.sharenarice.com/brainsconnected/about.html">About</a>
+      <a href="https://www.sharenarice.com/brainsconnected/team.html">Team</a>
+    </div>
+    <p><strong>Neurotech Reports</strong>, 461 Second St. #124, San Francisco, CA 94107, 415 546 1259</p>
+    <div class="social-row">
+      <a href="http://www.twitter.com/neurotechwriter" aria-label="Twitter">X</a>
+      <a href="http://www.linkedin.com/company/neurotechreports/" aria-label="LinkedIn">in</a>
+    </div>
+    <p class="fine">© 2026 Neurotech Reports. All rights reserved. Nothing here is medical advice.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var QUESTIONS = [
+    {
+      q: "It's 9pm on a Tuesday. Your brain is:",
+      sub: "Be honest, not aspirational.",
+      opts: [
+        { t: "Wired. I know I should wind down and I won't.", w: { sleep: 3, calm: 2 } },
+        { t: "Fried. I got nothing done and I don't know where the day went.", w: { focus: 3, calm: 1 } },
+        { t: "Fine, actually. I'm here out of curiosity.", w: { make: 3, play: 1 } },
+        { t: "Sore, tense, or recovering from something physical.", w: { body: 3, calm: 1 } }
+      ]
+    },
+    {
+      q: "Last time you tried to change a habit, what got in the way?",
+      sub: "The habit itself doesn't matter. The failure mode does.",
+      opts: [
+        { t: "I couldn't tell whether it was working, so I stopped.", w: { focus: 2, make: 2 } },
+        { t: "I could never get to sleep early enough to make it stick.", w: { sleep: 3 } },
+        { t: "I'd get anxious or overwhelmed and abandon it.", w: { calm: 3 } },
+        { t: "Boredom. It felt like homework.", w: { play: 3, make: 1 } }
+      ]
+    },
+    {
+      q: "Pick the sentence you'd most want to be true a year from now.",
+      sub: "",
+      opts: [
+        { t: "\u201cI can drop into deep work on demand.\u201d", w: { focus: 3 } },
+        { t: "\u201cI sleep through the night and remember my dreams.\u201d", w: { sleep: 3 } },
+        { t: "\u201cI notice stress early enough to do something about it.\u201d", w: { calm: 3, body: 1 } },
+        { t: "\u201cI built something with my own brain signals.\u201d", w: { make: 3, play: 2 } }
+      ]
+    },
+    {
+      q: "Someone hands you a headband that reads brain activity. First instinct?",
+      sub: "",
+      opts: [
+        { t: "Put it on. What does the graph do if I think hard?", w: { make: 2, play: 2 } },
+        { t: "Ask what it does with the data before it touches my head.", w: { calm: 1, focus: 1, make: 1 } },
+        { t: "Ask whether there's a study behind it.", w: { focus: 2, calm: 1 } },
+        { t: "Ask if I can use it to control something.", w: { play: 3, make: 1 } }
+      ]
+    },
+    {
+      q: "How do you feel about wearing something on your head or face?",
+      sub: "This kills more devices than any other factor.",
+      opts: [
+        { t: "Only while I'm sitting still and alone. Nowhere public.", w: { focus: 2, calm: 2 } },
+        { t: "Overnight is fine. Anything daytime is a hard no.", w: { sleep: 3 } },
+        { t: "I already wear earbuds constantly. Add to the pile.", w: { focus: 2, sleep: 1, calm: 1 } },
+        { t: "I'd wear a colander if it did something cool.", w: { play: 2, make: 3 } }
+      ]
+    },
+    {
+      q: "What's your relationship with data about yourself?",
+      sub: "",
+      opts: [
+        { t: "I have four years of sleep scores and I've read all of them.", w: { sleep: 2, make: 2 } },
+        { t: "I want one number that tells me if today was good.", w: { calm: 2, body: 2 } },
+        { t: "I want the raw signal and an export button.", w: { make: 3, focus: 1 } },
+        { t: "I want it to just work and not show me a dashboard.", w: { play: 2, body: 2 } }
+      ]
+    },
+    {
+      q: "Which would annoy you most about a new device?",
+      sub: "",
+      opts: [
+        { t: "A subscription on top of the hardware price.", w: { make: 2, play: 1 } },
+        { t: "Vague claims with nothing to back them up.", w: { focus: 2, calm: 1, make: 1 } },
+        { t: "Ten minutes of fiddling before it reads anything.", w: { sleep: 2, body: 2, play: 1 } },
+        { t: "Discovering it sends my data somewhere I didn't agree to.", w: { calm: 2, make: 2 } }
+      ]
+    },
+    {
+      q: "Budget check.",
+      sub: "This changes the recommendation, not the category.",
+      budget: true,
+      opts: [
+        { t: "Zero. Convince me first.", b: "zero" },
+        { t: "Under $150 for something real.", b: "low" },
+        { t: "$150 to $500 if it earns it.", b: "mid" },
+        { t: "Whatever it takes, I want the good one.", b: "high" }
+      ]
+    }
+  ];
+
+  var RESULTS = {
+    focus: {
+      name: "Focus & Flow",
+      tagline: "Attention, measured",
+      color: "#C1694F",
+      blurb: "You're not looking for a wellness experience, you're looking for evidence that your attention is doing what you think it's doing. This corner of neurotech is about measurement first: devices that track markers of focus during work sessions and give you a record you can argue with.",
+      evidence: ["mixed", "Mixed evidence"],
+      evidenceNote: "Neurofeedback for attention has decades of research behind it and a persistent replication problem. Studies that blind participants properly tend to find smaller effects than open-label ones. Treat any device promising ADHD-grade improvement with real suspicion, and treat the metrics as a mirror rather than a diagnosis.",
+      look: [
+        "Dry-electrode EEG headbands built for desk sessions rather than clinical labs",
+        "Focus-tracking earbuds, which trade signal quality for something you'll actually wear",
+        "Apps that pair a simple signal with session structure, since the structure may be doing most of the work"
+      ],
+      first: "Before buying anything: run two weeks of timed work blocks with a paper log of how each one felt. If you won't keep the log, you won't keep the headband either. That single test predicts device abandonment better than any spec.",
+      watch: "\u201cFocus score\u201d is a vendor-defined number, not a standard unit. Two devices can disagree completely and both be internally consistent. Ask what the score is computed from before you trust a trend line."
+    },
+    sleep: {
+      name: "Sleep & Dreams",
+      tagline: "The overnight shift",
+      color: "#8B9199",
+      blurb: "Sleep is the one place consumer neurotech has the cleanest shot, because you're lying still for eight hours and the signals are large and well characterized. It's also where the gap between tracking and improving is widest, and the most interesting experimental work is happening.",
+      evidence: ["solid", "Strongest signal"],
+      evidenceNote: "Sleep staging from EEG is genuinely well established, and consumer devices have gotten respectably close to lab polysomnography for coarse staging. Interventions are a different story: acoustic stimulation during deep sleep has real published support, while most \u201csleep optimization\u201d claims stack far more inference on top of the measurement than the measurement can carry.",
+      look: [
+        "Sleep-staging headbands with EEG rather than wrist-only movement and heart rate",
+        "Closed-loop acoustic stimulation systems that time sound to your slow waves",
+        "Dream journaling and lucid dreaming tools, the most experimental end and the most fun"
+      ],
+      first: "Free version of this experiment: fixed wake time for two weeks, no naps, and a note each morning on how you feel out of five. Most people find something worth fixing before a device tells them anything. Then the device tells you whether the fix worked.",
+      watch: "Comfort decides everything here. A headband that's 8% more accurate and slightly less comfortable will lose to the comfortable one every night, because you'll wear the comfortable one."
+    },
+    calm: {
+      name: "Calm & Regulation",
+      tagline: "Noticing before it's a problem",
+      color: "#C9A84C",
+      blurb: "You want an early warning system. The useful devices in this category aren't trying to make you calm, they're trying to make your own state legible to you sooner than you'd notice unaided, which turns out to be the harder and more valuable problem.",
+      evidence: ["mixed", "Mixed evidence"],
+      evidenceNote: "Heart rate variability and breath-linked biofeedback have decent support for short-term physiological effects. EEG-based meditation feedback has enthusiastic users and thin controlled evidence, partly because a good control condition for \u201cmeditating with a gadget\u201d is genuinely hard to design. The practice may matter more than the hardware.",
+      look: [
+        "Meditation-focused EEG headbands that sonify your state in real time",
+        "HRV and breath-based wearables, cheaper and better validated than EEG for this purpose",
+        "Non-invasive vagus nerve stimulation, an active research area worth watching skeptically"
+      ],
+      first: "Try three weeks of a free breath-pacing app first. If you stick with it, a device will add a feedback loop worth having. If you don't, the device becomes a $300 reminder of a habit you didn't want.",
+      watch: "Anything marketed for anxiety or depression treatment is making a medical claim. Check whether it has actual regulatory clearance for that claim, and talk to a clinician rather than a product page."
+    },
+    play: {
+      name: "Play & Control",
+      tagline: "Brains as input devices",
+      color: "#C1694F",
+      blurb: "You're less interested in optimizing yourself than in what happens when a brain or muscle signal becomes a controller. This is the most honest corner of consumer neurotech, because the demo either works or it doesn't and no wellness framing can paper over the difference.",
+      evidence: ["early", "Early but honest"],
+      evidenceNote: "Non-invasive control is real but low-bandwidth. Neural wristbands reading muscle signals at the forearm are dramatically more responsive than anything reading through the skull, which is why that's where the mainstream input work has gone. Consumer EEG control is closer to a well-executed party trick than a mouse replacement, and it's still a genuinely good time.",
+      look: [
+        "EMG and neural input wristbands, the category with real momentum behind it",
+        "BCI-enabled games and attention-driven mechanics",
+        "VR and XR integrations where an extra input channel actually earns its place"
+      ],
+      first: "Watch unedited demo footage before you buy, not the sizzle reel. Look specifically for the latency between intention and response, and for how many takes the reviewer needed. That gap is the whole product.",
+      watch: "Marketing that says \u201cmind control\u201d usually means blink detection, jaw clench, or a trained attention proxy. Those are legitimate inputs, and they're not what the phrase implies."
+    },
+    body: {
+      name: "Body & Recovery",
+      tagline: "The nervous system below the neck",
+      color: "#8B9199",
+      blurb: "Your nervous system doesn't stop at your skull, and neither does neurotech. This category covers stimulation and sensing aimed at recovery, pain, and physical regulation. It's the corner where the medical device world and the consumer world overlap most, which cuts both ways.",
+      evidence: ["mixed", "Depends heavily on the claim"],
+      evidenceNote: "Some of this has serious clinical backing and regulatory clearance behind specific claims. Some of it is the same electrode with a lifestyle label and no clearance at all. The technology isn't the variable, the specific claim is. Two devices can be electrically near-identical and have completely different evidence behind what they say they do.",
+      look: [
+        "Cleared neurostimulation devices for specific indications, prescription or over the counter",
+        "Recovery and pain wearables with published trials rather than testimonials",
+        "HRV and autonomic tracking, which is cheap, comfortable, and reasonably validated"
+      ],
+      first: "Before anything else, look up whether the exact claim the product makes has regulatory clearance. \u201cCleared\u201d and \u201cregistered\u201d and \u201cdesigned in accordance with\u201d mean very different things, and the third one usually means nothing at all.",
+      watch: "This is the one category where we'll say it plainly: talk to a clinician first, especially with any implanted device, seizure history, pregnancy, or cardiac condition. Stimulation is not a category to freelance in."
+    },
+    make: {
+      name: "Curiosity & Making",
+      tagline: "Give me the raw signal",
+      color: "#C9A84C",
+      blurb: "You don't want a wellness product, you want an instrument. The good news: this is the best-served corner of neurotech for the money, because open hardware and open software communities have been building here for fifteen years and the tooling is genuinely excellent.",
+      evidence: ["solid", "The tooling is real"],
+      evidenceNote: "No claims to evaluate here, which is the appeal. Open EEG hardware plus mature signal processing libraries will teach you more about what these devices can and can't do in a weekend than any amount of reading. You'll also develop a useful allergy to marketing copy, because you'll have seen how much of the signal is jaw clench.",
+      look: [
+        "Open-source EEG boards with full raw data access and no subscription",
+        "Signal processing libraries and public datasets, so you can practice before buying hardware",
+        "Citizen science projects and hackathons where the community shares recordings"
+      ],
+      first: "Start with a public dataset and a notebook, not hardware. Load real EEG, plot it, try to find an eye blink. You'll spend nothing, and you'll know within an evening whether this is a hobby or a passing curiosity.",
+      watch: "Budget for the annoying parts: electrode gel, replacement cables, and the afternoon you'll lose to mains hum at 50 or 60 hertz. Everyone loses that afternoon. Consider it tuition."
+    }
+  };
+
+  var BUDGET_NOTE = {
+    zero: "You said zero budget, which is the right answer to start with. Everything in the \u201ctry this first\u201d box above costs nothing, and the community threads are free. Come back to hardware once a free experiment has told you what you'd actually be buying.",
+    low: "Under $150 is a real budget in this space, especially for wristbands, HRV sensors, and open hardware starter kits. It is not a real budget for EEG sleep staging or anything with a clinical claim. Spend it on the category above where the entry price is honest.",
+    mid: "The $150 to $500 band is where most credible consumer neurotech actually lives. Ask about return windows before you buy, and check whether core features sit behind a subscription, because that changes the real price by a lot over two years.",
+    high: "With an open budget, the binding constraint stops being money and becomes whether you'll keep using it. Buy the most comfortable option in the category above rather than the most capable, and put the difference toward a second device in six months once you know what you actually reach for."
+  };
+
+  var form = document.getElementById('quizForm');
+  var fill = document.getElementById('progressFill');
+  var label = document.getElementById('progressLabel');
+  var backBtn = document.getElementById('backBtn');
+  var restartBtn = document.getElementById('restartBtn');
+  var resultZone = document.getElementById('resultZone');
+  var shell = document.getElementById('quizShell');
+
+  var answers = new Array(QUESTIONS.length).fill(null);
+  var current = 0;
+
+  function render() {
+    form.innerHTML = '';
+    var q = QUESTIONS[current];
+
+    var block = document.createElement('div');
+    block.className = 'q-block';
+
+    var h = document.createElement('h3');
+    h.textContent = q.q;
+    block.appendChild(h);
+
+    if (q.sub) {
+      var s = document.createElement('p');
+      s.className = 'q-sub';
+      s.textContent = q.sub;
+      block.appendChild(s);
+    }
+
+    var opts = document.createElement('div');
+    opts.className = 'opts';
+
+    q.opts.forEach(function (o, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt' + (answers[current] === i ? ' picked' : '');
+
+      var k = document.createElement('span');
+      k.className = 'opt-key';
+      k.textContent = String.fromCharCode(65 + i);
+      b.appendChild(k);
+
+      var t = document.createElement('span');
+      t.textContent = o.t;
+      b.appendChild(t);
+
+      b.addEventListener('click', function () {
+        answers[current] = i;
+        if (current < QUESTIONS.length - 1) {
+          current++;
+          render();
+        } else {
+          finish();
+        }
+      });
+      opts.appendChild(b);
+    });
+
+    block.appendChild(opts);
+    form.appendChild(block);
+
+    var pct = ((current) / QUESTIONS.length) * 100;
+    fill.style.width = pct + '%';
+    label.textContent = (current + 1) + ' of ' + QUESTIONS.length;
+    backBtn.disabled = current === 0;
+    restartBtn.hidden = current === 0;
+  }
+
+  function finish() {
+    var scores = { focus: 0, sleep: 0, calm: 0, play: 0, body: 0, make: 0 };
+    var budget = 'mid';
+
+    QUESTIONS.forEach(function (q, qi) {
+      var pick = answers[qi];
+      if (pick === null) return;
+      var o = q.opts[pick];
+      if (q.budget) { budget = o.b; return; }
+      Object.keys(o.w || {}).forEach(function (k) { scores[k] += o.w[k]; });
+    });
+
+    var ranked = Object.keys(scores).map(function (k) {
+      return { key: k, val: scores[k] };
+    }).sort(function (a, b) { return b.val - a.val; });
+
+    var max = ranked[0].val || 1;
+    var top = RESULTS[ranked[0].key];
+    var second = RESULTS[ranked[1].key];
+
+    fill.style.width = '100%';
+    label.textContent = 'Done';
+    shell.hidden = true;
+
+    var bars = ranked.map(function (r) {
+      var res = RESULTS[r.key];
+      var pct = Math.round((r.val / max) * 100);
+      return '<div class="bar-row">' +
+        '<span class="bar-label">' + res.name + '</span>' +
+        '<span class="bar-track"><span class="bar-fill" style="width:' + pct + '%; background:' + res.color + ';"></span></span>' +
+        '<span class="bar-pct">' + pct + '</span>' +
+        '</div>';
+    }).join('');
+
+    var lookList = top.look.map(function (l) { return '<li>' + l + '</li>'; }).join('');
+
+    resultZone.innerHTML =
+      '<div class="quiz-shell">' +
+        '<div class="result-head">' +
+          '<span class="result-badge" style="background:' + top.color + '22;">' +
+            '<span class="dot" style="width:26px;height:26px;background:' + top.color + ';"></span>' +
+          '</span>' +
+          '<div>' +
+            '<h3>' + top.name + '</h3>' +
+            '<p class="result-tagline">' + top.tagline + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="result-body">' +
+          '<p style="font-size:1.05rem;">' + top.blurb + '</p>' +
+
+          '<h4>How strong is the evidence?</h4>' +
+          '<span class="evidence ' + top.evidence[0] + '">' + top.evidence[1] + '</span>' +
+          '<p>' + top.evidenceNote + '</p>' +
+
+          '<h4>What to look at</h4>' +
+          '<ul style="color:var(--ink-soft); padding-left:20px;">' + lookList + '</ul>' +
+
+          '<div class="callout coral">' +
+            '<h4>Try this first, for free</h4>' +
+            '<p>' + top.first + '</p>' +
+          '</div>' +
+
+          '<h4>What to watch out for</h4>' +
+          '<p>' + top.watch + '</p>' +
+
+          '<h4>On your budget</h4>' +
+          '<p>' + BUDGET_NOTE[budget] + '</p>' +
+
+          '<h4>Your full spread</h4>' +
+          '<p style="font-size:0.92rem;">Nobody is one category. Your second-strongest pull was <strong>' + second.name + '</strong>, and the overlap between your top two is usually where the device you actually keep wearing lives.</p>' +
+          bars +
+
+          '<div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:30px;">' +
+            '<a href="resources.html" class="btn-primary">See the resource shelf</a>' +
+            '<button type="button" class="btn-ghost" id="againBtn">Take it again</button>' +
+          '</div>' +
+
+          '<p style="font-size:0.82rem; color:var(--silver); margin-top:26px;">This quiz is orientation, not diagnosis or medical advice. It reflects the state of published evidence as our editors read it, and we update it as that changes. Disagree with a call? Tell us, and bring the paper.</p>' +
+        '</div>' +
+      '</div>';
+
+    resultZone.hidden = false;
+    resultZone.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    document.getElementById('againBtn').addEventListener('click', reset);
+  }
+
+  function reset() {
+    answers = new Array(QUESTIONS.length).fill(null);
+    current = 0;
+    resultZone.hidden = true;
+    resultZone.innerHTML = '';
+    shell.hidden = false;
+    render();
+    shell.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  backBtn.addEventListener('click', function () {
+    if (current > 0) { current--; render(); }
+  });
+  restartBtn.addEventListener('click', reset);
+
+  render();
+
+  /* ---------- Myth or neuroscience ---------- */
+
+  var TF = [
+    {
+      claim: "We only use 10% of our brains.",
+      answer: false,
+      why: "Imaging shows essentially all of the brain is active across a day, and there is no dormant reserve waiting to be unlocked. Damage to almost any region causes deficits, which is hard to square with 90% spare capacity. The number appears to have been invented by advertising, not neuroscience."
+    },
+    {
+      claim: "Brain training games make you generally smarter.",
+      answer: false,
+      why: "You reliably get better at the trained game. Transfer to untrained abilities is the contested part, and large well-controlled studies have mostly found it narrow or absent. Getting faster at a matching task is real, it just isn't general intelligence."
+    },
+    {
+      claim: "People are left-brained or right-brained in personality.",
+      answer: false,
+      why: "Lateralization is real for specific functions, notably language. Whole personalities sorted by hemisphere are not. Large imaging studies looking for people with globally stronger left or right networks haven't found them."
+    },
+    {
+      claim: "Consumer EEG headsets can tell what word you're thinking.",
+      answer: false,
+      why: "Scalp EEG through skull and skin gives coarse, heavily smeared signals. Consumer devices detect rhythmic states, blinks, and jaw clenches well. Decoding specific words from language cortex is a research problem being worked on with electrodes placed on or in the brain, not with a headband."
+    },
+    {
+      claim: "Scientists agree that adults grow new neurons in the hippocampus.",
+      answer: false,
+      why: "This is the genuinely unsettled one. Two prominent 2018 papers using human tissue reached opposite conclusions, and the disagreement traces partly to how tissue is preserved and what counts as a young neuron. Adult neurogenesis is well established in rodents. In adult humans it remains actively contested, which makes it a much better classroom discussion than a settled fact."
+    },
+    {
+      claim: "The brain is basically switched off during sleep.",
+      answer: false,
+      why: "Sleeping brains are intensely active in structured patterns, including slow waves and spindles tied to memory consolidation. Some regions are more active in REM sleep than in quiet waking. Sleep is a different mode of operation, not an off state."
+    },
+    {
+      claim: "Neurons are the only brain cells that matter for thinking.",
+      answer: false,
+      why: "Glial cells are roughly as numerous as neurons and do far more than housekeeping. Astrocytes shape synaptic transmission, microglia prune connections, and oligodendrocytes control conduction speed through myelin. A model with only neurons in it is missing half the machine."
+    }
+  ];
+
+  var tfList = document.getElementById('tfList');
+  var tfScore = document.getElementById('tfScore');
+  var tfAnswered = 0, tfRight = 0;
+
+  TF.forEach(function (item, i) {
+    var wrap = document.createElement('div');
+    wrap.className = 'tf-item';
+
+    var p = document.createElement('p');
+    p.className = 'claim';
+    p.textContent = (i + 1) + '. ' + item.claim;
+    wrap.appendChild(p);
+
+    var btns = document.createElement('div');
+    btns.className = 'tf-btns';
+
+    var ans = document.createElement('p');
+    ans.className = 'tf-answer';
+    ans.hidden = true;
+    ans.innerHTML = '<strong>' + (item.answer ? 'True.' : 'Myth.') + '</strong> ' + item.why;
+
+    [['True', true], ['Myth', false]].forEach(function (pair) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tf-btn';
+      b.textContent = pair[0];
+      b.addEventListener('click', function () {
+        if (wrap.dataset.done) return;
+        wrap.dataset.done = '1';
+        var correct = pair[1] === item.answer;
+        b.classList.add(correct ? 'right' : 'wrong');
+        ans.hidden = false;
+        tfAnswered++;
+        if (correct) tfRight++;
+        tfScore.textContent = tfRight + ' of ' + tfAnswered + ' so far.' +
+          (tfAnswered === TF.length ? (tfRight === TF.length ? ' Clean sweep. Go teach someone.' : ' The one that gets people is number five.') : '');
+        Array.prototype.forEach.call(btns.children, function (c) { c.disabled = true; });
+      });
+      btns.appendChild(b);
+    });
+
+    wrap.appendChild(btns);
+    wrap.appendChild(ans);
+    tfList.appendChild(wrap);
+  });
+
+})();
+</script>
+
+</body>
+</html>
