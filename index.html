@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> <meta name="description" content="MECHANISMS: A Systems Account of Medical Neurotechnology. 55 named structural patterns across five volumes. Written by Sharena Rice, PhD.">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sharena Rice, PhD · Making neuro work</title>
+<meta name="description" content="Sharena Rice, PhD, makes neuro work. Her flagship work, Field Potentials: A Systems Account of Clinical Neuro, is free: twelve seats, seven gates, and twenty-two field diagnostic mechanisms.">
 <meta name="author" content="Sharena Rice, PhD">
-<meta property="og:title" content="Sharena Rice, PhD — Making neuro work">
-<meta property="og:description" content="MECHANISMS names the structural patterns that determine why medical neurotechnology fails.">
+<meta property="og:title" content="Sharena Rice, PhD · Making neuro work">
+<meta property="og:description" content="Field Potentials, a free systems account of clinical neuro: the seats people hold, the gates an intervention passes, and the mechanisms that decide whether good work reaches patients.">
 <meta property="og:image" content="https://sharenarice.com/og-image.png">
 <meta property="og:url" content="https://sharenarice.com">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Sharena Rice, PhD — Making neuro work">
-<meta name="twitter:description" content="MECHANISMS names the structural patterns that determine why medical neurotechnology fails.">
+<meta name="twitter:title" content="Sharena Rice, PhD · Making neuro work">
+<meta name="twitter:description" content="Field Potentials, a free systems account of clinical neuro: the seats people hold, the gates an intervention passes, and the mechanisms that decide whether good work reaches patients.">
 <meta name="twitter:image" content="https://sharenarice.com/og-image.png">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" href="/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sharena Rice, PhD · Making neuro work</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -450,6 +451,165 @@ footer {
 .footer-logo img { width: 22px; height: 22px; object-fit: contain; opacity: 0.45; }
 .footer-l { font-family: var(--serif); font-size: 14px; color: rgba(220,239,232,0.3); }
 .footer-r { font-size: 12px; color: rgba(220,239,232,0.2); letter-spacing: 0.06em; }
+
+/* Keeps section tops clear of the fixed nav when jumping from a link */
+section { scroll-margin-top: 80px; }
+
+/* FLAGSHIP: the Field Potentials section and its sign-up form */
+.flagship {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 64px;
+  align-items: start;
+}
+.fp-free {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dg);
+  background: var(--gold);
+  padding: 4px 10px;
+  margin-bottom: 18px;
+}
+.fp-title {
+  font-family: var(--serif);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+  margin-bottom: 6px;
+}
+.fp-sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(20px, 2.2vw, 26px);
+  color: var(--lg);
+  margin-bottom: 30px;
+}
+.fp-desc p {
+  font-size: 17px;
+  color: rgba(220,239,232,0.78);
+  line-height: 1.85;
+  margin-bottom: 18px;
+}
+.fp-list {
+  list-style: none;
+  margin: 8px 0 26px;
+  border-top: 0.5px solid rgba(220,239,232,0.1);
+}
+.fp-list li {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 0.5px solid rgba(220,239,232,0.1);
+  font-size: 15px;
+  color: rgba(220,239,232,0.7);
+}
+.fp-list .n {
+  font-family: var(--serif);
+  font-size: 30px;
+  color: var(--gold);
+  line-height: 1;
+}
+.fp-precursor {
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(220,239,232,0.45);
+}
+.fp-precursor a { color: var(--lg); border-bottom: 0.5px solid rgba(220,239,232,0.3); }
+
+/* The sign-up card: email in, Zenodo link out */
+.signup {
+  background: rgba(220,239,232,0.04);
+  border: 0.5px solid rgba(240,195,24,0.35);
+  padding: 36px 32px;
+  position: sticky;
+  top: 96px;
+}
+.signup h3 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.signup .lead {
+  font-size: 15px;
+  color: rgba(220,239,232,0.7);
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+.signup label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.signup input[type=email] {
+  width: 100%;
+  padding: 13px 14px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--dg);
+  background: var(--lg);
+  border: 1px solid transparent;
+  margin-bottom: 14px;
+}
+.signup input[type=email]:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+.signup button {
+  width: 100%;
+  cursor: pointer;
+  border: 0;
+  font-family: var(--sans);
+}
+.signup .fine {
+  margin-top: 14px;
+  font-size: 12px;
+  color: rgba(220,239,232,0.42);
+  line-height: 1.6;
+}
+.signup .err { color: #ffb4a8; font-size: 14px; margin-top: 10px; min-height: 1em; }
+/* Hidden trap field: people never see it, simple bots fill it in */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+/* Shown after sign-up */
+.unlocked h3 { color: var(--gold); }
+.unlocked .btn-p { width: 100%; text-align: center; margin: 8px 0 14px; }
+.unlocked .alt-link { font-size: 14px; color: var(--lg); border-bottom: 0.5px solid rgba(220,239,232,0.3); }
+
+/* Small line icons on every resource card, drawn in the site's gold */
+.res-icon {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 18px;
+  stroke: var(--gold);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.2s, transform 0.2s;
+}
+.res-card:hover .res-icon { stroke: var(--lg); transform: translateY(-2px); }
+
+/* Narrow screens: stack the grids and tighten the side padding */
+@media (max-width: 860px) {
+  nav { padding: 14px 22px; }
+  .nav-links { gap: 18px; }
+  .hero, section { padding-left: 22px; padding-right: 22px; }
+  .hero { padding-top: 140px; }
+  .flagship, .about-grid, .resources-grid { grid-template-columns: 1fr; }
+  .signup { position: static; }
+  footer { padding: 30px 22px; }
+}
+@media (max-width: 560px) {
+  .nav-logo-text { display: none; }
+}
 </style>
 </head>
 <body>
@@ -460,26 +620,70 @@ footer {
     <span class="nav-logo-text">Sharena Rice, PhD</span>
   </div>
   <ul class="nav-links">
+    <li><a href="#field-potentials">Field Potentials</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#resources">Resources</a></li>
-    <li><a href="#work">Work</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#connect">Connect</a></li>
   </ul>
 </nav>
 
-<!-- HERO -->
+<!-- HERO: who I am and what my flagship work is -->
 <section class="hero">
   <h1 class="hero-name">What I do</h1>
   <div class="hero-statement">
-    <p class="hero-descriptor">Medical Neurotechnology · Neuroscience</p>
+    <p class="hero-descriptor">Clinical Neuro · Neurotechnology · Neuroscience</p>
     <p>I work on making neuro work.</p>
-    <p>Serving as Head of Neuroscience Clinical Trials and Partnerships at Radial, the largest brain medicine clinical network in the United States.<p>
-    <p>My experience has been hands on and direct, which matters a great deal for closing gaps: early clinical work, basic research, device testing and characterization, tooling, documentation, training teams on protocols, diligence in venture capital, journalism, and advising organizations.<p>
-    <p>My core strength is structural synthesis. I've produced field-level analyses and diligence frameworks. I publish many reference materials that transfer information rather than hype. I’m especially interested in capital-accountability coupling: what makes neuro initiatives investable, auditable, and resilient.</p>
-    <p>My flagship canon, <a href="https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview" target="_blank" style="color:var(--gold);border-bottom:0.5px solid rgba(240,195,24,0.35);padding-bottom:1px">MECHANISMS</a>, names the hidden patterns that cause capable teams to produce value that goes uncaptured, good research to stall, and prevent promising devices from reaching patients.</p>
+    <p>Serving as Head of Neuroscience Clinical Trials and Partnerships at Radial, the largest brain medicine clinical network in the United States.</p>
+    <p>My experience has been hands on and direct, which matters a great deal for closing gaps: early clinical work, basic research, device testing and characterization, tooling, documentation, training teams on protocols, diligence in venture capital, journalism, and advising organizations.</p>
+    <p>My core strength is structural synthesis. I have produced field-level analyses and diligence frameworks. I publish many reference materials that transfer information rather than hype. I am especially interested in capital-accountability coupling: what makes neuro initiatives investable, auditable, and resilient.</p>
+    <p>My flagship work, <a href="#field-potentials" style="color:var(--gold);border-bottom:0.5px solid rgba(240,195,24,0.35);padding-bottom:1px"><em>Field Potentials</em></a>, is a systems account of clinical neuro: the seats people hold, the gates an intervention must pass, and the twenty-two mechanisms that decide whether good work reaches patients. It is free.</p>
   </div>
   <div class="hero-actions">
-    <a href="#resources" class="btn-p">Resources</a>
+    <a href="#field-potentials" class="btn-p">Get Field Potentials, free</a>
+    <a href="#resources" class="btn-s">Resources</a>
+  </div>
+</section>
+
+<!-- FLAGSHIP: Field Potentials, with the email sign-up that unlocks the Zenodo link -->
+<section id="field-potentials">
+  <div class="sec-eye">Flagship work</div>
+  <div class="flagship">
+    <div>
+      <span class="fp-free">Free · CC BY-NC-ND 4.0</span>
+      <h2 class="fp-title">Field Potentials</h2>
+      <p class="fp-sub">A Systems Account of Clinical Neuro</p>
+      <div class="fp-desc">
+        <p>Clinical neuro keeps its promises more often when the people in it can see past their own seat. Most of the field’s failures happen at the seams, where a researcher, a regulator, a payer, a clinician, and a builder each hold one piece and no one is paid to watch the joins.</p>
+        <p>Field Potentials maps those seams. It is written for anyone who works in clinical neuro, drugs and devices alike, or lives with what it produces, and it assumes little beyond curiosity.</p>
+      </div>
+      <ul class="fp-list">
+        <li><span class="n">12</span><span>seats, from trainee and discovery researcher to payer and person with lived experience, with who pays for each</span></li>
+        <li><span class="n">15</span><span>words that mean different things in different seats, set side by side in the Neurosetta Stone</span></li>
+        <li><span class="n">7</span><span>gates an intervention passes to reach a patient and stay in use</span></li>
+        <li><span class="n">22</span><span>field diagnostic mechanisms, each with a key question to ask aloud and a first move from your seat</span></li>
+      </ul>
+      <p class="fp-precursor"><a href="https://sharenarice.com/fieldpotentials/" target="_blank" rel="noopener"><em>Field Potentials</em></a> supersedes MECHANISMS, my earlier account of medical neurotechnology.</p>
+    </div>
+
+    <div class="signup" id="signup">
+      <!-- Step 1: the form. Step 2 (hidden until submit): the Zenodo link. -->
+      <form id="fp-form" novalidate>
+        <h3>Read it free</h3>
+        <p class="lead">Enter your email and the book opens on Zenodo, free to read, download, and share.</p>
+        <label for="fp-email">Email</label>
+        <input type="email" id="fp-email" name="email" autocomplete="email" required placeholder="you@example.com">
+        <div class="hp" aria-hidden="true"><label for="fp-website">Leave this empty</label><input type="text" id="fp-website" tabindex="-1" autocomplete="off"></div>
+        <button type="submit" class="btn-p">Get the book</button>
+        <p class="err" id="fp-err" role="alert"></p>
+        <p class="fine">I will email you when Field Potentials is revised, and rarely otherwise. Your address is never shared or sold. Unsubscribe anytime by replying.</p>
+      </form>
+      <div class="unlocked" id="fp-unlocked" hidden>
+        <h3>Thank you. It is yours.</h3>
+        <p class="lead">Field Potentials v0.0 is on Zenodo, free to read and download.</p>
+        <a class="btn-p" id="fp-zenodo" href="https://doi.org/10.5281/zenodo.24359235" target="_blank" rel="noopener">Open on Zenodo →</a>
+        <a class="alt-link" href="https://sharenarice.com/fieldpotentials/" target="_blank" rel="noopener">Explore the seats and mechanisms online →</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -504,11 +708,11 @@ footer {
     </div>
     <div class="stats">
       <div class="stat">
-        <div class="stat-n">55</div>
-        <div class="stat-l">Named structural claims in <a href="https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview" target="_blank" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">MECHANISMS</a></div>
+        <div class="stat-n">22</div>
+        <div class="stat-l">Field diagnostic mechanisms in <a href="#field-potentials" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">Field Potentials</a></div>
       </div>
       <div class="stat">
-        <div class="stat-n">35+</div>
+        <div class="stat-n">40+</div>
         <div class="stat-l">Published resources in neuro</div>
       </div>
       <div class="stat">
@@ -519,95 +723,164 @@ footer {
   </div>
 </section>
 
-<!-- RESOURCES -->
+<!-- RESOURCES: free references and games, no email needed -->
 <section id="resources">
   <div class="sec-eye">Resources</div>
-  <h2 class="sec-head">Canon and reference<br><em>infrastructure</em></h2>
-  <div class="resources-note">These resources are free to use and share.</p>
-    <p>No login, no email needed.</div>
+  <h2 class="sec-head">Reference<br><em>infrastructure</em></h2>
+  <div class="resources-note"><p>These resources are free to use and share, with no login and no email needed.</p></div>
   <div class="resources-grid">
     <div class="res-card">
-      <div class="res-card-tag">Structural diagnostics · Five volumes</div>
-      <div class="res-card-title">MECHANISMS</div>
-      <div class="res-card-subtitle">A Systems Account of Medical Neurotechnology</div>
-      <div class="res-card-desc">A five-volume canon that names the structural patterns behind why medical neurotechnology fails. This is because systems build in the wrong incentives, authority structures, and blind spots before anyone makes a single product decision. Written for operators, builders, and funders who already sense something is broken but do not yet have the language for it. Recognizing the patterns is the first step to fixing things.</div>
-      <div class="res-card-meta"><a href="https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview" target="_blank">Read MECHANISMS →</a></div>
-    </div>
-    <div class="res-card">
+      <!-- icon: shield with a check, for standards and governance -->
+      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L27 7 V15 C27 22 22 27 16 29 C10 27 5 22 5 15 V7 Z"/><path d="M11 16 L15 20 L22 12"/></svg>
       <div class="res-card-tag">Standards and governance reference</div>
       <div class="res-card-title">Neurotechnology Standards &amp; Governance</div>
       <div class="res-card-subtitle">A Curated Reference for Innovators</div>
       <div class="res-card-desc">A map of the standards bodies, regulators, and ethics initiatives that shape how neurotechnology products are developed and approved worldwide. Used by product teams, researchers, and program managers who need to find the right frameworks early.</div>
-      <div class="res-card-meta"><a href="https://sharenarice.com/neurotechstandardsandgovernance/" target="_blank">View resource →</a></div>
+      <div class="res-card-meta"><a href="https://sharenarice.com/neurotechstandardsandgovernance/" target="_blank" rel="noopener">View resource →</a></div>
     </div>
     <div class="res-card">
+      <!-- icon: a cleared document moving to a coin, for clearance to coverage -->
+      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5 H13 L16 8 V20 H4 Z"/><path d="M7 12 L9 14 L13 10"/><path d="M15 25 H20"/><path d="M18 23 L20 25 L18 27"/><circle cx="25.5" cy="20" r="4.5"/><path d="M25.5 18 V22"/></svg>
       <div class="res-card-tag">Reimbursement reference</div>
       <div class="res-card-title">Navigating the Neurotechnology Reimbursement Maze</div>
       <div class="res-card-subtitle">From Clearance to Coverage</div>
       <div class="res-card-desc">Article on how neurotechnology products move from FDA clearance to insurance coverage to patient access. Designed for developers and teams who need to understand the reimbursement landscape before it becomes a late-stage surprise.</div>
-      <div class="res-card-meta"><a href="https://medium.com/neurotechx/navigating-the-neurotechnology-insurance-reimbursement-maze-challenges-and-solutions-in-the-united-a82ab89e69d7" target="_blank">View resource →</a></div>
-    </div>
-        <div class="res-card">
-      <div class="res-card-tag">Patient-Centered Neurotech</div>
-      <div class="res-card-title">A Curated Reference for Innovators</div>
-      <div class="res-card-subtitle">The patient engagement infrastructure in neurotech is different than many people realize.</div>
-      <div class="res-card-desc">Designed for innovators and teams who need to know what exists as they develop patient-centered neurotechnologies.</div>
-      <div class="res-card-meta"><a href="https://sharenarice.com/patientcenteredneurotech/" target="_blank">View resource →</a></div>
+      <div class="res-card-meta"><a href="https://medium.com/neurotechx/navigating-the-neurotechnology-insurance-reimbursement-maze-challenges-and-solutions-in-the-united-a82ab89e69d7" target="_blank" rel="noopener">View resource →</a></div>
     </div>
     <div class="res-card">
-      <div class="res-card-tag">Career Reference · Article</div>
+      <!-- icon: a person with a heart, for patient-centered work -->
+      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 27 C4 20 8 16 12 16 C14 16 15.5 16.6 17 17.6"/><path d="M24 27 C19 23.5 17.5 21.5 17.5 19.5 C17.5 17.8 18.8 16.5 20.5 16.5 C21.9 16.5 23.2 17.4 24 18.7 C24.8 17.4 26.1 16.5 27.5 16.5 C29.2 16.5 30.5 17.8 30.5 19.5 C30.5 21.5 29 23.5 24 27 Z"/></svg>
+      <div class="res-card-tag">Patient-centered neurotech</div>
+      <div class="res-card-title">A Curated Reference for Innovators</div>
+      <div class="res-card-subtitle">The patient engagement infrastructure in neurotech is different from what many people realize.</div>
+      <div class="res-card-desc">Designed for innovators and teams who need to know what exists as they develop patient-centered neurotechnologies.</div>
+      <div class="res-card-meta"><a href="https://sharenarice.com/patientcenteredneurotech/" target="_blank" rel="noopener">View resource →</a></div>
+    </div>
+    <div class="res-card">
+      <!-- icon: a winding path with a flag, for a career journey -->
+      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 28 C5 22 14 23 14 17 C14 11 22 13 22 7"/><circle cx="5" cy="28" r="1.5"/><path d="M22 7 V2"/><path d="M22 2 L28 4 L22 6"/></svg>
+      <div class="res-card-tag">Career reference · Article</div>
       <div class="res-card-title">My Journey + Resources for Yours in Neurotech</div>
       <div class="res-card-subtitle">The article I send when people ask about my career</div>
-      <div class="res-card-desc">A walk through how I came into neuroscience research and progressed into works across domains in neurotech. Contains resources I recommend for people building their own path into medical neurotechnology. Sent most often to people who want to move into the field as a professional.</div>
-      <div class="res-card-meta"><a href="https://substack.com/home/post/p-176299869" target="_blank">Read the essay →</a></div>
+      <div class="res-card-desc">A walk through how I came into neuroscience research and progressed into work across domains in neurotech. Contains resources I recommend for people building their own path into medical neurotechnology. Sent most often to people who want to move into the field as a professional.</div>
+      <div class="res-card-meta"><a href="https://substack.com/home/post/p-176299869" target="_blank" rel="noopener">Read the essay →</a></div>
     </div>
   </div>
 
   <div class="res-subsection">
     <div class="sec-eye">Choose your own adventure</div>
     <h3 class="sub-sec-head">Interactive games <em>for students</em></h3>
-      <div class="resources-note">These games are free to use and share.</p>
-    <p>No login, no email needed.</div>
+    <div class="resources-note"><p>These games are free to use and share, with no login and no email needed.</p></div>
     <div class="resources-grid">
       <div class="res-card">
+        <!-- icon: a doorway with a step, for thresholds -->
+        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 28 V5 H22 V28"/><path d="M4 28 H28"/><circle cx="18.5" cy="17" r="1"/><path d="M22 23 H27"/></svg>
         <div class="res-card-tag">For undergraduates interested in neuro</div>
         <div class="res-card-title">Thresholds</div>
         <div class="res-card-subtitle">A Navigation Game</div>
         <div class="res-card-desc">Step through the choices that shape an early career in the field, from networking to research direction to what to pursue after graduation. Built to make the structure of the path visible before students commit to it.</div>
-        <div class="res-card-meta"><a href="https://sharenarice.com/thresholds/" target="_blank">Play the game →</a></div>
+        <div class="res-card-meta"><a href="https://sharenarice.com/thresholds/" target="_blank" rel="noopener">Play the game →</a></div>
       </div>
       <div class="res-card">
+        <!-- icon: an action potential trace (rest, sharp rise, fall, brief dip below rest), for potentials -->
+        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 22 H10 L12 20 L14 5 L16.5 24.5 C17.5 26 19 25 20 23.5 L21.5 22 H30"/></svg>
         <div class="res-card-tag">For graduate students interested in neuro</div>
         <div class="res-card-title">Potentials</div>
         <div class="res-card-subtitle">A Navigation Game</div>
-        <div class="res-card-desc">Surfaces the structural tradeoffs that shape a graduate career and helps students see how decisions change authority, agency, and optinality.</div>
-        <div class="res-card-meta"><a href="https://sharenarice.com/potentials/" target="_blank">Play the game →</a></div>
+        <div class="res-card-desc">Surfaces the structural tradeoffs that shape a graduate career and helps students see how decisions change authority, agency, and optionality.</div>
+        <div class="res-card-meta"><a href="https://sharenarice.com/potentials/" target="_blank" rel="noopener">Play the game →</a></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CONTACT -->
-<section id="Follow">
+<!-- CONNECT -->
+<section id="connect">
   <div class="sec-eye">Connect</div>
   <div class="gold-bar"></div>
   <div class="contact-inner">
     <p>Follow for neurotech. Stay for systems, incentives, and what actually scales.</p>
     <p>I am heads-down building and selective about meetings. If you reach out, please include a concrete ask.</p>
     <div class="contact-links">
-      <a href="https://www.linkedin.com/in/sharenarice/" target="_blank" class="c-link">LinkedIn</a>
-      <a href="/cdn-cgi/l/email-protection#97e4fff6e5f2f9f6a6a6a7a1d7eef6fff8f8b9f4f8fa" class="c-link">Email</a>
+      <a href="https://www.linkedin.com/in/sharenarice/" target="_blank" rel="noopener" class="c-link">LinkedIn</a>
+      <a href="mailto:sharena1106@yahoo.com" class="c-link">Email</a>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="footer-logo">
-    <img src="ShuffleSynthesisIconYellow.svg" alt="logo">
+    <img src="ShuffleSynthesisIconYellow.svg" alt="">
     <span class="footer-l">Sharena Rice, PhD · sharenarice.com</span>
   </div>
-  <div class="footer-r">Medical neurotechnology · Quality · San Francisco Bay Area</div>
+  <div class="footer-r">Clinical neuro · Neurotechnology · Quality</div>
 </footer>
+
+<script>
+/* ---------------------------------------------------------------
+   EMAIL LIST SETUP (do this once; see the steps in the reply)
+   Each sign-up is sent to a Google Form, which writes it as a new
+   row (timestamp + email) in a Google Sheet you own. That Sheet is
+   your email list.
+   - FORM_ACTION: your form's address, ending in /formResponse
+   - EMAIL_FIELD: the entry ID of the form's Email question
+   Until both are filled in, visitors still get the book, but no
+   address is saved, and the browser console shows a warning.
+   --------------------------------------------------------------- */
+const FORM_ACTION = 'https://docs.google.com/forms/d/e/PASTE_FORM_ID_HERE/formResponse';
+const EMAIL_FIELD = 'entry.PASTE_ENTRY_ID_HERE';
+
+const ZENODO_URL = 'https://doi.org/10.5281/zenodo.24359235';
+const STORAGE_KEY = 'fp_signed_up';
+
+const form = document.getElementById('fp-form');
+const unlocked = document.getElementById('fp-unlocked');
+const emailInput = document.getElementById('fp-email');
+const errorBox = document.getElementById('fp-err');
+const trap = document.getElementById('fp-website');
+
+/* Swaps the form for the Zenodo link */
+function showBook() {
+  form.hidden = true;
+  unlocked.hidden = false;
+}
+
+/* Returning visitors who already signed up skip the form */
+try { if (localStorage.getItem(STORAGE_KEY)) showBook(); } catch (e) {}
+
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
+  errorBox.textContent = '';
+  const email = emailInput.value.trim();
+
+  /* Checks the address looks like an email before sending it */
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    errorBox.textContent = 'Please enter a valid email address.';
+    emailInput.focus();
+    return;
+  }
+
+  /* Bots that fill the hidden field get the link but are not recorded */
+  const isBot = trap.value !== '';
+  const configured = !FORM_ACTION.includes('PASTE_') && !EMAIL_FIELD.includes('PASTE_');
+
+  if (!isBot && configured) {
+    /* Sends the email to the Google Form, which adds it to the Sheet.
+       Google does not let the page read the reply, so the request is
+       sent and the book is shown right away. */
+    const data = new URLSearchParams();
+    data.append(EMAIL_FIELD, email);
+    fetch(FORM_ACTION, { method: 'POST', mode: 'no-cors', body: data }).catch(function () {});
+  } else if (!configured) {
+    console.warn('Field Potentials sign-up: the Google Form is not connected yet, so this email was not saved.');
+  }
+
+  try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+  showBook();
+  /* Opens Zenodo in a new tab; if the browser blocks it, the button is right there */
+  window.open(ZENODO_URL, '_blank', 'noopener');
+});
+</script>
 
 </body>
 </html>
