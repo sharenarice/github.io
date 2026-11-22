@@ -1,885 +1,1593 @@
 <!DOCTYPE html>
+<!--
+  sharenarice.com home page
+  Takeaway: Sharena Rice makes neuro work, and her free work (Field Potentials, visualizers, references) shows how.
+
+  Page map, top to bottom (HTML, CSS, and JavaScript follow the same order):
+    1. Header and navigation (with a menu button on narrow screens)
+    2. Hero: role, background, a short personal note, the NLF 2026 photo, and three stat links
+       (40+ resources opens Resources, 11 opens Visualizers, 16,700+ opens LinkedIn)
+    3. Field Potentials: the flagship book, its preview, and the email form that opens it on Zenodo
+    4. Writing and resources: featured references (link previews), the PUBLICATIONS index, student games
+    5. Discovery research: splines feature, drawn by drawSplines() with a zoom from panel A to panel B
+    6. Neuro visualizers: video and carousel cards, a topic filter, and one viewer dialog
+    7. Connections: logo wall built from AFFILIATIONS; hover, focus, or tap shows the connection
+    8. BrainsConnected: the consumer neurotech venture she co-founded
+    9. Connect: email list sign up, LinkedIn, email
+   10. Footer
+
+  Depends on (all paths relative to this file):
+    ShuffleSynthesisIconYellow.svg, favicon.ico, apple-touch-icon.png  (already on the site)
+    images/nlf-2026-speaking-900.jpg and -1600.jpg  (Neurotech Leaders Forum 2026 photo; the UCLA photo is no longer used)
+    images/logos/<id>.png  (affiliation logos, cut from the logo sheet)
+    Link previews: each destination's own og image (her sites, Substack, brainsconnected.com); a styled fallback shows if one fails
+    media/video/<slug>.mp4, media/posters/<slug>.jpg, media/cards/<slug>.jpg  (visualizers)
+    media/carousels/eeg/1-6.jpg, media/carousels/meg/1-7.jpg, media/carousels/eeg.pdf, meg.pdf
+    Google Fonts: Cormorant Garamond, Karla
+
+  Email list: every sign up (both forms) goes to one Google Form, which writes a row to a Google Sheet.
+  Paste the form's pre-filled link into GOOGLE_FORM_PREFILLED_LINK in the script (steps in SETUP-EMAIL-LIST.md).
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sharena Rice, PhD · Making neuro work</title>
-<meta name="description" content="Sharena Rice, PhD, makes neuro work. Her flagship work, Field Potentials: A Systems Account of Clinical Neuro, is free: twelve seats, seven gates, and twenty-two field diagnostic mechanisms.">
-<meta name="author" content="Sharena Rice, PhD">
+<meta name="description" content="Sharena Rice, PhD, makes neuro work. Read Field Potentials free, watch short neuro visualizers, and use her references for clinical neuro and neurotech.">
+<meta name="author" content="Sharena Rice">
+<meta name="theme-color" content="#11241D">
 <meta property="og:title" content="Sharena Rice, PhD · Making neuro work">
-<meta property="og:description" content="Field Potentials, a free systems account of clinical neuro: the seats people hold, the gates an intervention passes, and the mechanisms that decide whether good work reaches patients.">
+<meta property="og:description" content="Field Potentials, a free systems account of clinical neuro, plus short neuro visualizers and references for the people who make neuro work.">
 <meta property="og:image" content="https://sharenarice.com/og-image.png">
 <meta property="og:url" content="https://sharenarice.com">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sharena Rice, PhD · Making neuro work">
-<meta name="twitter:description" content="Field Potentials, a free systems account of clinical neuro: the seats people hold, the gates an intervention passes, and the mechanisms that decide whether good work reaches patients.">
+<meta name="twitter:description" content="Field Potentials, a free systems account of clinical neuro, plus short neuro visualizers and references for the people who make neuro work.">
 <meta name="twitter:image" content="https://sharenarice.com/og-image.png">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" href="/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
+/* ===== Tokens: colors by role, type, spacing. Every text color passes WCAG AA on --bg and --surface ===== */
 :root {
-  --dg: #11241D;
-  --lg: #dcefe8;
-  --gold: #F0C318;
-  --white: #ffffff;
-  --serif: 'Cormorant Garamond', serif;
-  --sans: 'Karla', sans-serif;
+  --bg: #11241D;            /* page ground (dark green) */
+  --surface: #18302A;       /* cards and panels */
+  --surface-hover: #1E3A32;
+  --line: rgba(220,239,232,0.14);   /* hairlines, structural only */
+  --line-strong: rgba(220,239,232,0.32);
+  --heading: #ffffff;       /* 15.9:1 */
+  --text: #c4d8d0;          /* body, 10.9:1 on bg, 9.4:1 on surface */
+  --muted: #a7bcb4;         /* secondary, 8.1:1 on bg, 7.0:1 on surface */
+  --mint: #dcefe8;
+  --gold: #F0C318;          /* accent and buttons, 9.7:1 on bg */
+  --error: #ffb4a8;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Karla', system-ui, sans-serif;
+  --pad: clamp(20px, 5vw, 64px);    /* side padding, scales with the window */
+  --section-y: clamp(64px, 9vw, 112px);
+  --max: 1240px;                    /* content width cap on wide monitors */
 }
 
-html { scroll-behavior: smooth; }
-
+/* ===== Base ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
-  background: var(--dg);
-  color: var(--white);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--sans);
-  font-weight: 300;
-  font-size: 17px;
-  line-height: 1.75;
+  font-weight: 400;
+  font-size: 1.0625rem;   /* 17px, scales with browser zoom */
+  line-height: 1.7;
   overflow-x: hidden;
 }
-
-a { color: inherit; text-decoration: none; }
-
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 60px;
-  background: rgba(17,36,29,0.96);
-  backdrop-filter: blur(8px);
-  border-bottom: 0.5px solid rgba(220,239,232,0.1);
+img, video { max-width: 100%; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-
-.nav-logo { display: flex; align-items: center; gap: 12px; }
-.nav-logo img { width: 32px; height: 32px; object-fit: contain; }
-.nav-logo-text {
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--gold);
-  letter-spacing: 0.04em;
+.wrap { max-width: var(--max); margin: 0 auto; }
+.skip-link {
+  position: absolute; left: 12px; top: -60px; z-index: 300;
+  background: var(--gold); color: var(--bg); padding: 10px 16px; font-weight: 600; text-decoration: none;
 }
+.skip-link:focus { top: 12px; }
 
-.nav-links { display: flex; gap: 36px; list-style: none; }
-.nav-links a {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(220,239,232,0.6);
-  transition: color 0.2s;
+/* Shared text pieces: eyebrow, section heading, lead paragraph */
+.eyebrow {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 14px;
 }
-.nav-links a:hover { color: var(--gold); }
-
-.hero {
-  min-height: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 200px 60px 72px;
-  border-bottom: 0.5px solid rgba(220,239,232,0.08);
-}
-
-.hero-name {
-  font-family: var(--serif);
-  font-size: clamp(52px, 7.5vw, 92px);
-  font-weight: 300;
-  line-height: 1.0;
-  margin-bottom: 32px;
-}
-
-.hero-name em { font-style: italic; color: var(--lg); }
-
-.hero-statement {
-  max-width: 620px;
-  border-left: 1.5px solid var(--gold);
-  padding-left: 24px;
-  margin-bottom: 44px;
-}
-
-.hero-descriptor {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 20px;
-}
-
-.hero-statement p {
-  font-size: 17px;
-  color: rgba(220,239,232,0.78);
-  line-height: 1.9;
-  margin-bottom: 18px;
-}
-
-.hero-statement p:last-child { margin-bottom: 0; }
-
-.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-
-.btn-p {
-  display: inline-block;
-  padding: 13px 32px;
-  background: var(--gold);
-  color: var(--dg);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition: opacity 0.2s;
-}
-.btn-p:hover { opacity: 0.86; }
-
-.btn-s {
-  display: inline-block;
-  padding: 13px 32px;
-  background: transparent;
-  color: var(--lg);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border: 0.5px solid rgba(220,239,232,0.3);
-  transition: border-color 0.2s, color 0.2s;
-}
-.btn-s:hover { border-color: var(--lg); color: var(--white); }
-
-section {
-  padding: 100px 60px;
-  border-bottom: 0.5px solid rgba(220,239,232,0.07);
-}
-
-.sec-eye {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 14px;
-}
-
 .sec-head {
-  font-family: var(--serif);
-  font-size: clamp(32px, 4vw, 52px);
-  font-weight: 300;
-  line-height: 1.1;
-  margin-bottom: 48px;
+  font-family: var(--serif); font-weight: 300; color: var(--heading);
+  font-size: clamp(2rem, 4.2vw, 3.25rem); line-height: 1.12; margin-bottom: 20px; max-width: 22ch;
+}
+.sec-head em, .sub-head em { font-style: italic; color: var(--mint); }
+.lead { max-width: 62ch; color: var(--text); margin-bottom: 40px; }
+.sub-head {
+  font-family: var(--serif); font-weight: 300; color: var(--heading);
+  font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.15; margin-bottom: 14px;
 }
 
-.sec-head em { font-style: italic; color: var(--lg); }
-
-.gold-bar {
-  width: 36px;
-  height: 1px;
-  background: var(--gold);
-  opacity: 0.55;
-  margin-bottom: 36px;
+/* Buttons: gold primary, outlined secondary, both at least 44px tall */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 12px 28px;
+  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  transition: background-color .2s, color .2s, border-color .2s, transform .2s;
 }
+.btn-p { background: var(--gold); color: var(--bg); }
+.btn-p:hover { background: #ffd84a; }
+.btn-s { background: transparent; color: var(--mint); border-color: var(--line-strong); }
+.btn-s:hover { border-color: var(--mint); color: #fff; }
+.btn:active { transform: translateY(1px); }
 
-/* ABOUT */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 0.65fr 0.75fr;
-  gap: 56px;
-  align-items: start;
+/* Text links inside prose */
+.text-link { color: var(--gold); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.text-link:hover { text-decoration-thickness: 2px; }
+
+section { padding: var(--section-y) var(--pad); border-bottom: 1px solid var(--line); scroll-margin-top: 72px; }
+
+/* ===== 1. Header and navigation ===== */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(17,36,29,0.96); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
 }
-
-.about-text p {
-  font-size: 17px;
-  color: rgba(220,239,232,0.78);
-  line-height: 1.85;
-  margin-bottom: 20px;
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px var(--pad); max-width: calc(var(--max) + 2 * var(--pad)); margin: 0 auto; }
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; min-height: 44px; }
+.nav-logo img { width: 32px; height: 32px; object-fit: contain; }
+.nav-logo span { font-family: var(--serif); font-size: 1.2rem; color: var(--gold); letter-spacing: 0.03em; }
+.nav-links { display: flex; gap: clamp(16px, 2.4vw, 34px); list-style: none; }
+.nav-links a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; transition: color .2s;
 }
-
-.formation-note {
-  margin-top: 28px;
-  padding: 18px 22px;
-  border: 0.5px solid rgba(220,239,232,0.1);
-  font-size: 15px;
-  font-style: italic;
-  color: rgba(220,239,232,0.45);
-  line-height: 1.75;
-  max-width: 100%;
-  width: 100%;
+.nav-links a:hover, .nav-links a[aria-current="true"] { color: var(--gold); }
+.menu-btn {
+  display: none; min-width: 48px; min-height: 48px; background: none; border: 1px solid var(--line-strong);
+  cursor: pointer; align-items: center; justify-content: center;
 }
+.menu-btn svg { width: 22px; height: 22px; stroke: var(--mint); fill: none; stroke-width: 2; stroke-linecap: round; }
 
-.about-photo {
-  width: 100%;
-  aspect-ratio: 3/4;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-  filter: grayscale(12%);
+/* ===== 2. Hero ===== */
+.hero { padding-top: clamp(48px, 8vw, 96px); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.hero h1 {
+  font-family: var(--serif); font-weight: 300; color: var(--heading);
+  font-size: clamp(2.9rem, 7vw, 5.6rem); line-height: 1.0; margin-bottom: 28px;
 }
+.hero h1 em { font-style: italic; color: var(--mint); }
+.hero-body { border-left: 2px solid var(--gold); padding-left: 22px; margin-bottom: 36px; max-width: 58ch; }
+.hero-body p { margin-bottom: 14px; }
+.hero-body p:last-child { margin-bottom: 0; }
+.hero-body strong { color: var(--heading); font-weight: 500; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+.hero-photo { margin: 0; }
+.hero-photo img { width: 100%; height: auto; aspect-ratio: 1600 / 920; object-fit: cover; border: 1px solid var(--line); }
+.hero-photo figcaption { margin-top: 10px; font-size: 0.875rem; color: var(--muted); }
 
-.photo-caption {
-  margin-top: 10px;
-  font-size: 12px;
-  color: rgba(220,239,232,0.3);
-  letter-spacing: 0.05em;
-  line-height: 1.5;
-}
+/* Headline numbers: count up once when they scroll into view */
+.stats { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; margin-top: clamp(40px, 6vw, 72px); }
+.stat { background: var(--surface); padding: clamp(20px, 3vw, 30px) clamp(16px, 2.5vw, 28px); border-top: 2px solid transparent; transition: border-color .3s, background-color .3s; }
+.stat:hover { border-top-color: var(--gold); background: var(--surface-hover); }
+.stat-n { font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 3.4rem); color: var(--gold); line-height: 1; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+.stat-l { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-}
-
-.stat {
-  background: rgba(220,239,232,0.03);
-  border: 0.5px solid rgba(220,239,232,0.07);
-  padding: 28px 22px;
-}
-
-.stat-n {
-  font-family: var(--serif);
-  font-size: 40px;
-  font-weight: 300;
-  color: var(--gold);
-  line-height: 1;
-  margin-bottom: 6px;
-}
-
-.stat-l {
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  color: rgba(220,239,232,0.45);
-  text-transform: uppercase;
-}
-
-/* RESOURCES */
-.resources-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-}
-
-.res-card {
-  background: rgba(220,239,232,0.025);
-  border: 0.5px solid rgba(220,239,232,0.08);
-  padding: 38px 34px;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.res-card:hover {
-  background: rgba(220,239,232,0.045);
-  border-color: rgba(220,239,232,0.14);
-}
-
-.res-card-tag {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 14px;
-}
-
-.res-card-title {
-  font-family: var(--serif);
-  font-size: 26px;
-  font-weight: 400;
-  color: var(--white);
-  margin-bottom: 5px;
-}
-
-.res-card-subtitle {
-  font-family: var(--serif);
-  font-size: 15px;
-  font-style: italic;
-  color: rgba(220,239,232,0.44);
-  margin-bottom: 18px;
-}
-
-.res-card-desc {
-  font-size: 15px;
-  color: rgba(220,239,232,0.65);
-  line-height: 1.8;
-  margin-bottom: 22px;
-}
-
-.res-card-meta {
-  font-size: 12px;
-  color: rgba(220,239,232,0.32);
-  letter-spacing: 0.05em;
-}
-
-.res-card-meta span { color: var(--gold); }
-.res-card-meta a {
-  color: var(--gold);
-  border-bottom: 0.5px solid rgba(240,195,24,0.3);
-  padding-bottom: 1px;
-  transition: border-color 0.18s;
-}
-.res-card-meta a:hover { border-color: var(--gold); }
-
-.resources-note {
-  font-size: 15px;
-  color: rgba(220,239,232,0.72);
-  border-left: 1.5px solid var(--gold);
-  padding-left: 20px;
-  margin-bottom: 44px;
-  line-height: 1.8;
-  max-width: 720px;
-}
-
-.res-subsection {
-  margin-top: 84px;
-  padding-top: 60px;
-  border-top: 0.5px solid rgba(220,239,232,0.08);
-}
-
-.sub-sec-head {
-  font-family: var(--serif);
-  font-size: clamp(26px, 3vw, 38px);
-  font-weight: 300;
-  line-height: 1.15;
-  margin-bottom: 36px;
-}
-
-.sub-sec-head em { font-style: italic; color: var(--lg); }
-
-.pos-card {
-  padding: 30px 26px;
-  border: 0.5px solid rgba(220,239,232,0.07);
-}
-
-.pos-org {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 8px;
-}
-
-.pos-title {
-  font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 400;
-  color: var(--white);
-  margin-bottom: 10px;
-  line-height: 1.3;
-}
-
-.pos-desc {
-  font-size: 14px;
-  color: rgba(220,239,232,0.55);
-  line-height: 1.75;
-}
-
-.work-writing {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-top: 40px;
-  border-top: 0.5px solid rgba(220,239,232,0.07);
-}
-
-.writing-org {
-  font-size: 14px;
-  color: rgba(220,239,232,0.45);
-  border-left: 1.5px solid rgba(240,195,24,0.3);
-  padding-left: 14px;
-  line-height: 1.6;
-}
-
-.writing-org strong {
-  display: block;
-  font-weight: 500;
-  color: rgba(220,239,232,0.72);
-  font-size: 15px;
-  margin-bottom: 2px;
-}
-
-/* CONTACT */
-.contact-inner { max-width: 580px; }
-
-.contact-inner p {
-  font-size: 17px;
-  color: rgba(220,239,232,0.7);
-  line-height: 1.85;
-  margin-bottom: 30px;
-}
-
-.contact-rule {
-  font-size: 15px;
-  font-style: italic;
-  color: rgba(220,239,232,0.38);
-  border-left: 1px solid rgba(240,195,24,0.25);
-  padding-left: 18px;
-  margin-bottom: 30px;
-  line-height: 1.7;
-}
-
-.contact-links { display: flex; gap: 22px; flex-wrap: wrap; }
-
-.c-link {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--lg);
-  border-bottom: 0.5px solid rgba(220,239,232,0.25);
-  padding-bottom: 3px;
-  transition: color 0.18s, border-color 0.18s;
-}
-
-.c-link:hover { color: var(--gold); border-color: var(--gold); }
-
-footer {
-  padding: 36px 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.footer-logo { display: flex; align-items: center; gap: 10px; }
-.footer-logo img { width: 22px; height: 22px; object-fit: contain; opacity: 0.45; }
-.footer-l { font-family: var(--serif); font-size: 14px; color: rgba(220,239,232,0.3); }
-.footer-r { font-size: 12px; color: rgba(220,239,232,0.2); letter-spacing: 0.06em; }
-
-/* Keeps section tops clear of the fixed nav when jumping from a link */
-section { scroll-margin-top: 80px; }
-
-/* FLAGSHIP: the Field Potentials section and its sign-up form */
-.flagship {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 64px;
-  align-items: start;
-}
+/* ===== 3. Field Potentials ===== */
+.flagship { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(32px, 5vw, 64px); align-items: start; }
 .fp-free {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--dg);
-  background: var(--gold);
-  padding: 4px 10px;
-  margin-bottom: 18px;
+  display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--bg); background: var(--gold); padding: 4px 10px; margin-bottom: 18px;
 }
-.fp-title {
-  font-family: var(--serif);
-  font-size: clamp(40px, 5vw, 64px);
-  font-weight: 400;
-  line-height: 1.05;
-  margin-bottom: 6px;
-}
-.fp-sub {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(20px, 2.2vw, 26px);
-  color: var(--lg);
-  margin-bottom: 30px;
-}
-.fp-desc p {
-  font-size: 17px;
-  color: rgba(220,239,232,0.78);
-  line-height: 1.85;
-  margin-bottom: 18px;
-}
-.fp-list {
-  list-style: none;
-  margin: 8px 0 26px;
-  border-top: 0.5px solid rgba(220,239,232,0.1);
-}
+.fp-title { font-family: var(--serif); font-weight: 400; color: var(--heading); font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.05; margin-bottom: 6px; }
+.fp-sub { font-family: var(--serif); font-style: italic; font-size: clamp(1.25rem, 2.2vw, 1.65rem); color: var(--mint); margin-bottom: 28px; }
+.fp-desc p { margin-bottom: 16px; max-width: 62ch; }
+.fp-list { list-style: none; margin: 12px 0 24px; border-top: 1px solid var(--line); }
 .fp-list li {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: 16px;
-  align-items: baseline;
-  padding: 12px 0;
-  border-bottom: 0.5px solid rgba(220,239,232,0.1);
-  font-size: 15px;
-  color: rgba(220,239,232,0.7);
+  display: grid; grid-template-columns: 64px 1fr; gap: 16px; align-items: baseline;
+  padding: 14px 8px; border-bottom: 1px solid var(--line); transition: background-color .2s;
 }
-.fp-list .n {
-  font-family: var(--serif);
-  font-size: 30px;
-  color: var(--gold);
-  line-height: 1;
-}
-.fp-precursor {
-  font-size: 14px;
-  font-style: italic;
-  color: rgba(220,239,232,0.45);
-}
-.fp-precursor a { color: var(--lg); border-bottom: 0.5px solid rgba(220,239,232,0.3); }
+.fp-list li:hover { background: var(--surface); }
+.fp-list .n { font-family: var(--serif); font-size: 2rem; color: var(--gold); line-height: 1; }
+.fp-precursor { font-size: 0.9375rem; font-style: italic; color: var(--muted); }
 
-/* The sign-up card: email in, Zenodo link out */
-.signup {
-  background: rgba(220,239,232,0.04);
-  border: 0.5px solid rgba(240,195,24,0.35);
-  padding: 36px 32px;
-  position: sticky;
-  top: 96px;
+/* Sign up card: email in, Zenodo link out */
+.signup { background: var(--surface); border: 1px solid rgba(240,195,24,0.45); padding: clamp(24px, 3vw, 36px); }
+.signup h3 { font-family: var(--serif); font-weight: 400; color: var(--heading); font-size: 1.75rem; line-height: 1.2; margin-bottom: 10px; }
+.signup .card-lead { font-size: 0.9375rem; margin-bottom: 20px; }
+
+/* Shared form fields (Field Potentials card and the Connect email list) */
+.field-label { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.field-input {
+  width: 100%; min-height: 48px; padding: 12px 14px; font: inherit; font-size: 1rem;
+  color: var(--bg); background: var(--mint); border: 2px solid transparent; margin-bottom: 14px;
 }
-.signup h3 {
-  font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin-bottom: 10px;
-}
-.signup .lead {
-  font-size: 15px;
-  color: rgba(220,239,232,0.7);
-  line-height: 1.7;
-  margin-bottom: 22px;
-}
-.signup label {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 8px;
-}
-.signup input[type=email] {
-  width: 100%;
-  padding: 13px 14px;
-  font: inherit;
-  font-size: 16px;
-  font-weight: 400;
-  color: var(--dg);
-  background: var(--lg);
-  border: 1px solid transparent;
-  margin-bottom: 14px;
-}
-.signup input[type=email]:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
-.signup button {
-  width: 100%;
-  cursor: pointer;
-  border: 0;
-  font-family: var(--sans);
-}
-.signup .fine {
-  margin-top: 14px;
-  font-size: 12px;
-  color: rgba(220,239,232,0.42);
-  line-height: 1.6;
-}
-.signup .err { color: #ffb4a8; font-size: 14px; margin-top: 10px; min-height: 1em; }
-/* Hidden trap field: people never see it, simple bots fill it in */
-.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-/* Shown after sign-up */
+.field-input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.field-input[aria-invalid="true"] { border-color: var(--error); }
+.form-btn { width: 100%; }
+.form-error { color: var(--error); font-size: 0.875rem; margin-top: 10px; min-height: 1.4em; }
+.fine { margin-top: 10px; font-size: 0.8125rem; color: var(--muted); line-height: 1.6; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; } /* trap field for bots */
 .unlocked h3 { color: var(--gold); }
-.unlocked .btn-p { width: 100%; text-align: center; margin: 8px 0 14px; }
-.unlocked .alt-link { font-size: 14px; color: var(--lg); border-bottom: 0.5px solid rgba(220,239,232,0.3); }
-
-/* Small line icons on every resource card, drawn in the site's gold */
-.res-icon {
-  width: 34px;
-  height: 34px;
-  margin-bottom: 18px;
-  stroke: var(--gold);
-  fill: none;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: stroke 0.2s, transform 0.2s;
+.unlocked .btn { width: 100%; margin: 6px 0 12px; }
+.unlocked-links { display: flex; flex-direction: column; gap: 4px; }
+.link-btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; background: none; border: 0; cursor: pointer;
+  font-size: 0.9375rem; color: var(--mint); text-decoration: underline; text-underline-offset: 3px; text-align: left; padding: 0;
 }
-.res-card:hover .res-icon { stroke: var(--lg); transform: translateY(-2px); }
+.link-btn:hover { color: var(--gold); }
 
-/* Narrow screens: stack the grids and tighten the side padding */
-@media (max-width: 860px) {
-  nav { padding: 14px 22px; }
-  .nav-links { gap: 18px; }
-  .hero, section { padding-left: 22px; padding-right: 22px; }
-  .hero { padding-top: 140px; }
-  .flagship, .about-grid, .resources-grid { grid-template-columns: 1fr; }
+/* ===== 4. Neuro visualizers ===== */
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+.chip {
+  min-height: 44px; padding: 8px 18px; cursor: pointer; background: transparent;
+  border: 1px solid var(--line-strong); color: var(--text);
+  font-size: 0.875rem; font-weight: 500; transition: background-color .2s, color .2s, border-color .2s;
+}
+.chip:hover { border-color: var(--mint); color: #fff; }
+.chip[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--bg); font-weight: 600; }
+.viz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: clamp(14px, 2vw, 22px); list-style: none; }
+.viz-card { position: relative; background: var(--surface); border: 1px solid var(--line); transition: border-color .2s, transform .25s, background-color .2s; }
+.viz-card:hover { border-color: var(--gold); transform: translateY(-3px); background: var(--surface-hover); }
+.viz-card[hidden] { display: none; }
+.viz-thumb { position: relative; overflow: hidden; background: #fff; aspect-ratio: 4 / 5; }
+.viz-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.viz-card:hover .viz-thumb img { transform: scale(1.04); }
+.viz-badge {
+  position: absolute; right: 10px; bottom: 10px; display: flex; align-items: center; gap: 6px;
+  background: var(--bg); color: var(--mint); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em;
+  padding: 6px 10px; border-radius: 999px;
+}
+.viz-badge svg { width: 14px; height: 14px; fill: var(--gold); }
+.viz-body { padding: 14px 16px 18px; }
+.viz-topic { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.viz-title { font-family: var(--serif); font-size: 1.25rem; line-height: 1.25; color: var(--heading); font-weight: 400; }
+/* The whole card is one button, stretched over the card so any tap opens the viewer */
+.viz-open { all: unset; cursor: pointer; }
+.viz-open::after { content: ""; position: absolute; inset: 0; }
+.viz-open:focus-visible::after { outline: 3px solid var(--gold); outline-offset: 3px; }
+.viz-note { margin-top: 24px; font-size: 0.875rem; color: var(--muted); }
+
+/* Viewer dialog: one dialog shows any video or carousel */
+.viewer {
+  border: 1px solid var(--line-strong); background: var(--bg); color: var(--text);
+  width: min(1120px, 94vw); max-height: 92vh; margin: auto; padding: 0; overflow: auto;
+}
+.viewer::backdrop { background: rgba(5,12,10,0.82); }
+.viewer-inner { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 0; }
+.viewer-media { background: #fff; display: flex; align-items: center; justify-content: center; min-height: 300px; position: relative; }
+.viewer-media video, .viewer-media img { max-height: calc(86vh - 66px); width: auto; max-width: 100%; height: auto; }
+.viewer-text { padding: clamp(20px, 3vw, 36px); }
+/* Top bar keeps the close button clear of every word and of the art */
+.viewer-bar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: flex-end; padding: 8px; background: var(--bg); border-bottom: 1px solid var(--line); }
+.viewer-close {
+  width: 48px; height: 48px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line-strong); display: flex; align-items: center; justify-content: center;
+}
+.viewer-close svg { width: 20px; height: 20px; stroke: var(--mint); stroke-width: 2; stroke-linecap: round; }
+.viewer-close:hover { border-color: var(--gold); }
+.viewer-text h3 { font-family: var(--serif); font-weight: 400; color: var(--heading); font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.2; margin: 4px 0 16px; }
+.viewer-text p { margin-bottom: 14px; font-size: 1rem; }
+.viewer-meta { font-size: 0.8125rem; color: var(--muted); }
+.viewer-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 8px; }
+.viewer-actions .btn { padding: 10px 18px; }
+.status { font-size: 0.875rem; color: var(--gold); min-height: 1.4em; }
+/* Carousel controls sit over the slide edges, outside the art */
+.slide-nav { position: absolute; inset: auto 0 12px 0; display: flex; justify-content: center; align-items: center; gap: 14px; }
+.slide-btn {
+  width: 48px; height: 48px; cursor: pointer; background: var(--bg); border: 1px solid var(--bg);
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+}
+.slide-btn svg { width: 20px; height: 20px; stroke: var(--mint); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.slide-btn:hover { background: #24463c; }
+.slide-btn:disabled { opacity: 0.45; cursor: default; }
+.slide-count { background: var(--bg); color: var(--mint); font-size: 0.8125rem; font-weight: 600; padding: 6px 12px; border-radius: 999px; }
+.viewer-media.is-carousel { padding-bottom: 72px; }
+
+/* ===== 5. Writing and resources ===== */
+.resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 2px; }
+.res-card { position: relative; background: var(--surface); border: 1px solid var(--line); padding: clamp(24px, 3vw, 36px); transition: background-color .2s, border-color .2s; }
+.res-card:hover { background: var(--surface-hover); border-color: var(--line-strong); }
+.res-icon {
+  width: 36px; height: 36px; margin-bottom: 16px; stroke: var(--gold); fill: none; stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s, transform .2s;
+}
+.res-card:hover .res-icon { stroke: var(--mint); transform: translateY(-2px); }
+.res-tag { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.res-title { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; line-height: 1.2; color: var(--heading); margin-bottom: 6px; }
+.res-sub { font-family: var(--serif); font-size: 1.05rem; font-style: italic; color: var(--muted); margin-bottom: 14px; }
+.res-desc { font-size: 0.9375rem; margin-bottom: 18px; }
+/* The card title link stretches over the whole card */
+.card-link { text-decoration: none; }
+.card-link::after { content: ""; position: absolute; inset: 0; }
+.card-link:focus-visible { outline: none; }
+.card-link:focus-visible::after { outline: 3px solid var(--gold); outline-offset: -3px; }
+.res-cta { font-size: 0.875rem; font-weight: 600; color: var(--gold); }
+.res-card:hover .res-cta { text-decoration: underline; text-underline-offset: 3px; }
+.subsection { margin-top: clamp(56px, 8vw, 88px); padding-top: clamp(40px, 6vw, 60px); border-top: 1px solid var(--line); }
+.note { max-width: 62ch; margin-bottom: 28px; }
+
+/* More publications: a filterable list, newest first */
+.pub-list { list-style: none; border-top: 1px solid var(--line); }
+.pub { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 18px; align-items: start; padding: 20px 8px; border-bottom: 1px solid var(--line); transition: background-color .2s; }
+.pub:hover { background: var(--surface); }
+.pub[hidden] { display: none; }
+.pub-icon { width: 36px; height: 36px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; margin-top: 4px; }
+.pub-meta { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+.pub-title { font-family: var(--serif); font-size: 1.3rem; line-height: 1.3; color: var(--heading); font-weight: 400; }
+.pub-desc { font-size: 0.9375rem; margin-top: 4px; max-width: 70ch; }
+.pub-arrow { width: 22px; height: 22px; stroke: var(--muted); fill: none; stroke-width: 1.8; margin-top: 8px; transition: stroke .2s, transform .2s; }
+.pub:hover .pub-arrow { stroke: var(--gold); transform: translate(2px, -2px); }
+
+/* ===== 6. About ===== */
+.about-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: clamp(32px, 5vw, 64px); align-items: start; }
+.about-text p { margin-bottom: 18px; max-width: 62ch; }
+.formation-note { margin-top: 24px; padding: 18px 22px; border: 1px solid var(--line); font-size: 0.9375rem; font-style: italic; color: var(--muted); }
+.about-photo figure { margin: 0; }
+.about-photo img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center top; }
+.about-photo figcaption { margin-top: 10px; font-size: 0.875rem; color: var(--muted); }
+
+/* ===== 7. Connect ===== */
+.connect-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px); align-items: start; }
+.connect-copy p { margin-bottom: 18px; max-width: 52ch; }
+.contact-links { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 8px; }
+.c-link {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--mint); text-decoration: underline; text-underline-offset: 5px; transition: color .2s;
+}
+.c-link:hover { color: var(--gold); }
+.list-card { background: var(--surface); border: 1px solid var(--line); padding: clamp(24px, 3vw, 36px); }
+.list-card h3 { font-family: var(--serif); font-weight: 400; color: var(--heading); font-size: 1.75rem; margin-bottom: 8px; }
+.list-card .card-lead { font-size: 0.9375rem; margin-bottom: 18px; }
+.list-done { color: var(--gold); font-size: 1rem; }
+
+/* ===== 8. Footer ===== */
+footer { padding: 32px var(--pad); }
+.footer-row { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-logo { display: flex; align-items: center; gap: 10px; }
+.footer-logo img { width: 22px; height: 22px; object-fit: contain; }
+.footer-l { font-family: var(--serif); font-size: 1rem; color: var(--muted); }
+.footer-r { font-size: 0.8125rem; color: var(--muted); letter-spacing: 0.06em; }
+
+/* ===== Connections: logo wall; hover, focus, or tap a logo to read the connection ===== */
+.aff-grid { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; }
+.aff {
+  position: relative; display: flex; align-items: center; justify-content: center; width: 100%;
+  aspect-ratio: 16 / 9; background: #fff; border: 0; cursor: pointer; overflow: hidden; padding: 0;
+  transition: opacity .25s, box-shadow .25s;
+}
+.aff img { max-width: 72%; max-height: 52%; width: auto; height: auto; object-fit: contain; transition: transform .3s, opacity .3s; }
+.aff-info {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  padding: 10px 14px; text-align: left; background: var(--bg); color: var(--text);
+  opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s;
+}
+.aff-verb { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+.aff-org { font-family: var(--serif); font-size: 1.15rem; line-height: 1.15; color: var(--heading); }
+.aff-detail { font-size: 0.8125rem; line-height: 1.45; color: var(--text); }
+.aff:hover .aff-info, .aff:focus-visible .aff-info, .aff.is-open .aff-info { opacity: 1; transform: none; }
+.aff:hover img, .aff:focus-visible img, .aff.is-open img { opacity: 0; transform: scale(.94); }
+.aff:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+.aff.is-dim { opacity: 0.22; }
+.aff.is-match { box-shadow: inset 0 0 0 3px var(--gold); }
+.aff-hint { font-size: 0.875rem; color: var(--muted); margin: -8px 0 22px; }
+
+/* ===== Link previews: the destination's own image, with a styled fallback if it cannot load ===== */
+.preview {
+  display: block; aspect-ratio: 1200 / 630; margin: calc(-1 * clamp(24px, 3vw, 36px)) calc(-1 * clamp(24px, 3vw, 36px)) 22px;
+  background: #fff; overflow: hidden; border-bottom: 1px solid var(--line); position: relative;
+}
+.preview img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform .5s; }
+.res-card:hover .preview img { transform: scale(1.03); }
+/* A portrait photo is shown whole (no crop) so the face and hands stay in frame */
+.preview--portrait { background: #fff; }
+.preview--portrait img { object-fit: contain; object-position: center; }
+.res-card:hover .preview--portrait img { transform: scale(1.02); }
+.preview-fallback {
+  display: none; position: absolute; inset: 0; flex-direction: column; justify-content: flex-end; gap: 6px;
+  padding: 20px 22px; background: #fff; color: #17382B;
+}
+.preview.is-fallback .preview-fallback { display: flex; }
+.preview.is-fallback img { display: none; }
+.preview-fallback .pf-kicker { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #3D10BD; }
+.preview-fallback .pf-title { font-family: var(--serif); font-size: 1.5rem; line-height: 1.15; }
+.preview-fallback svg { position: absolute; top: 20px; right: 22px; width: 44px; height: 44px; stroke: #17382B; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ===== BrainsConnected ===== */
+.bc-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
+.bc-card { position: relative; display: block; background: #fff; border: 1px solid var(--line); overflow: hidden; text-decoration: none; }
+.bc-card .preview { margin: 0; border: 0; }
+.bc-card:hover .preview img { transform: scale(1.03); }
+.bc-roles { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 22px; list-style: none; }
+.bc-roles li { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.04em; color: var(--mint); border: 1px solid var(--line-strong); padding: 6px 12px; border-radius: 999px; }
+.bc-copy p { margin-bottom: 16px; max-width: 58ch; }
+
+/* ===== Discovery research: the splines feature with a live two-hemisphere illustration ===== */
+.research { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 4vw, 56px); align-items: center; background: var(--surface); border: 1px solid var(--line); padding: clamp(24px, 3.5vw, 44px); }
+.research p { margin-bottom: 14px; max-width: 60ch; }
+.research-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.research-links .btn { padding: 10px 18px; }
+.splines { margin: 0; }
+.splines svg { width: 100%; height: auto; display: block; background: var(--bg); border: 1px solid var(--line); }
+.splines figcaption { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; font-size: 0.8125rem; color: var(--muted); }
+.splines .pause-btn { flex: none; min-height: 44px; padding: 8px 14px; background: none; border: 1px solid var(--line-strong); color: var(--mint); cursor: pointer; font-size: 0.8125rem; font-weight: 600; }
+.splines .pause-btn:hover { border-color: var(--gold); }
+
+/* ===== Publication index rows built from PUBLICATIONS ===== */
+.pub-plain .pub-title { color: var(--text); }
+.pub-group-note { font-size: 0.875rem; color: var(--muted); margin-top: 16px; }
+.more-btn { margin-top: 22px; }
+
+@media (max-width: 1024px) {
+  .aff-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bc-grid, .research { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .aff-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aff { aspect-ratio: 1 / 1; }
+  .aff-info { padding: 10px; }
+  .aff-org { font-size: 1rem; }
+  .aff-detail { font-size: 0.78rem; line-height: 1.35; }
+}
+@media (max-width: 380px) {
+  .aff-grid { grid-template-columns: 1fr; }
+  .aff { aspect-ratio: 16 / 9; }
+}
+
+/* Gentle reveal on scroll (only when the script runs and motion is allowed) */
+.js-motion .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+.js-motion .reveal.is-in { opacity: 1; transform: none; }
+
+
+/* ===== Hero additions: personal note and the three stat links ===== */
+.hero-grid { align-items: center; }
+.hero-note { max-width: 58ch; font-size: 0.9375rem; font-style: italic; color: var(--muted); margin: -12px 0 28px; padding-left: 24px; }
+.hero-cta { margin-bottom: 14px; }
+.stat-links { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 640px; }
+.stat-link {
+  position: relative; display: flex; flex-direction: column; gap: 6px; height: 100%; min-height: 44px;
+  padding: 16px 18px 18px; text-decoration: none; background: var(--surface);
+  border: 1px solid var(--line); border-top: 2px solid transparent; transition: border-color .2s, background-color .2s, transform .2s;
+}
+.stat-link:hover { background: var(--surface-hover); border-top-color: var(--gold); transform: translateY(-2px); }
+.stat-link .stat-n { font-size: clamp(1.9rem, 3.4vw, 2.5rem); margin: 0; }
+.stat-link .stat-l { line-height: 1.35; padding-right: 26px; }
+.stat-arrow { position: absolute; bottom: 16px; right: 14px; width: 18px; height: 18px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
+.stat-play { fill: var(--muted); stroke: none; }
+.stat-link:hover .stat-arrow { stroke: var(--gold); }
+.stat-link:hover .stat-play { fill: var(--gold); }
+
+/* ===== Field Potentials preview (the seats ring from the online explorer) ===== */
+.fp-preview { display: block; margin: 0 0 20px; text-decoration: none; border: 1px solid var(--line); background: var(--surface); }
+.fp-preview .preview { margin: 0; border: 0; aspect-ratio: 1200 / 627; }
+.fp-preview .preview img { object-fit: cover; object-position: center; }
+.fp-preview:hover .preview img { transform: scale(1.03); }
+.fp-preview-label { display: block; padding: 12px 16px; font-size: 0.9375rem; font-weight: 600; color: var(--gold); }
+.fp-preview:hover .fp-preview-label { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ===== Splines figure: white panel in the house schematic style, sized to its container ===== */
+.research-wrap { margin: 0; }
+.splines-host svg { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--line); }
+
+@media (max-width: 640px) {
+  .stat-links { grid-template-columns: 1fr; }
+  .stat-link { flex-direction: row; align-items: baseline; gap: 14px; padding-right: 44px; }
+  .stat-arrow { bottom: auto; top: 50%; transform: translateY(-50%); }
+}
+
+/* Navigation collapses to the menu button before six links get crowded */
+@media (max-width: 1100px) {
+  .menu-btn { display: inline-flex; }
+  .nav-links {
+    display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0;
+    background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px var(--pad) 16px;
+  }
+  .nav-links.is-open { display: flex; }
+  .nav-links a { width: 100%; min-height: 48px; border-bottom: 1px solid var(--line); }
+}
+.nav-logo span, .nav-links a { white-space: nowrap; }
+/* ===== Responsive layout: medium screens ===== */
+@media (max-width: 1024px) {
+  .flagship, .about-grid, .connect-grid { grid-template-columns: 1fr; }
   .signup { position: static; }
-  footer { padding: 30px 22px; }
+  .about-photo { max-width: 420px; }
+}
+/* ===== Responsive layout: narrow screens and phones ===== */
+@media (max-width: 860px) {
+  .menu-btn { display: inline-flex; }
+  .nav-links {
+    display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0;
+    background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px var(--pad) 16px;
+  }
+  .nav-links.is-open { display: flex; }
+  .nav-links a { width: 100%; min-height: 48px; border-bottom: 1px solid var(--line); }
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-photo { order: 2; }
+  .viewer-inner { grid-template-columns: 1fr; }
+  .viewer-media video, .viewer-media img { max-height: 62vh; }
 }
 @media (max-width: 560px) {
-  .nav-logo-text { display: none; }
+  .stats { grid-template-columns: 1fr; }
+  .stat { display: flex; align-items: baseline; gap: 14px; }
+  .stat-n { margin-bottom: 0; }
+  .pub { grid-template-columns: 36px minmax(0, 1fr); gap: 14px; }
+  .pub-arrow { display: none; }
+  .hero-actions .btn { width: 100%; }
+  .viz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .viz-title { font-size: 1.05rem; }
+  .viz-body { padding: 12px; }
+}
+@media (max-width: 360px) {
+  .viz-grid { grid-template-columns: 1fr; }
+  .nav-logo span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo">
-    <img src="ShuffleSynthesisIconYellow.svg" alt="Sharena Rice logo">
-    <span class="nav-logo-text">Sharena Rice, PhD</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="#field-potentials">Field Potentials</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#resources">Resources</a></li>
-    <li><a href="#connect">Connect</a></li>
-  </ul>
-</nav>
+<a class="skip-link" href="#main">Skip to main content</a>
 
-<!-- HERO: who I am and what my flagship work is -->
-<section class="hero">
-  <h1 class="hero-name">What I do</h1>
-  <div class="hero-statement">
-    <p class="hero-descriptor">Clinical Neuro · Neurotechnology · Neuroscience</p>
-    <p>I work on making neuro work.</p>
-    <p>Serving as Head of Neuroscience Clinical Trials and Partnerships at Radial, the largest brain medicine clinical network in the United States.</p>
-    <p>My experience has been hands on and direct, which matters a great deal for closing gaps: early clinical work, basic research, device testing and characterization, tooling, documentation, training teams on protocols, diligence in venture capital, journalism, and advising organizations.</p>
-    <p>My core strength is structural synthesis. I have produced field-level analyses and diligence frameworks. I publish many reference materials that transfer information rather than hype. I am especially interested in capital-accountability coupling: what makes neuro initiatives investable, auditable, and resilient.</p>
-    <p>My flagship work, <a href="#field-potentials" style="color:var(--gold);border-bottom:0.5px solid rgba(240,195,24,0.35);padding-bottom:1px"><em>Field Potentials</em></a>, is a systems account of clinical neuro: the seats people hold, the gates an intervention must pass, and the twenty-two mechanisms that decide whether good work reaches patients. It is free.</p>
-  </div>
-  <div class="hero-actions">
-    <a href="#field-potentials" class="btn-p">Get Field Potentials, free</a>
-    <a href="#resources" class="btn-s">Resources</a>
-  </div>
-</section>
+<!-- ===== 1. Header and navigation ===== -->
+<header class="site-header">
+  <nav class="nav" aria-label="Main">
+    <a class="nav-logo" href="#top" aria-label="Sharena Rice, PhD, back to top">
+      <img src="ShuffleSynthesisIconYellow.svg" alt="" width="32" height="32">
+      <span>Sharena Rice, PhD</span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">
+      <span class="sr-only">Menu</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#field-potentials">Field Potentials</a></li>
+      <li><a href="#resources">Resources</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#visualizers">Visualizers</a></li>
+      <li><a href="#connections">Connections</a></li>
+      <li><a href="#connect">Connect</a></li>
+    </ul>
+  </nav>
+</header>
 
-<!-- FLAGSHIP: Field Potentials, with the email sign-up that unlocks the Zenodo link -->
-<section id="field-potentials">
-  <div class="sec-eye">Flagship work</div>
-  <div class="flagship">
-    <div>
-      <span class="fp-free">Free · CC BY-NC-ND 4.0</span>
-      <h2 class="fp-title">Field Potentials</h2>
-      <p class="fp-sub">A Systems Account of Clinical Neuro</p>
-      <div class="fp-desc">
-        <p>Clinical neuro keeps its promises more often when the people in it can see past their own seat. Most of the field’s failures happen at the seams, where a researcher, a regulator, a payer, a clinician, and a builder each hold one piece and no one is paid to watch the joins.</p>
-        <p>Field Potentials maps those seams. It is written for anyone who works in clinical neuro, drugs and devices alike, or lives with what it produces, and it assumes little beyond curiosity.</p>
+<main id="main">
+
+<!-- ===== 2. Hero: who she is (with the former About section folded in), the NLF 2026 photo, and three stat links ===== -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Clinical neuro · Neurotechnology · Neuroscience</p>
+        <h1 id="hero-title">I make neuro <em>work.</em></h1>
+        <div class="hero-body">
+          <p>I lead <strong>neuroscience clinical trials and partnerships at Radial</strong>, the largest brain medicine clinical network in the United States.</p>
+          <p>I earned my PhD in neuroscience at the University of Michigan, where I helped discover a brain rhythm the two hemispheres trade in opposite phase. As the first full-time hire at a focused ultrasound company, I then carried a device from concept to multi-site clinical trials.</p>
+          <p>My path runs through discovery research, device testing, quality engineering, venture diligence, journalism, and advising, so I read the field from more than one seat. I turn what each seat learns into free tools and references others can use.</p>
+        </div>
+        <p class="hero-note">As a child, I wrote a 45 page typed documentary on human behavior because I was curious. In graduate school, I lived and trained at the Ann Arbor Zen Buddhist Temple for 22 months. You cannot meditate your way through the FDA, but you can learn to observe lines of thought.</p>
+        <a href="#field-potentials" class="btn btn-p hero-cta">Read Field Potentials free</a>
+        <!-- Stat links: each number opens what it counts -->
+        <ul class="stat-links">
+          <li><a class="stat-link" href="#resources"><span class="stat-n" aria-hidden="true" data-count="40" data-suffix="+">40+</span><span class="stat-l" aria-hidden="true">Published field resources</span><span class="sr-only">40 plus published field resources: go to writing and resources</span><svg class="stat-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
+          <li><a class="stat-link" href="#visualizers"><span class="stat-n" aria-hidden="true" data-count="11" data-suffix="">11</span><span class="stat-l" aria-hidden="true">Watch the neuro visualizers</span><span class="sr-only">Watch 11 neuro visualizers</span><svg class="stat-arrow stat-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></li>
+          <li><a class="stat-link" href="https://www.linkedin.com/in/sharenarice/" target="_blank" rel="noopener"><span class="stat-n" aria-hidden="true" data-count="16700" data-suffix="+">16,700+</span><span class="stat-l" aria-hidden="true">LinkedIn followers</span><span class="sr-only">16,700 plus LinkedIn followers: follow on LinkedIn (opens in a new tab)</span><svg class="stat-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></li>
+        </ul>
       </div>
-      <ul class="fp-list">
-        <li><span class="n">12</span><span>seats, from trainee and discovery researcher to payer and person with lived experience, with who pays for each</span></li>
-        <li><span class="n">15</span><span>words that mean different things in different seats, set side by side in the Neurosetta Stone</span></li>
-        <li><span class="n">7</span><span>gates an intervention passes to reach a patient and stay in use</span></li>
-        <li><span class="n">22</span><span>field diagnostic mechanisms, each with a key question to ask aloud and a first move from your seat</span></li>
-      </ul>
-      <p class="fp-precursor"><a href="https://sharenarice.com/fieldpotentials/" target="_blank" rel="noopener"><em>Field Potentials</em></a> supersedes MECHANISMS, my earlier account of medical neurotechnology.</p>
-    </div>
-
-    <div class="signup" id="signup">
-      <!-- Step 1: the form. Step 2 (hidden until submit): the Zenodo link. -->
-      <form id="fp-form" novalidate>
-        <h3>Read it free</h3>
-        <p class="lead">Enter your email and the book opens on Zenodo, free to read, download, and share.</p>
-        <label for="fp-email">Email</label>
-        <input type="email" id="fp-email" name="email" autocomplete="email" required placeholder="you@example.com">
-        <div class="hp" aria-hidden="true"><label for="fp-website">Leave this empty</label><input type="text" id="fp-website" tabindex="-1" autocomplete="off"></div>
-        <button type="submit" class="btn-p">Get the book</button>
-        <p class="err" id="fp-err" role="alert"></p>
-        <p class="fine">I will email you when Field Potentials is revised, and rarely otherwise. Your address is never shared or sold. Unsubscribe anytime by replying.</p>
-      </form>
-      <div class="unlocked" id="fp-unlocked" hidden>
-        <h3>Thank you. It is yours.</h3>
-        <p class="lead">Field Potentials v0.0 is on Zenodo, free to read and download.</p>
-        <a class="btn-p" id="fp-zenodo" href="https://doi.org/10.5281/zenodo.24359235" target="_blank" rel="noopener">Open on Zenodo →</a>
-        <a class="alt-link" href="https://sharenarice.com/fieldpotentials/" target="_blank" rel="noopener">Explore the seats and mechanisms online →</a>
-      </div>
+      <figure class="hero-photo">
+        <img src="images/nlf-2026-speaking-900.jpg"
+             srcset="images/nlf-2026-speaking-900.jpg 900w, images/nlf-2026-speaking-1600.jpg 1600w"
+             sizes="(max-width: 860px) 92vw, 50vw" width="1600" height="920"
+             alt="Sharena Rice at the podium of the Neurotech Leaders Forum 2026, beside her slide showing five predictions that feed care at scale.">
+        <figcaption>Presenting five predictions for neurotech care at scale, Neurotech Leaders Forum 2026.</figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
-<!-- ABOUT -->
-<section id="about">
-  <div class="sec-eye">About</div>
-  <div class="about-grid">
-    <div>
-      <div class="gold-bar"></div>
-      <h2 class="sec-head">Building at the<br><em>intersection of fields</em></h2>
-      <div class="about-text">
-        <p>I earned a PhD in neuroscience from the University of Michigan. My discovery research focused on brain rhythms and neural circuits. Today I work across clinical trials, product, writing, and strategy in neurotechnology.</p>
-        <p>My work turns hard-won knowledge into tools and resources others can use.</p>
+<!-- ===== 3. Field Potentials: the flagship book and the sign up that opens it ===== -->
+<section id="field-potentials" aria-labelledby="fp-title">
+  <div class="wrap">
+    <p class="eyebrow">Flagship work</p>
+    <div class="flagship">
+      <div class="reveal">
+        <span class="fp-free">Free · CC BY-NC-ND 4.0</span>
+        <h2 class="fp-title" id="fp-title">Field Potentials</h2>
+        <p class="fp-sub">A Systems Account of Clinical Neuro</p>
+        <div class="fp-desc">
+          <p>Clinical neuro keeps its promises more often when the people in it can see past their own seat. Most of the field’s failures happen at the seams, where a researcher, a regulator, a payer, a clinician, and a builder each hold one piece and no one is paid to watch the joins.</p>
+          <p>Field Potentials maps those seams. It is written for anyone who works in clinical neuro, drugs and devices alike, or lives with what it produces, and it assumes little beyond curiosity.</p>
+        </div>
+        <ul class="fp-list">
+          <li><span class="n" aria-hidden="true">12</span><span><span class="sr-only">12 </span>seats, from trainee and discovery researcher to payer and person with lived experience, with who pays for each</span></li>
+          <li><span class="n" aria-hidden="true">15</span><span><span class="sr-only">15 </span>words that mean different things in different seats, set side by side in the Neurosetta Stone</span></li>
+          <li><span class="n" aria-hidden="true">7</span><span><span class="sr-only">7 </span>gates an intervention passes to reach a patient and stay in use</span></li>
+          <li><span class="n" aria-hidden="true">22</span><span><span class="sr-only">22 </span>field diagnostic mechanisms, each with a key question to ask aloud and a first move from your seat</span></li>
+        </ul>
+        <p class="fp-precursor">Field Potentials supersedes MECHANISMS, my earlier account of medical neurotechnology.</p>
       </div>
-      <div class="formation-note">
-        A few notes on how I got here: as a child, I wrote a 45-page typed documentary on human behavior just because I was curious. My dream was to be a scientist and write books about my inventions. I also lived and trained at the Ann Arbor Zen Buddhist Temple for 22 months during graduate school. You cannot meditate your way through the FDA, but you can learn to observe lines of thought.
+
+      <!-- Right column: the book's preview, then the sign up card -->
+      <div class="fp-side">
+          <a class="fp-preview" href="https://sharenarice.com/fieldpotentials/" target="_blank" rel="noopener">
+            <span class="preview">
+              <img src="images/field-potentials-thumb.jpg" alt="" loading="lazy" width="1200" height="627">
+              <span class="preview-fallback"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="5" r="2"/><circle cx="27" cy="16" r="2"/><circle cx="16" cy="27" r="2"/><circle cx="5" cy="16" r="2"/></svg><span class="pf-kicker">Twelve seats, one field</span><span class="pf-title">Field Potentials</span></span>
+            </span>
+            <span class="fp-preview-label">Explore the seats and mechanisms online<span class="sr-only"> (opens in a new tab)</span> →</span>
+          </a>
+      <div class="signup reveal" id="signup">
+        <!-- Step 1: the form. Step 2 (hidden until submit): the Zenodo link. -->
+        <form id="fp-form" class="js-signup" data-source="field-potentials" novalidate>
+          <h3>Read it free</h3>
+          <p class="card-lead">Enter your email and the book opens on Zenodo, free to read, download, and share.</p>
+          <label class="field-label" for="fp-email">Email</label>
+          <input class="field-input" type="email" id="fp-email" name="email" autocomplete="email" required aria-describedby="fp-err fp-fine">
+          <div class="hp" aria-hidden="true"><label for="fp-website">Leave this empty</label><input type="text" id="fp-website" name="website" tabindex="-1" autocomplete="off"></div>
+          <button type="submit" class="btn btn-p form-btn">Get the book</button>
+          <p class="form-error" id="fp-err" role="alert"></p>
+          <p class="fine" id="fp-fine">I will email you when Field Potentials is revised, and rarely otherwise. Your address is never shared or sold. Unsubscribe anytime by replying.</p>
+        </form>
+        <div class="unlocked" id="fp-unlocked" hidden tabindex="-1">
+          <h3>Thank you. It is yours.</h3>
+          <p class="card-lead">Field Potentials v0.0 is on Zenodo, free to read and download.</p>
+          <a class="btn btn-p" id="fp-zenodo" href="https://doi.org/10.5281/zenodo.24359235" target="_blank" rel="noopener">Open on Zenodo<span class="sr-only"> (opens in a new tab)</span> →</a>
+          <div class="unlocked-links">
+            <button type="button" class="link-btn js-share" data-share-url="https://doi.org/10.5281/zenodo.24359235" data-share-title="Field Potentials: A Systems Account of Clinical Neuro, free on Zenodo">Share the book’s link</button>
+            <p class="status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+        <noscript><p class="fine"><a class="text-link" href="https://doi.org/10.5281/zenodo.24359235">Open Field Potentials on Zenodo</a></p></noscript>
       </div>
-    </div>
-    <div>
-      <img src="sharena_speaking.png" alt="Sharena Rice speaking at UCLA David Geffen School of Medicine" class="about-photo">
-      <div class="photo-caption">Speaking at UCLA David Geffen<br>School of Medicine</div>
-    </div>
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-n">22</div>
-        <div class="stat-l">Field diagnostic mechanisms in <a href="#field-potentials" style="color:inherit;border-bottom:0.5px solid rgba(240,195,24,0.3);padding-bottom:1px">Field Potentials</a></div>
-      </div>
-      <div class="stat">
-        <div class="stat-n">40+</div>
-        <div class="stat-l">Published resources in neuro</div>
-      </div>
-      <div class="stat">
-        <div class="stat-n">15K+</div>
-        <div class="stat-l">LinkedIn followers</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- RESOURCES: free references and games, no email needed -->
-<section id="resources">
-  <div class="sec-eye">Resources</div>
-  <h2 class="sec-head">Reference<br><em>infrastructure</em></h2>
-  <div class="resources-note"><p>These resources are free to use and share, with no login and no email needed.</p></div>
-  <div class="resources-grid">
-    <div class="res-card">
-      <!-- icon: shield with a check, for standards and governance -->
-      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L27 7 V15 C27 22 22 27 16 29 C10 27 5 22 5 15 V7 Z"/><path d="M11 16 L15 20 L22 12"/></svg>
-      <div class="res-card-tag">Standards and governance reference</div>
-      <div class="res-card-title">Neurotechnology Standards &amp; Governance</div>
-      <div class="res-card-subtitle">A Curated Reference for Innovators</div>
-      <div class="res-card-desc">A map of the standards bodies, regulators, and ethics initiatives that shape how neurotechnology products are developed and approved worldwide. Used by product teams, researchers, and program managers who need to find the right frameworks early.</div>
-      <div class="res-card-meta"><a href="https://sharenarice.com/neurotechstandardsandgovernance/" target="_blank" rel="noopener">View resource →</a></div>
-    </div>
-    <div class="res-card">
-      <!-- icon: a cleared document moving to a coin, for clearance to coverage -->
-      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5 H13 L16 8 V20 H4 Z"/><path d="M7 12 L9 14 L13 10"/><path d="M15 25 H20"/><path d="M18 23 L20 25 L18 27"/><circle cx="25.5" cy="20" r="4.5"/><path d="M25.5 18 V22"/></svg>
-      <div class="res-card-tag">Reimbursement reference</div>
-      <div class="res-card-title">Navigating the Neurotechnology Reimbursement Maze</div>
-      <div class="res-card-subtitle">From Clearance to Coverage</div>
-      <div class="res-card-desc">Article on how neurotechnology products move from FDA clearance to insurance coverage to patient access. Designed for developers and teams who need to understand the reimbursement landscape before it becomes a late-stage surprise.</div>
-      <div class="res-card-meta"><a href="https://medium.com/neurotechx/navigating-the-neurotechnology-insurance-reimbursement-maze-challenges-and-solutions-in-the-united-a82ab89e69d7" target="_blank" rel="noopener">View resource →</a></div>
-    </div>
-    <div class="res-card">
-      <!-- icon: a person with a heart, for patient-centered work -->
-      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 27 C4 20 8 16 12 16 C14 16 15.5 16.6 17 17.6"/><path d="M24 27 C19 23.5 17.5 21.5 17.5 19.5 C17.5 17.8 18.8 16.5 20.5 16.5 C21.9 16.5 23.2 17.4 24 18.7 C24.8 17.4 26.1 16.5 27.5 16.5 C29.2 16.5 30.5 17.8 30.5 19.5 C30.5 21.5 29 23.5 24 27 Z"/></svg>
-      <div class="res-card-tag">Patient-centered neurotech</div>
-      <div class="res-card-title">A Curated Reference for Innovators</div>
-      <div class="res-card-subtitle">The patient engagement infrastructure in neurotech is different from what many people realize.</div>
-      <div class="res-card-desc">Designed for innovators and teams who need to know what exists as they develop patient-centered neurotechnologies.</div>
-      <div class="res-card-meta"><a href="https://sharenarice.com/patientcenteredneurotech/" target="_blank" rel="noopener">View resource →</a></div>
-    </div>
-    <div class="res-card">
-      <!-- icon: a winding path with a flag, for a career journey -->
-      <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 28 C5 22 14 23 14 17 C14 11 22 13 22 7"/><circle cx="5" cy="28" r="1.5"/><path d="M22 7 V2"/><path d="M22 2 L28 4 L22 6"/></svg>
-      <div class="res-card-tag">Career reference · Article</div>
-      <div class="res-card-title">My Journey + Resources for Yours in Neurotech</div>
-      <div class="res-card-subtitle">The article I send when people ask about my career</div>
-      <div class="res-card-desc">A walk through how I came into neuroscience research and progressed into work across domains in neurotech. Contains resources I recommend for people building their own path into medical neurotechnology. Sent most often to people who want to move into the field as a professional.</div>
-      <div class="res-card-meta"><a href="https://substack.com/home/post/p-176299869" target="_blank" rel="noopener">Read the essay →</a></div>
-    </div>
-  </div>
+<!-- ===== 4. Writing and resources: featured references and games, each with its link preview ===== -->
+<section id="resources" aria-labelledby="writing-heading">
+  <div class="wrap">
+    <p class="eyebrow">Writing and resources</p>
+    <h2 class="sec-head" id="writing-heading">Reference <em>infrastructure</em></h2>
+    <p class="lead">Free to use and share, with no login and no email needed.</p>
 
-  <div class="res-subsection">
-    <div class="sec-eye">Choose your own adventure</div>
-    <h3 class="sub-sec-head">Interactive games <em>for students</em></h3>
-    <div class="resources-note"><p>These games are free to use and share, with no login and no email needed.</p></div>
+    <h3 class="sr-only">Featured references</h3>
     <div class="resources-grid">
-      <div class="res-card">
-        <!-- icon: a doorway with a step, for thresholds -->
-        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 28 V5 H22 V28"/><path d="M4 28 H28"/><circle cx="18.5" cy="17" r="1"/><path d="M22 23 H27"/></svg>
-        <div class="res-card-tag">For undergraduates interested in neuro</div>
-        <div class="res-card-title">Thresholds</div>
-        <div class="res-card-subtitle">A Navigation Game</div>
-        <div class="res-card-desc">Step through the choices that shape an early career in the field, from networking to research direction to what to pursue after graduation. Built to make the structure of the path visible before students commit to it.</div>
-        <div class="res-card-meta"><a href="https://sharenarice.com/thresholds/" target="_blank" rel="noopener">Play the game →</a></div>
+      <article class="res-card reveal">
+        <div class="preview" aria-hidden="true"><img src="/neurotechstandardsandgovernance/og-image.jpg" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Curated reference</span><span class="pf-title">Neurotechnology Standards &amp; Governance</span></span></div>
+        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L27 7 V15 C27 22 22 27 16 29 C10 27 5 22 5 15 V7 Z"/><path d="M11 16 L15 20 L22 12"/></svg>
+        <p class="res-tag">Standards and governance reference</p>
+        <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/neurotechstandardsandgovernance/" target="_blank" rel="noopener">Neurotechnology Standards &amp; Governance<span class="sr-only"> (opens in a new tab)</span></a></h4>
+        <p class="res-sub">A Curated Reference for Innovators</p>
+        <p class="res-desc">A map of the standards bodies, regulators, and ethics initiatives that shape how neurotechnology products are developed and approved worldwide. Used by product teams, researchers, and program managers who need to find the right frameworks early.</p>
+        <span class="res-cta" aria-hidden="true">View resource →</span>
+      </article>
+      <article class="res-card reveal">
+        <div class="preview is-fallback" aria-hidden="true"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">NeuroTechX Content Lab</span><span class="pf-title">Navigating the Neurotechnology Reimbursement Maze</span></span></div>
+        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5 H13 L16 8 V20 H4 Z"/><path d="M7 12 L9 14 L13 10"/><path d="M15 25 H20"/><path d="M18 23 L20 25 L18 27"/><circle cx="25.5" cy="20" r="4.5"/><path d="M25.5 18 V22"/></svg>
+        <p class="res-tag">Reimbursement reference</p>
+        <h4 class="res-title"><a class="card-link" href="https://medium.com/neurotechx/navigating-the-neurotechnology-insurance-reimbursement-maze-challenges-and-solutions-in-the-united-a82ab89e69d7" target="_blank" rel="noopener">Navigating the Neurotechnology Reimbursement Maze<span class="sr-only"> (opens in a new tab)</span></a></h4>
+        <p class="res-sub">From Clearance to Coverage</p>
+        <p class="res-desc">How neurotechnology products move from FDA clearance to insurance coverage to patient access. Designed for developers and teams who need to understand the reimbursement landscape before it becomes a late stage surprise.</p>
+        <span class="res-cta" aria-hidden="true">Read the article →</span>
+      </article>
+      <article class="res-card reveal">
+        <div class="preview" aria-hidden="true"><img src="/patientcenteredneurotech/og-image.png" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Curated reference</span><span class="pf-title">Patient Centered Neurotechnology</span></span></div>
+        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 27 C4 20 8 16 12 16 C14 16 15.5 16.6 17 17.6"/><path d="M24 27 C19 23.5 17.5 21.5 17.5 19.5 C17.5 17.8 18.8 16.5 20.5 16.5 C21.9 16.5 23.2 17.4 24 18.7 C24.8 17.4 26.1 16.5 27.5 16.5 C29.2 16.5 30.5 17.8 30.5 19.5 C30.5 21.5 29 23.5 24 27 Z"/></svg>
+        <p class="res-tag">Patient centered neurotech</p>
+        <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/patientcenteredneurotech/" target="_blank" rel="noopener">Patient Centered Neurotechnology<span class="sr-only"> (opens in a new tab)</span></a></h4>
+        <p class="res-sub">A Curated Reference for Innovators</p>
+        <p class="res-desc">The patient engagement infrastructure in neurotech is different from what many people realize. Designed for innovators and teams who need to know what exists as they develop patient centered neurotechnologies.</p>
+        <span class="res-cta" aria-hidden="true">View resource →</span>
+      </article>
+      <article class="res-card reveal">
+        <div class="preview preview--portrait" aria-hidden="true"><img src="https://substackcdn.com/image/fetch/w_800,c_limit,f_jpg,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc4526a79-87ea-48b3-99ae-295929fe5894_2560x3840.jpeg" data-fallback-src="https://substack-post-media.s3.amazonaws.com/public/images/c4526a79-87ea-48b3-99ae-295929fe5894_2560x3840.jpeg" alt="" loading="lazy" width="800" height="1200"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Essay</span><span class="pf-title">My Journey + Resources for Yours in Neurotech</span></span></div>
+        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 28 C5 22 14 23 14 17 C14 11 22 13 22 7"/><circle cx="5" cy="28" r="1.5"/><path d="M22 7 V2"/><path d="M22 2 L28 4 L22 6"/></svg>
+        <p class="res-tag">Career reference · Essay</p>
+        <h4 class="res-title"><a class="card-link" href="https://sharenarice.substack.com/p/my-journey-resources-for-yours-in" target="_blank" rel="noopener">My Journey + Resources for Yours in Neurotech<span class="sr-only"> (opens in a new tab)</span></a></h4>
+        <p class="res-sub">The essay I send when people ask about my career</p>
+        <p class="res-desc">How I came into neuroscience research and moved into work across domains in neurotech, with the resources I recommend to people building their own path into medical neurotechnology.</p>
+        <span class="res-cta" aria-hidden="true">Read the essay →</span>
+      </article>
+    </div>
+
+    <!-- Every publication: index built from PUBLICATIONS -->
+    <div class="subsection" id="publications">
+      <p class="eyebrow">Publications</p>
+      <h3 class="sub-head">Every publication, <em>newest first</em></h3>
+      <div class="filters" role="group" aria-label="Filter publications by type">
+        <button class="chip" type="button" data-pub-filter="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-pub-filter="research" aria-pressed="false">Research</button>
+        <button class="chip" type="button" data-pub-filter="analysis" aria-pressed="false">Analysis and books</button>
+        <button class="chip" type="button" data-pub-filter="trade" aria-pressed="false">Trade reporting</button>
+        <button class="chip" type="button" data-pub-filter="essay" aria-pressed="false">Essays</button>
       </div>
-      <div class="res-card">
-        <!-- icon: an action potential trace (rest, sharp rise, fall, brief dip below rest), for potentials -->
-        <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 22 H10 L12 20 L14 5 L16.5 24.5 C17.5 26 19 25 20 23.5 L21.5 22 H30"/></svg>
-        <div class="res-card-tag">For graduate students interested in neuro</div>
-        <div class="res-card-title">Potentials</div>
-        <div class="res-card-subtitle">A Navigation Game</div>
-        <div class="res-card-desc">Surfaces the structural tradeoffs that shape a graduate career and helps students see how decisions change authority, agency, and optionality.</div>
-        <div class="res-card-meta"><a href="https://sharenarice.com/potentials/" target="_blank" rel="noopener">Play the game →</a></div>
+      <p class="sr-only" id="pub-count" role="status" aria-live="polite"></p>
+      <ul class="pub-list" id="pub-list"></ul>
+      <button class="btn btn-s more-btn" type="button" id="pub-more" aria-controls="pub-list" aria-expanded="false"></button>
+      <p class="pub-group-note">Trade reporting appears in Neurotech Business Report and BioElectRx Business Report from Neurotech Reports; titles without links ran in the subscriber editions. Earlier essays are on <a class="text-link" href="https://sharenarice.medium.com/" target="_blank" rel="noopener">Medium<span class="sr-only"> (opens in a new tab)</span></a>.</p>
+    </div>
+
+    <!-- Games for students -->
+    <div class="subsection">
+      <p class="eyebrow">Choose your own adventure</p>
+      <h3 class="sub-head">Interactive games <em>for students</em></h3>
+      <p class="note">Free to play and share, with no login and no email needed.</p>
+      <div class="resources-grid">
+        <article class="res-card reveal">
+        <div class="preview" aria-hidden="true"><img src="/thresholds-og.png" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Navigation game</span><span class="pf-title">Thresholds</span></span></div>
+          <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 28 V5 H22 V28"/><path d="M4 28 H28"/><circle cx="18.5" cy="17" r="1"/><path d="M22 23 H27"/></svg>
+          <p class="res-tag">For undergraduates interested in neuro</p>
+          <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/thresholds/" target="_blank" rel="noopener">Thresholds<span class="sr-only">, a navigation game (opens in a new tab)</span></a></h4>
+          <p class="res-sub">A Navigation Game</p>
+          <p class="res-desc">Step through the choices that shape an early career in the field, from networking to research direction to what to pursue after graduation. Built to make the structure of the path visible before students commit to it.</p>
+          <span class="res-cta" aria-hidden="true">Play the game →</span>
+        </article>
+        <article class="res-card reveal">
+        <div class="preview" aria-hidden="true"><img src="/gradstudents-og.png" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Navigation game</span><span class="pf-title">Potentials</span></span></div>
+          <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 22 H10 L12 20 L14 5 L16.5 24.5 C17.5 26 19 25 20 23.5 L21.5 22 H30"/></svg>
+          <p class="res-tag">For graduate students interested in neuro</p>
+          <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/potentials/" target="_blank" rel="noopener">Potentials<span class="sr-only">, a navigation game (opens in a new tab)</span></a></h4>
+          <p class="res-sub">A Navigation Game</p>
+          <p class="res-desc">Surfaces the structural tradeoffs that shape a graduate career and helps students see how decisions change authority, agency, and optionality.</p>
+          <span class="res-cta" aria-hidden="true">Play the game →</span>
+        </article>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CONNECT -->
-<section id="connect">
-  <div class="sec-eye">Connect</div>
-  <div class="gold-bar"></div>
-  <div class="contact-inner">
-    <p>Follow for neurotech. Stay for systems, incentives, and what actually scales.</p>
-    <p>I am heads-down building and selective about meetings. If you reach out, please include a concrete ask.</p>
-    <div class="contact-links">
-      <a href="https://www.linkedin.com/in/sharenarice/" target="_blank" rel="noopener" class="c-link">LinkedIn</a>
-      <a href="mailto:sharena1106@yahoo.com" class="c-link">Email</a>
+<!-- ===== 5. Discovery research: the splines feature, drawn live by drawSplines() ===== -->
+<section id="research" aria-labelledby="research-heading">
+  <div class="wrap">
+    <p class="eyebrow">Discovery research</p>
+    <div class="research-wrap">
+      <div class="research">
+        <div>
+          <h2 class="sub-head" id="research-heading">A brain rhythm the two hemispheres trade <em>in opposite phase</em></h2>
+          <p>In my PhD research at the University of Michigan, I helped discover and characterize splines: a fast rhythm near 140 Hz in the retrosplenial cortex, a hub for navigation and memory. The left and right sides fire in opposite phase, like the interlocking teeth of gears, and the pattern grows more precise the faster an animal runs. It returns during REM sleep, when most dreaming happens.</p>
+          <div class="research-links">
+            <a class="btn btn-p" href="https://doi.org/10.1016/j.celrep.2022.111028" target="_blank" rel="noopener">Cell Reports paper<span class="sr-only">, co-first author (opens in a new tab)</span></a>
+            <a class="btn btn-s" href="https://hdl.handle.net/2027.42/169724" target="_blank" rel="noopener">Dissertation<span class="sr-only"> (opens in a new tab)</span></a>
+          </div>
+        </div>
+        <figure class="splines">
+          <div id="splines-host" class="splines-host"></div>
+          <figcaption>
+            <span>Redrawn from the Cell Reports (2022) findings. Illustration, not recorded data; panel B enlarges the yellow box and is slowed about 200 times.</span>
+            <button class="pause-btn" type="button" id="splines-pause">Pause</button>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+
+  </div>
+</section>
+
+<!-- ===== 6. Neuro visualizers: cards are built from VISUALIZERS in the script ===== -->
+<section id="visualizers" aria-labelledby="viz-heading">
+  <div class="wrap">
+    <p class="eyebrow">Neuro visualizers</p>
+    <h2 class="sec-head" id="viz-heading">See the mechanism, <em>then why it matters</em></h2>
+    <p class="lead">Short, silent videos and carousels on how the brain works and how devices reach it. Each one has a written description, so nothing depends on watching. Free to share for education under CC BY-NC-ND 4.0. Not medical advice.</p>
+
+    <div class="filters" role="group" aria-label="Filter visualizers by topic">
+      <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-filter="recording" aria-pressed="false">Recording and imaging</button>
+      <button class="chip" type="button" data-filter="devices" aria-pressed="false">Devices and delivery</button>
+      <button class="chip" type="button" data-filter="cells" aria-pressed="false">Cells and circuits</button>
+    </div>
+    <p class="sr-only" id="viz-count" role="status" aria-live="polite"></p>
+    <ul class="viz-grid" id="viz-grid"></ul>
+    <noscript><p class="note">Turn on JavaScript to watch the visualizers here, or find them on <a class="text-link" href="https://www.linkedin.com/in/sharenarice/">LinkedIn</a>.</p></noscript>
+  </div>
+</section>
+
+<!-- One dialog serves every visualizer; the script fills it -->
+<dialog class="viewer" id="viewer" aria-labelledby="viewer-title" aria-describedby="viewer-desc">
+  <div class="viewer-bar">
+    <button class="viewer-close" type="button" id="viewer-close">
+      <span class="sr-only">Close</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="viewer-inner">
+    <div class="viewer-media" id="viewer-media"></div>
+    <div class="viewer-text">
+      <p class="eyebrow" id="viewer-topic"></p>
+      <h3 id="viewer-title"></h3>
+      <p id="viewer-desc"></p>
+      <p class="viewer-meta" id="viewer-meta"></p>
+      <div class="viewer-actions" id="viewer-actions"></div>
+      <p class="status" id="viewer-status" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===== 7. Connections: logo tiles are built from AFFILIATIONS in the script ===== -->
+<section id="connections" aria-labelledby="aff-heading">
+  <div class="wrap">
+    <p class="eyebrow">Connections with Organizations</p>
+    <h2 class="sec-head" id="aff-heading">Where I have worked, advised, <em>and spoken</em></h2>
+    <p class="aff-hint" id="aff-hint">Hover over, focus, or tap a logo to see the connection.</p>
+    <div class="filters" role="group" aria-label="Highlight connections with organizations by type">
+      <button class="chip" type="button" data-aff-filter="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-aff-filter="work" aria-pressed="false">Worked at</button>
+      <button class="chip" type="button" data-aff-filter="advise" aria-pressed="false">Advise and consult</button>
+      <button class="chip" type="button" data-aff-filter="speak" aria-pressed="false">Spoke at</button>
+      <button class="chip" type="button" data-aff-filter="write" aria-pressed="false">Wrote for</button>
+      <button class="chip" type="button" data-aff-filter="study" aria-pressed="false">Studied at</button>
+      <button class="chip" type="button" data-aff-filter="found" aria-pressed="false">Co-founded</button>
+    </div>
+    <p class="sr-only" id="aff-count" role="status" aria-live="polite"></p>
+    <ul class="aff-grid" id="aff-grid" aria-describedby="aff-hint"></ul>
+  </div>
+</section>
+
+<!-- ===== 8. BrainsConnected: the consumer neurotech venture she co-founded ===== -->
+<section id="brainsconnected" aria-labelledby="bc-heading">
+  <div class="wrap bc-grid">
+    <div class="bc-copy reveal">
+      <p class="eyebrow">Also building</p>
+      <h2 class="sec-head" id="bc-heading">Neurotech scales when people <em>outside health and tech</em> can use it</h2>
+      <ul class="bc-roles" aria-label="My roles at BrainsConnected">
+        <li>Co-founder</li><li>Chief Product Officer</li><li>Executive Editor</li>
+      </ul>
+      <p>BrainsConnected is the nexus for consumer neurotech buyers: a place to discover devices, meet other users, and help invent what comes next. I created the concept for the website and contributed the idea at its center, that neurotech scales better when it is approachable to people beyond the health and tech spaces.</p>
+      <p>We announced it at the Neurotech Leaders Forum in November 2026.</p>
+      <a class="btn btn-p" href="https://brainsconnected.com/" target="_blank" rel="noopener">Visit BrainsConnected<span class="sr-only"> (opens in a new tab)</span></a>
+    </div>
+    <a class="bc-card reveal" href="https://brainsconnected.com/" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+      <span class="preview">
+        <img src="https://brainsconnected.com/og-image.png" alt="" loading="lazy" width="1200" height="630">
+        <span class="preview-fallback"><svg viewBox="0 0 32 32"><circle cx="9" cy="16" r="4"/><circle cx="23" cy="9" r="3"/><circle cx="23" cy="23" r="3"/><path d="M13 14.5l7-4M13 17.5l7 4"/></svg><span class="pf-kicker">brainsconnected.com</span><span class="pf-title">The Nexus for Consumer Neurotech Buyers</span></span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<!-- ===== 9. Connect: email list, LinkedIn, email ===== -->
+<section id="connect" aria-labelledby="connect-heading">
+  <div class="wrap">
+    <p class="eyebrow">Connect</p>
+    <div class="connect-grid">
+      <div class="connect-copy">
+        <h2 class="sec-head" id="connect-heading">Follow for neurotech. <em>Stay for systems, incentives, and what scales.</em></h2>
+        <p>I am heads down building and selective about meetings. If you reach out, please include a concrete ask.</p>
+        <div class="contact-links">
+          <a href="https://www.linkedin.com/in/sharenarice/" target="_blank" rel="noopener" class="c-link">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a>
+          <a href="mailto:sharena1106@yahoo.com" class="c-link">Email</a>
+        </div>
+      </div>
+      <div class="list-card reveal">
+        <form id="list-form" class="js-signup" data-source="email-list" novalidate>
+          <h3>Join the email list</h3>
+          <p class="card-lead">One short email when a new reference, visualizer, or revision of Field Potentials ships. Your address is never shared or sold. Unsubscribe anytime by replying.</p>
+          <label class="field-label" for="list-email">Email</label>
+          <input class="field-input" type="email" id="list-email" name="email" autocomplete="email" required aria-describedby="list-err">
+          <div class="hp" aria-hidden="true"><label for="list-website">Leave this empty</label><input type="text" id="list-website" name="website" tabindex="-1" autocomplete="off"></div>
+          <button type="submit" class="btn btn-p form-btn">Sign up</button>
+          <p class="form-error" id="list-err" role="alert"></p>
+        </form>
+        <p class="list-done" id="list-done" hidden tabindex="-1">You are on the list. Thank you.</p>
+      </div>
     </div>
   </div>
 </section>
 
+</main>
+
+<!-- ===== 8. Footer ===== -->
 <footer>
-  <div class="footer-logo">
-    <img src="ShuffleSynthesisIconYellow.svg" alt="">
-    <span class="footer-l">Sharena Rice, PhD · sharenarice.com</span>
+  <div class="footer-row">
+    <div class="footer-logo">
+      <img src="ShuffleSynthesisIconYellow.svg" alt="">
+      <span class="footer-l">Sharena Rice, PhD · sharenarice.com</span>
+    </div>
+    <p class="footer-r">Clinical neuro · Neurotechnology · Neuroscience</p>
   </div>
-  <div class="footer-r">Clinical neuro · Neurotechnology · Quality</div>
 </footer>
 
 <script>
-/* ---------------------------------------------------------------
-   EMAIL LIST SETUP (do this once; see the steps in the reply)
-   Each sign-up is sent to a Google Form, which writes it as a new
-   row (timestamp + email) in a Google Sheet you own. That Sheet is
-   your email list.
-   - FORM_ACTION: your form's address, ending in /formResponse
-   - EMAIL_FIELD: the entry ID of the form's Email question
-   Until both are filled in, visitors still get the book, but no
-   address is saved, and the browser console shows a warning.
-   --------------------------------------------------------------- */
-const FORM_ACTION = 'https://docs.google.com/forms/d/e/PASTE_FORM_ID_HERE/formResponse';
-const EMAIL_FIELD = 'entry.PASTE_ENTRY_ID_HERE';
+/* =================================================================
+   EMAIL LIST SETUP (one paste; full steps in SETUP-EMAIL-LIST.md)
+   Both forms on this page send each sign up to one Google Form,
+   which adds a row (timestamp, email, source) to a Google Sheet you
+   own. That Sheet is your email list.
+   Paste the form's pre-filled link below, made with the answers
+   EMAIL and SOURCE typed into the two questions.
+   Until it is pasted, visitors still get the book, but no address is
+   saved, and the browser console shows a warning.
+   ================================================================= */
+const GOOGLE_FORM_PREFILLED_LINK = 'PASTE_PREFILLED_LINK_HERE';
 
+/* ===== Config: site constants ===== */
 const ZENODO_URL = 'https://doi.org/10.5281/zenodo.24359235';
-const STORAGE_KEY = 'fp_signed_up';
+const STORAGE_KEY = 'fp_signed_up';   // remembers a Field Potentials sign up in this browser
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const form = document.getElementById('fp-form');
-const unlocked = document.getElementById('fp-unlocked');
-const emailInput = document.getElementById('fp-email');
-const errorBox = document.getElementById('fp-err');
-const trap = document.getElementById('fp-website');
+/* ===== Config: visualizers. Edit here to add, retitle, or reorder; cards and the viewer read from this list =====
+   topic: recording | devices | cells (drives the filter chips)
+   type: video (src, poster) or carousel (slides with alt text, pdf)
+   card: the 4:5 image shown on the grid card                                  */
+const TOPIC_NAMES = { recording: 'Recording and imaging', devices: 'Devices and delivery', cells: 'Cells and circuits' };
+const VISUALIZERS = [
+  { id: 'scalp-skull', topic: 'devices', type: 'video', length: '10 second video',
+    title: 'Noninvasive brain devices need to get past the scalp and skull',
+    desc: 'Five noninvasive methods, one row each, set against the layers they cross: scalp, skull, cortex, and deep brain. EEG (electroencephalography) reads the cortex while bone blurs the signal. fNIRS (functional near infrared spectroscopy) reads blood oxygen in the cortex while scalp blood muddies it. tES (transcranial electrical stimulation) stimulates the cortex while the scalp diverts a large share of the current. TMS (transcranial magnetic stimulation) stimulates the cortex with a field that fades with depth. tFUS (transcranial focused ultrasound) stimulates deep targets, while bone bends and weakens the beam.' },
+  { id: 'skull-correction', topic: 'devices', type: 'video', length: '10 second video',
+    title: 'Correcting for the skull and its geometry brings the focus back to the target',
+    desc: 'A 2D model of transcranial focused ultrasound at 500 kHz, slowed 80,000 times or more. In both cases 73 percent of the energy is lost at the skull: 44 percent reflected and 29 percent absorbed, with 27 percent entering the brain. Without aberration correction the focus lands off target and delivers 22 percent of the intended dose. With correction the beam refocuses on the target and delivers the full intended dose.' },
+  { id: 'bbb', topic: 'devices', type: 'video', length: '7 second video',
+    title: 'Blood brain barrier considerations for drugs and noninvasive devices',
+    desc: 'Three panels at the blood brain barrier (BBB). Most drugs stay out of the brain; small, fat soluble drugs with few hydrogen bonds get through more easily. Fields from noninvasive and minimally invasive neuromodulation, such as tES and TMS, pass through the barrier unimpeded. Low intensity focused ultrasound with microbubbles opens the barrier through cavitation, which lets more kinds of drugs enter. Outside the picture: surgery gets implants past the barrier, and experience, thought, and the senses change the brain without crossing it.' },
+  { id: 'mri', topic: 'recording', type: 'video', length: '10 second video',
+    title: 'MRI sees the body by listening to its water',
+    desc: 'A 3 tesla magnet, about 60,000 times Earth’s field, lines up the hydrogen in water. A radio pulse at 128 MHz, near FM radio, tips the hydrogen, and it sends back an echo, shown 64 million times slower. Strong echoes look bright on the scan and weak echoes look dark; bone barely echoes, so it looks dark. Why it matters: tissues inside the body can be seen without X-ray or CT radiation.' },
+  { id: 'p300', topic: 'recording', type: 'video', length: '10 second video',
+    title: 'A rare, counted surprise evokes a positive wave about 300 ms later',
+    desc: 'A viewer counts stars among circles on a screen. Live EEG at the Pz electrode, on the top of the head toward the back, shows a positive peak, the P300, about 300 milliseconds after each star. Averaged over many trials, stars evoke a large positive wave and circles do not.' },
+  { id: 'ten-twenty', topic: 'recording', type: 'video', length: '10 second video',
+    title: 'Every EEG electrode sits at a measured fraction of your head',
+    desc: 'A top view of the head with the 10-20 EEG electrode positions, from the nasion at the front to the inion at the back. Electrodes sit at 10 and 20 percent steps of the distance across the head, so the layout fits any head size. Odd numbers mark the left side, even numbers the right, and z the midline.' },
+  { id: 'eeg', topic: 'recording', type: 'carousel', length: '6 slide carousel', pdf: 'media/carousels/eeg.pdf',
+    title: 'What EEG can answer follows from what it records',
+    desc: 'EEG (electroencephalography) records the currents that action potentials set off at synapses. Long lasting inputs follow rhythms, aligned cortex is seen best, and wave size tracks synchrony, so EEG fits questions about rhythm and timing.',
+    slides: ['Cover: what EEG can answer follows from what it records, over a top view of the head with EEG electrodes.',
+             'EEG records what action potentials set off.',
+             'Long lasting inputs follow rhythms.',
+             'Aligned cortex is seen best.',
+             'Wave size tracks synchrony.',
+             'EEG fits questions about rhythm and timing.'] },
+  { id: 'meg', topic: 'recording', type: 'carousel', length: '7 slide carousel', pdf: 'media/carousels/meg.pdf',
+    title: 'MEG sees EEG’s currents, minus the skull’s blur',
+    desc: 'MEG (magnetoencephalography) reads the magnetic field made by the same dendritic currents EEG records, and bone does not smear that field. The slides compare a SQUID helmet cooled by liquid helium with optically pumped sensors worn on the scalp, then cover how faint the signal is, which folds MEG sees best, how MEG compares with EEG and fMRI, surgery planning, and where MEG is strongest: fast activity near the surface.',
+    slides: ['Cover: MEG sees EEG’s currents, minus the skull’s blur, comparing a SQUID helmet with OPM sensors.',
+             'MEG reads dendritic current.',
+             'How faint the signal MEG reads is.',
+             'MEG sees the walls of folds, not their crowns.',
+             'MEG compared with EEG and fMRI.',
+             'MEG in surgery planning.',
+             'MEG is best at fast activity near the surface.'] },
+  { id: 'sodium-potassium', topic: 'cells', type: 'video', length: '10 second video',
+    title: 'Sodium in, then potassium out',
+    desc: 'A neuron from dendrites to terminals, with a close up of the axon membrane. Sodium channels open and sodium (Na+) flows in, driving the voltage from rest at -70 mV past threshold to a spike peak of +28 mV. Potassium channels then open and potassium (K+) flows out, bringing the voltage back down. Time is slowed. This is how even information from your toes can quickly reach your brain.' },
+  { id: 'cell-types', topic: 'cells', type: 'video', length: '27 second video',
+    title: 'How many brain cell types? It depends on the measure',
+    desc: 'The same cells sorted three ways. By shape: pyramidal, Purkinje, and interneuron neurons, plus astrocytes, oligodendrocytes, and microglia. By spikes. By the chemical messenger they release: glutamate, GABA, ATP, lactate, and cytokines. That gives 6 types by shape, 2 by spikes, and 5 by messenger. Sorting by RNA gives 5,322 (Nature, 2023).' },
+  { id: 'opposite-half', topic: 'cells', type: 'video', length: '10 second video',
+    title: 'Each half of your brain sees the opposite half of the world, through both eyes',
+    desc: 'An arrow someone sees spans the left and right halves of view. Fibers from both eyes partly cross at the optic chiasm, so the left primary visual cortex (V1) receives the right half of the world and the right V1 receives the left half, from both eyes at once.' },
+];
 
-/* Swaps the form for the Zenodo link */
-function showBook() {
-  form.hidden = true;
-  unlocked.hidden = false;
+/* ===== Config: connections (the logo wall). One entry per logo, in wall order.
+   verb: the connection in a few words; detail: one plain line; tags drive the highlight chips
+   (work, advise, speak, write, study, found). An entry with verb '' shows its logo without a caption. ===== */
+const AFFILIATIONS = [
+  { id: 'radial', org: 'Radial', verb: 'Work at', tags: ['work'],
+    detail: 'Head of Neuroscience Clinical Trials and Partnerships, 2026 to present' },
+  { id: 'wellcome-leap', org: 'Wellcome Leap', verb: 'Consult for', tags: ['advise'],
+    detail: 'Consultant to the $50M FORM Program, 2026 to present' },
+  { id: 'mayo-clinic', org: 'Mayo Clinic', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Invited speaker, EverybodyIN session' },
+  { id: 'sxsw', org: 'SXSW', verb: 'Advised', tags: ['advise'],
+    detail: 'Advisory board, 2022 to 2025; pitch competition finalist, 2020' },
+  { id: 'dana-foundation', org: 'Dana Foundation', verb: 'Spoke for', tags: ['speak'],
+    detail: 'Invited panelist, Virtual Career Fair, 2025' },
+  { id: 'michigan', org: 'University of Michigan', verb: 'Studied and spoke at', tags: ['study', 'speak'],
+    detail: 'PhD in neuroscience, 2021; invited panelist, 2025 and 2026' },
+  { id: 'foresight', org: 'Foresight Institute', verb: 'Advise', tags: ['advise'],
+    detail: 'Grant advisor, AI safety grant program, 2024 to present' },
+  { id: 'neurotech-reports', org: 'Neurotech Reports', verb: 'Write for', tags: ['write'],
+    detail: 'Contributing editor since 2022, with 35+ articles' },
+  { id: 'berkeley', org: 'UC Berkeley', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Invited panelist, Neurotech Device Panel, 2024' },
+  { id: 'kaleida', org: 'Kaleida Capital', verb: 'Worked at', tags: ['work', 'write'],
+    detail: 'Venture fellow, 2025 to 2026; co-authored its brain foundation models article' },
+  { id: 'sanmai', org: 'Sanmai', verb: 'Worked at', tags: ['work'],
+    detail: 'First full-time hire, 2022 to 2026; carried a focused ultrasound device into multi-site trials' },
+  { id: 'nyu', org: 'NYU', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Guest speaker, Future Humans class' },
+  { id: 'neurotechx', org: 'NeuroTechX', verb: 'Spoke and wrote for', tags: ['speak', 'write'],
+    detail: 'Speaker and panelist, 2022 to 2026; co-authored the reimbursement article' },
+  { id: 'ucla', org: 'UCLA', verb: 'Spoke for', tags: ['speak'],
+    detail: 'NeuroTechX club chapter' },
+  { id: 'brainsconnected', org: 'BrainsConnected', verb: 'Co-founded', tags: ['found'],
+    detail: 'Co-founder, Chief Product Officer, and Executive Editor' },
+  { id: 'uc-davis', org: 'UC Davis', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Industry panelist, 2024 and 2025' },
+  { id: 'valence', org: 'Valence Vibrations', verb: 'Advised', tags: ['advise'],
+    detail: 'Scientific advisor, 2021 to 2023, on a wearable that turns vocal emotion into haptics' },
+  { id: 'university-of-washington', org: 'University of Washington', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Invited speaker, BIOEN 532 career panel' },
+  { id: 'simply-neuroscience', org: 'Simply Neuroscience', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Keynote, Simply NeuroCon, 2021' },
+  { id: 'usc', org: 'USC', verb: 'Spoke for', tags: ['speak'],
+    detail: 'NeuroTechX club chapter' },
+];
+
+/* ===== Config: publication index (featured references and Field Potentials sit above, so they are not repeated).
+   group: research | analysis | trade | essay. url: '' when there is no public link. ===== */
+const NTR = 'Neurotech Business Report', BXR = 'BioElectRx Business Report';
+const PUBLICATIONS = [
+  { group: 'research', year: 2022, venue: 'Cell Reports · co-first author', url: 'https://doi.org/10.1016/j.celrep.2022.111028',
+    title: 'Running speed and REM sleep control two distinct modes of rapid interhemispheric communication' },
+  { group: 'research', year: 2021, venue: 'eLife · co-author', url: 'https://doi.org/10.7554/eLife.62207',
+    title: 'Thalamus and claustrum control parallel layer 1 circuits in retrosplenial cortex' },
+  { group: 'research', year: 2021, venue: 'Dissertation · University of Michigan', url: 'https://hdl.handle.net/2027.42/169724',
+    title: 'Oscillations of the Granular Retrosplenial Cortex' },
+  { group: 'research', year: 'In revision', venue: 'Neuroscience Letters · second author', url: '',
+    title: 'Unique Roles of L-Type Calcium Channel Subtypes in Homeostatic Synaptic Scaling' },
+  { group: 'analysis', year: 2026, venue: 'Kaleida Capital Insights · with the firm’s General Partner', url: 'https://www.kaleidacapital.com/insights/foundationmodels',
+    title: 'Foundation Models for the Brain: Why Neural Data Is a Critical Asset for AI' },
+  { group: 'analysis', year: 2026, venue: 'Book · superseded by Field Potentials', url: 'https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview',
+    title: 'MECHANISMS: A Systems Account of Medical Neurotechnology' },
+  { group: 'analysis', year: 2025, venue: 'DOTmed · with Ruthi Aladjem', url: 'https://www.dotmed.com/news/story/64182',
+    title: 'Achieving Moonshots in Neurotechnology: Three Strategies to Break Paradigms and Expand Horizons' },
+  { group: 'analysis', year: 2024, venue: 'Neurotech Futures · with Naveen Rao and Steven Veld', url: 'https://neurotechnology.substack.com/p/nods-of-neuromod-neuromodulation',
+    title: 'Nods of Neuromod: Neuromodulation Techniques' },
+  { group: 'analysis', year: 2024, venue: 'MedCity News · second author', url: 'https://medcitynews.com/2024/07/earning-trust-in-neurotech/',
+    title: 'Earning Trust in Neurotech' },
+  { group: 'analysis', year: 2024, venue: 'Med Device Online · second author', url: '',
+    title: 'Tips to Overcome 4 Challenges in the Neurotech Startup World' },
+  { group: 'analysis', year: 2024, venue: 'The Frontier Psychiatrists · guest post', url: '',
+    title: 'A Firm Science' },
+  { group: 'trade', year: 2026, venue: 'Neurotech Reports', url: 'https://neurotechreports.com/news/neurotechs-fsa-hsa-playbook-runs-through-four-systems',
+    title: 'Neurotech’s FSA/HSA Playbook Runs Through Four Systems' },
+  { group: 'trade', year: 2026, venue: 'Neurotech Reports', url: 'https://neurotechreports.com/news/computer-vision-is-becoming-neurotechs-situational-understanding-layer-and-distribution-channel',
+    title: 'Computer Vision Is Becoming Neurotech’s Situational Understanding Layer and Distribution Channel' },
+  { group: 'trade', year: 2026, venue: 'Neurotech Reports', url: 'https://neurotechreports.com/news/funding-outlook-for-neurotech-startups-moves-to-extremes',
+    title: 'Funding Outlook for Neurotech Startups Moves to Extremes' },
+  { group: 'trade', year: 2026, venue: 'Neurotech Reports', url: 'https://neurotechreports.com/news/allen-institute-launches-400m-brain-health-accelerator',
+    title: 'Allen Institute Launches $400M Brain Health Accelerator' },
+  { group: 'trade', year: 2025, venue: NTR, url: 'https://www.neurotechreports.com/pages/sonogenetics.html', title: 'Sonogenetics Offers Promise to Startup Neurotech Firms' },
+  { group: 'trade', year: 2025, venue: NTR, url: '', title: 'Cahira Technologies Seeks to Exploit Circulatronic Techniques' },
+  { group: 'trade', year: 2025, venue: NTR, url: '', title: 'Organoids Offer Key Tool for Brain Implant Developers' },
+  { group: 'trade', year: 2025, venue: NTR, url: '', title: 'Panelists Discuss Policy Shifts at Bioelectronic Medicine Forum' },
+  { group: 'trade', year: 2025, venue: NTR, url: '', title: 'Biogen Exec Discusses Biopharma/BioElectRx Interaction' },
+  { group: 'trade', year: 2025, venue: NTR, url: '', title: 'Neuromodulation Execs Voice Their Opinions at NANS i3' },
+  { group: 'trade', year: 2025, venue: BXR, url: '', title: 'Juniper Biomedical Emerges as New Player in Pelvic Health' },
+  { group: 'trade', year: 2024, venue: NTR, url: '', title: 'Multifunctional Implant Performs Variety of Functions' },
+  { group: 'trade', year: 2024, venue: BXR, url: '', title: 'Electrical Stimulation Shows Promise in Treating Cancer' },
+  { group: 'trade', year: 2023, venue: 'Neurotech Reports · first author', url: '', title: 'Bioelectronic Medicine Featured at 2023 BrainMind Summit' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Inner Cosmos profile' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Neuspera profile' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'POSTECH deep brain stimulation' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Dutch Team Demonstrates Improved Graphene Electrodes' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Boomerang Medical Gets Breakthrough Device Designation' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Entrepreneurs Join Academics at Bioelectronic Medicine Forum' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'taVNS for PCOS' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'GE Team Reports FUS Effective for Type 2 Diabetes' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Focused Ultrasound Neuromodulation Conference' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Biohybrid Microelectrode Arrays Improve Biocompatibility' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'Electrogenetics May Offer New Therapy for Type 1 Diabetes' },
+  { group: 'trade', year: 2023, venue: BXR, url: '', title: 'SPARC Knowledge Base Aids Study of ANS Connectivity' },
+  { group: 'trade', year: 2022, venue: 'Neurotech Reports', url: '', title: 'Neurotech on Display at SXSW' },
+  { group: 'trade', year: 2022, venue: BXR, url: '', title: 'Neurotech Leaders Forum Conference Report' },
+  { group: 'trade', year: 2022, venue: BXR, url: '', title: 'Wyss NeuroGI Develops New Tools for Enteric Nervous System' },
+  { group: 'essay', year: 2024, venue: 'Sharena’s Arenas', url: '', title: 'Early Career On-ramping Solutions' },
+  { group: 'essay', year: 2021, venue: 'Commonplace', url: '', title: 'Ethical Considerations: Applying Natural Systems to AI for Better Situational Understanding' },
+  { group: 'essay', year: 2020, venue: 'Medium', url: '', title: 'Six Thinking Hats and Beyond: Recipes for Good Decision Making' },
+  { group: 'essay', year: 2020, venue: 'ILLUMINATION-CURATED, Medium', url: '', title: 'Growth: How Big a Fish, How Big a Pond?' },
+  { group: 'essay', year: 2020, venue: 'NEURO+SCIENCE, Medium', url: '', title: 'A Brief History of [Inner] Space: Understanding the Brain’s GPS' },
+  { group: 'essay', year: 2020, venue: 'Start it Up, Medium', url: '', title: 'Learn Programming Better in Classes' },
+  { group: 'essay', year: 2020, venue: 'Start it Up, Medium', url: '', title: 'Learn Programming as a Laboratory Scientist' },
+  { group: 'essay', year: 2020, venue: 'Medium', url: '', title: 'Staying Enchanted as a Trainee in Science' },
+];
+
+/* ===== 1. Navigation: menu button on narrow screens, close on link tap or Escape ===== */
+const menuBtn = document.querySelector('.menu-btn');
+const navLinks = document.getElementById('nav-links');
+function setMenu(open) {
+  menuBtn.setAttribute('aria-expanded', String(open));
+  navLinks.classList.toggle('is-open', open);
+}
+menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+navLinks.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && navLinks.classList.contains('is-open')) { setMenu(false); menuBtn.focus(); } });
+
+/* Marks the nav link of the section in view (aria-current) */
+const sectionLinks = [...navLinks.querySelectorAll('a')];
+const navObserver = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    sectionLinks.forEach(a => {
+      if (a.getAttribute('href') === '#' + en.target.id) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+['field-potentials', 'resources', 'research', 'visualizers', 'connections', 'connect'].forEach(id => navObserver.observe(document.getElementById(id)));
+
+/* ===== 2. Hero numbers: count up once on first view (skipped with reduced motion) ===== */
+function countUp(el) {
+  const end = Number(el.dataset.count), suffix = el.dataset.suffix || '', ms = 1400, t0 = performance.now();
+  function tick(t) {
+    const p = Math.min((t - t0) / ms, 1), eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(end * eased).toLocaleString('en-US') + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+if (!reduceMotion) {
+  const statObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(en => { if (en.isIntersecting) { countUp(en.target); obs.unobserve(en.target); } });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('.stat-n').forEach(el => statObserver.observe(el));
 }
 
-/* Returning visitors who already signed up skip the form */
-try { if (localStorage.getItem(STORAGE_KEY)) showBook(); } catch (e) {}
+/* Gentle reveal for cards as they scroll in */
+if (!reduceMotion && 'IntersectionObserver' in window) {
+  document.documentElement.classList.add('js-motion');
+  const revealObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('is-in'); obs.unobserve(en.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
 
-form.addEventListener('submit', function (event) {
-  event.preventDefault();
-  errorBox.textContent = '';
-  const email = emailInput.value.trim();
-
-  /* Checks the address looks like an email before sending it */
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-    errorBox.textContent = 'Please enter a valid email address.';
-    emailInput.focus();
-    return;
+/* ===== Sharing: native share sheet on phones, copy link elsewhere. statusEl announces the result ===== */
+async function shareLink(url, title, statusEl) {
+  try {
+    if (navigator.share) { await navigator.share({ title, url }); return; }
+    await navigator.clipboard.writeText(url);
+    statusEl.textContent = 'Link copied.';
+  } catch (err) {
+    if (err && err.name === 'AbortError') return;   // the visitor closed the share sheet
+    statusEl.textContent = 'Copy this link: ' + url;
   }
+  setTimeout(() => { statusEl.textContent = ''; }, 4000);
+}
+document.querySelectorAll('.js-share').forEach(btn => btn.addEventListener('click', () =>
+  shareLink(btn.dataset.shareUrl, btn.dataset.shareTitle, btn.parentElement.querySelector('.status'))));
 
-  /* Bots that fill the hidden field get the link but are not recorded */
-  const isBot = trap.value !== '';
-  const configured = !FORM_ACTION.includes('PASTE_') && !EMAIL_FIELD.includes('PASTE_');
+/* ===== 3 and 7. Email sign ups: one handler for both forms; each row in the Sheet records its source ===== */
+/* Reads the pre-filled link once: form address plus the entry IDs for the EMAIL and SOURCE questions */
+const formTarget = (() => {
+  try {
+    const u = new URL(GOOGLE_FORM_PREFILLED_LINK);
+    const t = { action: u.origin + u.pathname.replace(/\/viewform$/, '/formResponse') };
+    u.searchParams.forEach((value, key) => {
+      if (!key.startsWith('entry.')) return;
+      if (value.trim().toUpperCase() === 'EMAIL') t.email = key;
+      if (value.trim().toUpperCase() === 'SOURCE') t.source = key;
+    });
+    return t.email ? t : null;
+  } catch (e) { return null; }
+})();
 
-  if (!isBot && configured) {
-    /* Sends the email to the Google Form, which adds it to the Sheet.
-       Google does not let the page read the reply, so the request is
-       sent and the book is shown right away. */
-    const data = new URLSearchParams();
-    data.append(EMAIL_FIELD, email);
-    fetch(FORM_ACTION, { method: 'POST', mode: 'no-cors', body: data }).catch(function () {});
-  } else if (!configured) {
-    console.warn('Field Potentials sign-up: the Google Form is not connected yet, so this email was not saved.');
-  }
+/* Sends one address to the Google Form. Google does not let the page read the reply, so the visitor sees success right away. */
+function saveEmail(email, source) {
+  if (!formTarget) { console.warn('Email sign up: the Google Form is not connected yet, so this address was not saved.'); return; }
+  const data = new URLSearchParams();
+  data.append(formTarget.email, email);
+  if (formTarget.source) data.append(formTarget.source, source);
+  fetch(formTarget.action, { method: 'POST', mode: 'no-cors', body: data }).catch(() => {});
+}
 
-  try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
-  showBook();
-  /* Opens Zenodo in a new tab; if the browser blocks it, the button is right there */
-  window.open(ZENODO_URL, '_blank', 'noopener');
+/* Field Potentials card: swaps the form for the Zenodo link */
+const fpForm = document.getElementById('fp-form');
+const fpUnlocked = document.getElementById('fp-unlocked');
+function showBook(moveFocus) {
+  fpForm.hidden = true;
+  fpUnlocked.hidden = false;
+  if (moveFocus) fpUnlocked.focus();
+}
+try { if (localStorage.getItem(STORAGE_KEY)) showBook(false); } catch (e) {}   // returning visitors skip the form
+
+/* Validates, saves, then runs the form's success step */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+document.querySelectorAll('.js-signup').forEach(form => {
+  const input = form.querySelector('input[type=email]');
+  const errorBox = form.querySelector('.form-error');
+  const trap = form.querySelector('.hp input');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = input.value.trim();
+    if (!EMAIL_PATTERN.test(email)) {
+      errorBox.textContent = 'Please enter a valid email address, such as name@example.com.';
+      input.setAttribute('aria-invalid', 'true');
+      input.focus();
+      return;
+    }
+    input.removeAttribute('aria-invalid');
+    errorBox.textContent = '';
+    if (trap.value === '') saveEmail(email, form.dataset.source);   // bots that fill the hidden field are not recorded
+
+    if (form.id === 'fp-form') {
+      try { localStorage.setItem(STORAGE_KEY, '1'); } catch (err) {}
+      showBook(true);
+      window.open(ZENODO_URL, '_blank', 'noopener');   // if the browser blocks it, the button is right there
+    } else {
+      form.hidden = true;
+      const done = document.getElementById('list-done');
+      done.hidden = false;
+      done.focus();
+    }
+  });
 });
+
+/* ===== 4. Visualizers: build cards, filter by topic, open the viewer ===== */
+const grid = document.getElementById('viz-grid');
+const PLAY_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
+const SLIDES_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="9" height="11" rx="1"/><rect x="12" y="5" width="2" height="7" rx="1"/></svg>';
+
+/* Builds one card per visualizer; the card is a single button that opens the viewer */
+VISUALIZERS.forEach(v => {
+  const li = document.createElement('li');
+  li.className = 'viz-card';
+  li.dataset.topic = v.topic;
+  li.innerHTML = `
+    <div class="viz-thumb">
+      <img src="media/cards/${v.id}.jpg" alt="" loading="lazy" width="720" height="900">
+      <span class="viz-badge" aria-hidden="true">${v.type === 'video' ? PLAY_ICON : SLIDES_ICON}${v.type === 'video' ? 'Video' : 'Slides'}</span>
+    </div>
+    <div class="viz-body">
+      <p class="viz-topic">${TOPIC_NAMES[v.topic]}</p>
+      <h3 class="viz-title"><button class="viz-open" type="button" data-id="${v.id}">${v.title}<span class="sr-only">, ${v.length}</span></button></h3>
+    </div>`;
+  grid.appendChild(li);
+});
+
+/* Topic filter: one chip pressed at a time; announces how many are shown */
+function wireFilter(chipSelector, attr, items, countEl, noun) {
+  const chips = document.querySelectorAll(chipSelector);
+  chips.forEach(chip => chip.addEventListener('click', () => {
+    const value = chip.dataset[attr];
+    chips.forEach(c => c.setAttribute('aria-pressed', String(c === chip)));
+    let shown = 0;
+    items().forEach(item => {
+      const match = value === 'all' || item.dataset[attr === 'filter' ? 'topic' : 'outlet'] === value;
+      item.hidden = !match;
+      if (match) shown++;
+    });
+    countEl.textContent = `Showing ${shown} ${noun}.`;
+  }));
+}
+wireFilter('[data-filter]', 'filter', () => grid.querySelectorAll('.viz-card'), document.getElementById('viz-count'), 'visualizers');
+
+/* Viewer dialog: fills media and text for one visualizer, keeps a shareable #viz-<id> link */
+const viewer = document.getElementById('viewer');
+const vMedia = document.getElementById('viewer-media');
+const vStatus = document.getElementById('viewer-status');
+let lastTrigger = null;
+let slideIndex = 0;
+
+function openViewer(id, trigger) {
+  const v = VISUALIZERS.find(x => x.id === id);
+  if (!v) return;
+  lastTrigger = trigger || null;
+  document.getElementById('viewer-topic').textContent = TOPIC_NAMES[v.topic];
+  document.getElementById('viewer-title').textContent = v.title;
+  document.getElementById('viewer-desc').textContent = v.desc;
+  document.getElementById('viewer-meta').textContent = `${v.length} · Silent · For education, not medical advice · CC BY-NC-ND 4.0`;
+  vStatus.textContent = '';
+  const pageUrl = location.origin + location.pathname + '#viz-' + v.id;
+  const actions = document.getElementById('viewer-actions');
+  actions.innerHTML = '';
+
+  if (v.type === 'video') {
+    vMedia.classList.remove('is-carousel');
+    vMedia.innerHTML = `<video controls playsinline muted loop preload="metadata" poster="media/posters/${v.id}.jpg" aria-describedby="viewer-desc">
+      <source src="media/video/${v.id}.mp4" type="video/mp4"></video>`;
+    const vid = vMedia.querySelector('video');
+    if (!reduceMotion) vid.play().catch(() => {});   // autoplay only when motion is welcome; controls are always there
+  } else {
+    vMedia.classList.add('is-carousel');
+    slideIndex = 0;
+    vMedia.innerHTML = `<img id="slide-img" src="" alt="">
+      <div class="slide-nav">
+        <button class="slide-btn" type="button" data-step="-1"><span class="sr-only">Previous slide</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="slide-count" id="slide-count" aria-live="polite"></span>
+        <button class="slide-btn" type="button" data-step="1"><span class="sr-only">Next slide</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>`;
+    vMedia.querySelectorAll('.slide-btn').forEach(b => b.addEventListener('click', () => showSlide(v, slideIndex + Number(b.dataset.step))));
+    addSwipe(vMedia, dir => showSlide(v, slideIndex + dir));
+    showSlide(v, 0);
+    const pdf = document.createElement('a');
+    pdf.className = 'btn btn-s'; pdf.href = v.pdf; pdf.download = '';
+    pdf.textContent = 'Download PDF';
+    actions.appendChild(pdf);
+  }
+  const share = document.createElement('button');
+  share.type = 'button'; share.className = 'btn btn-p'; share.textContent = 'Share this visualizer';
+  share.addEventListener('click', () => shareLink(pageUrl, v.title, vStatus));
+  actions.prepend(share);
+
+  history.replaceState(null, '', '#viz-' + v.id);
+  document.body.style.overflow = 'hidden';
+  viewer.showModal();
+  document.getElementById('viewer-close').focus();
+}
+
+/* Shows slide n of a carousel, with its own alt text and a "2 of 6" count */
+function showSlide(v, n) {
+  slideIndex = Math.max(0, Math.min(v.slides.length - 1, n));
+  const img = document.getElementById('slide-img');
+  img.src = `media/carousels/${v.id}/${slideIndex + 1}.jpg`;
+  img.alt = v.slides[slideIndex];
+  document.getElementById('slide-count').textContent = `${slideIndex + 1} of ${v.slides.length}`;
+  const [prev, next] = vMedia.querySelectorAll('.slide-btn');
+  prev.disabled = slideIndex === 0;
+  next.disabled = slideIndex === v.slides.length - 1;
+}
+
+/* Swipe left or right on touch screens to change slides */
+function addSwipe(el, onSwipe) {
+  let x0 = null;
+  el.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  el.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 40) onSwipe(dx < 0 ? 1 : -1);
+    x0 = null;
+  });
+}
+
+/* Closing: stop the video, clear the link hash, return focus to the card that opened it */
+function closeViewer() { if (viewer.open) viewer.close(); }
+viewer.addEventListener('close', () => {
+  vMedia.innerHTML = '';
+  document.body.style.overflow = '';
+  history.replaceState(null, '', location.pathname + location.search);
+  if (lastTrigger) lastTrigger.focus();
+});
+document.getElementById('viewer-close').addEventListener('click', closeViewer);
+viewer.addEventListener('click', e => { if (e.target === viewer) closeViewer(); });   // tap outside the panel
+viewer.addEventListener('keydown', e => {
+  const v = VISUALIZERS.find(x => location.hash === '#viz-' + x.id);
+  if (!v || v.type !== 'carousel') return;
+  if (e.key === 'ArrowRight') showSlide(v, slideIndex + 1);
+  if (e.key === 'ArrowLeft') showSlide(v, slideIndex - 1);
+});
+grid.addEventListener('click', e => {
+  const btn = e.target.closest('.viz-open');
+  if (btn) openViewer(btn.dataset.id, btn);
+});
+
+/* ===== Connections: build logo tiles; hover, focus, or tap reveals the caption; chips highlight a connection type ===== */
+const affGrid = document.getElementById('aff-grid');
+AFFILIATIONS.forEach(a => {
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'aff';
+  btn.dataset.tags = a.tags.join(' ');
+  btn.innerHTML = `<img src="images/logos/${a.id}.png" alt="${a.org}" loading="lazy">` +
+    (a.verb ? `<span class="aff-info"><span class="aff-verb">${a.verb}</span><span class="aff-org">${a.org}</span><span class="aff-detail">${a.detail}</span></span>` : '');
+  if (!a.verb) btn.setAttribute('aria-disabled', 'true');
+  li.appendChild(btn);
+  affGrid.appendChild(li);
+});
+/* Tap (or Enter) pins one caption open; tapping it again, Escape, or another logo closes it */
+affGrid.addEventListener('click', e => {
+  const btn = e.target.closest('.aff');
+  if (!btn || !btn.querySelector('.aff-info')) return;
+  const open = btn.classList.contains('is-open');
+  affGrid.querySelectorAll('.aff.is-open').forEach(b => b.classList.remove('is-open'));
+  if (!open) btn.classList.add('is-open');
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') affGrid.querySelectorAll('.aff.is-open').forEach(b => b.classList.remove('is-open')); });
+document.querySelectorAll('[data-aff-filter]').forEach(chip => chip.addEventListener('click', () => {
+  const tag = chip.dataset.affFilter;
+  document.querySelectorAll('[data-aff-filter]').forEach(c => c.setAttribute('aria-pressed', String(c === chip)));
+  let n = 0;
+  affGrid.querySelectorAll('.aff').forEach(b => {
+    const match = tag !== 'all' && b.dataset.tags.split(' ').includes(tag);
+    if (match) n++;
+    b.classList.toggle('is-match', match);
+    b.classList.toggle('is-dim', tag !== 'all' && !match);
+  });
+  document.getElementById('aff-count').textContent = tag === 'all' ? 'Showing all connections.' : `${n} connections highlighted.`;
+}));
+
+/* ===== Link previews: if a destination's image cannot load, show the styled fallback instead ===== */
+document.querySelectorAll('.preview img').forEach(img => {
+  /* First failure tries data-fallback-src (if set); a second failure shows the styled tile */
+  const fallback = () => {
+    if (img.dataset.fallbackSrc && img.src !== img.dataset.fallbackSrc) { img.src = img.dataset.fallbackSrc; return; }
+    img.closest('.preview').classList.add('is-fallback');
+  };
+  if (img.complete && img.naturalWidth === 0) fallback();
+  img.addEventListener('error', fallback);
+});
+
+/* ===== Publication index: rows from PUBLICATIONS, a type filter, and a show-all toggle ===== */
+const PUB_ICONS = {
+  research: '<path d="M12 4v8L6 25a2 2 0 0 0 2 3h16a2 2 0 0 0 2-3l-6-13V4"/><path d="M10 4h12M9 19h14"/>',
+  analysis: '<path d="M5 26h22"/><path d="M8 22v-6M14 22v-10M20 22v-7M26 22V8"/><path d="M7 12l7-5 6 4 6-6"/>',
+  trade: '<rect x="5" y="6" width="22" height="20" rx="2"/><path d="M9 11h14M9 15h6M9 19h6M18 15h5v6h-5z"/>',
+  essay: '<path d="M6 26l4-1 15-15-3-3L7 22z"/><path d="M19 10l3 3"/><path d="M6 26h20"/>',
+};
+const PUB_PREVIEW = 10;   // rows shown before "Show all"
+const pubList = document.getElementById('pub-list');
+const pubMore = document.getElementById('pub-more');
+let pubFilter = 'all', pubExpanded = false;
+
+/* Builds one row; rows with a url get a stretched link, the rest are plain text */
+function pubRow(p) {
+  const title = p.url
+    ? `<a class="card-link" href="${p.url}" target="_blank" rel="noopener">${p.title}<span class="sr-only"> (opens in a new tab)</span></a>`
+    : p.title;
+  return `<li class="pub${p.url ? '' : ' pub-plain'}">
+    <svg class="pub-icon" viewBox="0 0 32 32" aria-hidden="true">${PUB_ICONS[p.group]}</svg>
+    <div><p class="pub-meta">${p.venue} · ${p.year}</p><h4 class="pub-title">${title}</h4></div>
+    ${p.url ? '<svg class="pub-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>' : ''}
+  </li>`;
+}
+function renderPubs() {
+  const items = PUBLICATIONS.filter(p => pubFilter === 'all' || p.group === pubFilter);
+  const shown = pubExpanded ? items : items.slice(0, PUB_PREVIEW);
+  pubList.innerHTML = shown.map(pubRow).join('');
+  pubMore.hidden = items.length <= PUB_PREVIEW;
+  pubMore.textContent = pubExpanded ? 'Show fewer' : `Show all ${items.length}`;
+  pubMore.setAttribute('aria-expanded', String(pubExpanded));
+  document.getElementById('pub-count').textContent = `Showing ${shown.length} of ${items.length} publications.`;
+}
+document.querySelectorAll('[data-pub-filter]').forEach(chip => chip.addEventListener('click', () => {
+  pubFilter = chip.dataset.pubFilter; pubExpanded = false;
+  document.querySelectorAll('[data-pub-filter]').forEach(c => c.setAttribute('aria-pressed', String(c === chip)));
+  renderPubs();
+}));
+pubMore.addEventListener('click', () => {
+  pubExpanded = !pubExpanded; renderPubs();
+});
+renderPubs();
+
+/* ===== Splines figure, redrawn from the Cell Reports (2022) findings.
+   Panel A: one theta trace (about 8 Hz); at its peak a burst of splines (about 140 Hz) rides on it,
+            left hemisphere in blue and right in red, interlocked in opposite phase.
+            A pale yellow box marks the stretch that panel B enlarges, and two lines lead from it to panel B.
+   Panel B: the same stretch enlarged, with theta removed and the same pale yellow ground, so each blue peak
+            visibly meets a red dip. Only panel B moves (slowed about 200 times); reduced motion starts it paused.
+   The SVG is rebuilt at the container's real width, so labels stay at real pixel sizes on every screen. ===== */
+const SPL = {
+  SPLINE_HZ: 140, THETA_HZ: 8, BURST_SIGMA_MS: 8, BURST_DRAW_MS: 26, ZOOM_HALF_MS: 21,
+  LEFT: '#3F5BC2', RIGHT: '#B8323F', INK: '#17382B', MUTED: '#4A5A52', BAND: '#FBF0CA', BAND_EDGE: '#C9A24A', GUIDE: '#8A9A92',
+  B_CYCLE_S: 1.4,   // one 7 ms spline cycle takes 1.4 s on screen in panel B
+};
+const splHost = document.getElementById('splines-host');
+const splPause = document.getElementById('splines-pause');
+let splPhase = 0, splRunning = !reduceMotion, splLast = null, splGeom = null;
+
+/* Turns a function of time (ms) into an SVG path across x0 onward */
+function splPath(fn, msStart, msEnd, x0, pxPerMs, step = 0.25) {
+  let d = '';
+  for (let t = msStart; t <= msEnd + 1e-6; t += step) {
+    d += (d ? 'L' : 'M') + (x0 + (t - msStart) * pxPerMs).toFixed(1) + ' ' + fn(t).toFixed(1);
+  }
+  return d;
+}
+function txt(x, y, s, color, opts = {}) {
+  return `<text x="${x}" y="${y}" fill="${color}" font-family="Karla, sans-serif" font-size="${opts.size || 14}" font-weight="${opts.weight || 500}" text-anchor="${opts.anchor || 'start'}">${s}</text>`;
+}
+const splEnv = d => Math.exp(-(d * d) / (2 * SPL.BURST_SIGMA_MS ** 2));   // burst envelope, d = ms from the theta peak
+
+/* Builds both panels at the current width; panel B's waves are updated by renderSplinesB() */
+function drawSplines() {
+  const W = Math.max(300, Math.round(splHost.clientWidth || 600));
+  const narrow = W < 540, pad = 18, plotW = W - 2 * pad;
+  let back = '', out = '';
+
+  // ---- Panel A: theta with a spline burst riding its peak ----
+  const aBase = narrow ? 158 : 140, thetaAmp = 36, burstAmp = 26;
+  const winMs = narrow ? 125 : 250, pxA = plotW / winMs;
+  const peaks = narrow ? [62.5] : [62.5, 187.5], zoomPeak = peaks[0];
+  const theta = t => aBase - thetaAmp * Math.cos(2 * Math.PI * SPL.THETA_HZ * (t - 62.5) / 1000);
+  const near = t => ((t - 62.5) % 125 + 187.5) % 125 - 62.5;
+  const burst = ph => t => theta(t) - burstAmp * splEnv(near(t)) * Math.sin(2 * Math.PI * SPL.SPLINE_HZ * t / 1000 + ph);
+  out += txt(pad, 26, narrow ? 'A. Splines ride the theta peak' : 'A. Splines ride the peak of each theta cycle', SPL.INK, { size: 15, weight: 700 });
+  // Theta label and 25 ms scale bar sit in the upper corners, clear of the zoom lines below
+  const sbA = 25 * pxA;
+  if (narrow) {   // phones: one row under the title, so nothing crowds the zoom box
+    out += txt(pad, 50, 'Theta rhythm, about 8 Hz', SPL.INK, { size: 13 });
+    out += `<path d="M${W - pad - sbA} 46 H${W - pad}" stroke="${SPL.MUTED}" stroke-width="2"/>` + txt(W - pad - sbA - 6, 50, '25 ms', SPL.MUTED, { anchor: 'end', size: 13 });
+  } else {
+    const tx = pad + 125 * pxA;   // centered over the theta trough, between the two highlighted bursts
+    out += txt(tx, 66, 'Theta rhythm,', SPL.INK, { size: 13, anchor: 'middle' }) + txt(tx, 82, 'about 8 Hz', SPL.INK, { size: 13, anchor: 'middle' });
+    out += `<path d="M${W - pad - sbA} 60 H${W - pad}" stroke="${SPL.MUTED}" stroke-width="2"/>` + txt(W - pad - sbA / 2, 78, '25 ms', SPL.MUTED, { anchor: 'middle', size: 13 });
+  }
+  // The zoom box: exactly the stretch shown in panel B
+  const zx0 = pad + (zoomPeak - SPL.ZOOM_HALF_MS) * pxA, zx1 = pad + (zoomPeak + SPL.ZOOM_HALF_MS) * pxA;
+  const zTop = aBase - thetaAmp - burstAmp - 10, zBot = aBase - thetaAmp + burstAmp + 10;
+  back += `<rect x="${zx0.toFixed(1)}" y="${zTop}" width="${(zx1 - zx0).toFixed(1)}" height="${zBot - zTop}" rx="3" fill="${SPL.BAND}" stroke="${SPL.BAND_EDGE}" stroke-width="1.5"/>`;
+  out += txt((zx0 + zx1) / 2, zTop - 8, 'Highlight: splines, about 140 Hz', SPL.MUTED, { anchor: 'middle', size: 13 });
+  if (!narrow) {   // the second peak gets a plain highlight (not zoomed)
+    const p = peaks[1], x = pad + (p - SPL.ZOOM_HALF_MS) * pxA;
+    back += `<rect x="${x.toFixed(1)}" y="${zTop}" width="${(2 * SPL.ZOOM_HALF_MS * pxA).toFixed(1)}" height="${zBot - zTop}" rx="3" fill="${SPL.BAND}"/>`;
+  }
+  out += `<path d="${splPath(theta, 0, winMs, pad, pxA, 0.5)}" fill="none" stroke="${SPL.INK}" stroke-width="2.5" stroke-linecap="round"/>`;
+  peaks.forEach(p => {
+    const a = p - SPL.BURST_DRAW_MS, b = p + SPL.BURST_DRAW_MS, x0 = pad + a * pxA;
+    out += `<path d="${splPath(burst(0), a, b, x0, pxA)}" fill="none" stroke="${SPL.LEFT}" stroke-width="2.2" stroke-linejoin="round"/>`;
+    out += `<path d="${splPath(burst(Math.PI), a, b, x0, pxA)}" fill="none" stroke="${SPL.RIGHT}" stroke-width="2.2" stroke-linejoin="round"/>`;
+  });
+
+  // ---- Panel B: the boxed stretch, enlarged on the same pale yellow ground ----
+  const bTop = aBase + thetaAmp + 44, bAmp = 36, bBase = bTop + 52 + bAmp, bBot = bBase + bAmp + 16;
+  const winB = 2 * SPL.ZOOM_HALF_MS, pxB = (plotW - 24) / winB, bx0 = pad + 12;
+  back += `<path d="M${zx0.toFixed(1)} ${zBot} L${pad} ${bTop} M${zx1.toFixed(1)} ${zBot} L${W - pad} ${bTop}" stroke="${SPL.BAND_EDGE}" stroke-width="1.5" fill="none"/>`;
+  back += `<rect x="${pad}" y="${bTop}" width="${plotW}" height="${bBot - bTop}" rx="3" fill="${SPL.BAND}" stroke="${SPL.BAND_EDGE}" stroke-width="1.5"/>`;
+  out += txt(pad + 12, bTop + 24, narrow ? 'B. Zoomed in: opposite phase' : 'B. Zoomed in, theta removed: each left peak meets a right dip', SPL.INK, { size: 15, weight: 700 });
+  out += `<path d="M${bx0} ${bBase} H${bx0 + winB * pxB}" stroke="${SPL.GUIDE}" stroke-width="1.2" stroke-dasharray="6 6"/>`;
+  out += `<line id="spl-guide" y1="${bBase - bAmp - 8}" y2="${bBase + bAmp + 8}" stroke="${SPL.MUTED}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  out += `<path id="spl-left" fill="none" stroke="${SPL.LEFT}" stroke-width="3" stroke-linecap="round"/>`;
+  out += `<path id="spl-right" fill="none" stroke="${SPL.RIGHT}" stroke-width="3" stroke-linecap="round"/>`;
+  out += `<circle id="spl-peak" r="6" fill="${SPL.LEFT}" stroke="#fff" stroke-width="2"/>`;
+  out += `<rect id="spl-dip" width="11" height="11" fill="${SPL.RIGHT}" stroke="#fff" stroke-width="2"/>`;
+
+  // Legend (shape and color, so it reads in grayscale) and the 7 ms scale bar, below panel B
+  const legY = bBot + 26;
+  out += `<circle cx="${pad + 6}" cy="${legY - 5}" r="6" fill="${SPL.LEFT}"/>` + txt(pad + 18, legY, 'Left hemisphere', SPL.LEFT, { weight: 700 });
+  const rx = narrow ? pad : pad + 168, ry = narrow ? legY + 24 : legY;
+  out += `<rect x="${rx}" y="${ry - 11}" width="11" height="11" fill="${SPL.RIGHT}"/>` + txt(rx + 18, ry, 'Right hemisphere', SPL.RIGHT, { weight: 700 });
+  const sbB = (1000 / SPL.SPLINE_HZ) * pxB, sbY = narrow ? ry + 26 : legY - 6;
+  out += `<path d="M${W - pad - sbB} ${sbY} H${W - pad}" stroke="${SPL.MUTED}" stroke-width="2"/>`;
+  out += txt(W - pad, sbY + 18, '7 ms, one cycle', SPL.MUTED, { anchor: 'end', size: 13 });
+  const H = sbY + 32;
+
+  splHost.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="spl-title spl-desc">
+    <title id="spl-title">Splines ride the peak of each theta cycle, in opposite phase across the hemispheres</title>
+    <desc id="spl-desc">Panel A: a slow theta rhythm of about 8 Hz. At its peak, a burst of splines at about 140 Hz rides on it, drawn in blue for the left hemisphere and red for the right, interlocked in opposite phase. A highlighted box around the burst is enlarged in panel B, joined by two lines. Panel B shows that stretch with theta removed: every left peak lines up with a right dip, one cycle every 7 milliseconds.</desc>
+    ${back}${out}</svg>`;
+  splGeom = { bx0, pxB, winB, bBase, bAmp };
+  renderSplinesB();
+}
+
+/* Redraws panel B's two waves and the peak and dip markers at the current phase */
+function renderSplinesB() {
+  const g = splGeom; if (!g) return;
+  const half = g.winB / 2;
+  const f = ph => t => g.bBase - g.bAmp * splEnv(t - half) * Math.sin(2 * Math.PI * SPL.SPLINE_HZ * t / 1000 + ph);
+  document.getElementById('spl-left').setAttribute('d', splPath(f(splPhase), 0, g.winB, g.bx0, g.pxB, 0.05));
+  document.getElementById('spl-right').setAttribute('d', splPath(f(splPhase + Math.PI), 0, g.winB, g.bx0, g.pxB, 0.05));
+  // The guide follows the left peak nearest the middle, where the right trace is at its dip
+  const period = 1000 / SPL.SPLINE_HZ;
+  let tPeak = (0.25 - splPhase / (2 * Math.PI)) * period;
+  tPeak += Math.round((half - tPeak) / period) * period;
+  const x = g.bx0 + tPeak * g.pxB, a = g.bAmp * splEnv(tPeak - half);
+  const guide = document.getElementById('spl-guide');
+  guide.setAttribute('x1', x.toFixed(1)); guide.setAttribute('x2', x.toFixed(1));
+  const peak = document.getElementById('spl-peak'), dip = document.getElementById('spl-dip');
+  peak.setAttribute('cx', x.toFixed(1)); peak.setAttribute('cy', (g.bBase - a).toFixed(1));
+  dip.setAttribute('x', (x - 5.5).toFixed(1)); dip.setAttribute('y', (g.bBase + a - 5.5).toFixed(1));
+}
+function animateSplines(now) {
+  if (!splRunning) { splLast = null; return; }
+  if (splLast !== null) splPhase -= ((now - splLast) / 1000) * (2 * Math.PI / SPL.B_CYCLE_S);
+  splLast = now; renderSplinesB();
+  requestAnimationFrame(animateSplines);
+}
+function setSplines(run) {
+  splRunning = run;
+  splPause.textContent = run ? 'Pause' : 'Play';
+  if (run) requestAnimationFrame(animateSplines);
+}
+splPause.addEventListener('click', () => setSplines(!splRunning));
+drawSplines();
+setSplines(splRunning);
+/* Rebuild when the figure changes width (window resize, rotation, zoom) */
+let splW = splHost.clientWidth;
+new ResizeObserver(() => { if (Math.abs(splHost.clientWidth - splW) > 2) { splW = splHost.clientWidth; drawSplines(); } }).observe(splHost);
+
+/* A shared link such as sharenarice.com/#viz-mri opens that visualizer on arrival */
+if (location.hash.startsWith('#viz-')) {
+  const id = location.hash.slice(5);
+  document.getElementById('visualizers').scrollIntoView();
+  openViewer(id, grid.querySelector(`[data-id="${id}"]`));
+}
 </script>
 
 </body>
