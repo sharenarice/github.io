@@ -22,7 +22,7 @@
     images/logos/<id>.png  (affiliation logos, cut from the logo sheet)
     Link previews: each destination's own og image (her sites, Substack, brainsconnected.com); a styled fallback shows if one fails
     media/video/<slug>.mp4, media/posters/<slug>.jpg, media/cards/<slug>.jpg  (visualizers)
-    media/carousels/eeg/1-6.jpg, media/carousels/meg/1-7.jpg, media/carousels/eeg.pdf, meg.pdf
+    media/carousels/eeg/1-6.jpg, media/carousels/meg/1-7.jpg  (viewed in the page only; no downloads)
     Google Fonts: Cormorant Garamond, Karla
 
   Email list: every sign up (both forms) goes to one Google Form, which writes a row to a Google Sheet.
@@ -213,7 +213,7 @@ section { padding: var(--section-y) var(--pad); border-bottom: 1px solid var(--l
 }
 .field-input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .field-input[aria-invalid="true"] { border-color: var(--error); }
-.form-btn { width: 100%; }
+.form-btn { width: 100%; text-align: center; }
 .form-error { color: var(--error); font-size: 0.875rem; margin-top: 10px; min-height: 1.4em; }
 .fine { margin-top: 10px; font-size: 0.8125rem; color: var(--muted); line-height: 1.6; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; } /* trap field for bots */
@@ -360,7 +360,7 @@ footer { padding: 32px var(--pad); }
 .footer-r { font-size: 0.8125rem; color: var(--muted); letter-spacing: 0.06em; }
 
 /* ===== Connections: logo wall; hover, focus, or tap a logo to read the connection ===== */
-.aff-grid { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; }
+.aff-grid { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; }
 .aff {
   position: relative; display: flex; align-items: center; justify-content: center; width: 100%;
   aspect-ratio: 16 / 9; background: #fff; border: 0; cursor: pointer; overflow: hidden; padding: 0;
@@ -389,9 +389,9 @@ footer { padding: 32px var(--pad); }
 }
 .preview img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform .5s; }
 .res-card:hover .preview img { transform: scale(1.03); }
-/* A portrait photo is shown whole (no crop) so the face and hands stay in frame */
-.preview--portrait { background: #fff; }
-.preview--portrait img { object-fit: contain; object-position: center; }
+/* Portrait photos and images that are not 1.91:1 are shown whole (no crop) on white */
+.preview--portrait, .preview--contain { background: #fff; }
+.preview--portrait img, .preview--contain img { object-fit: contain; object-position: center; }
 .res-card:hover .preview--portrait img { transform: scale(1.02); }
 .preview-fallback {
   display: none; position: absolute; inset: 0; flex-direction: column; justify-content: flex-end; gap: 6px;
@@ -429,7 +429,7 @@ footer { padding: 32px var(--pad); }
 .more-btn { margin-top: 22px; }
 
 @media (max-width: 1024px) {
-  .aff-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .aff-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .bc-grid, .research { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
@@ -456,23 +456,27 @@ footer { padding: 32px var(--pad); }
 .stat-links { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 640px; }
 .stat-link {
   position: relative; display: flex; flex-direction: column; gap: 6px; height: 100%; min-height: 44px;
-  padding: 16px 18px 18px; text-decoration: none; background: var(--surface);
+  padding: 16px 18px 16px; text-decoration: none; background: var(--surface);
   border: 1px solid var(--line); border-top: 2px solid transparent; transition: border-color .2s, background-color .2s, transform .2s;
 }
 .stat-link:hover { background: var(--surface-hover); border-top-color: var(--gold); transform: translateY(-2px); }
 .stat-link .stat-n { font-size: clamp(1.9rem, 3.4vw, 2.5rem); margin: 0; }
-.stat-link .stat-l { line-height: 1.35; padding-right: 26px; }
-.stat-arrow { position: absolute; bottom: 16px; right: 14px; width: 18px; height: 18px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
-.stat-play { fill: var(--muted); stroke: none; }
-.stat-link:hover .stat-arrow { stroke: var(--gold); }
-.stat-link:hover .stat-play { fill: var(--gold); }
+.stat-link .stat-l { line-height: 1.35; }
+/* Action row at the bottom of each stat link: a verb beside its icon */
+.stat-action { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-top: auto; padding-top: 6px; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em; color: var(--gold); }
+.stat-link:hover .stat-action { text-decoration: underline; text-underline-offset: 3px; }
+.stat-arrow { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
+.stat-play { fill: var(--gold); stroke: none; }
+.stat-arrow { stroke: var(--gold); }
 
 /* ===== Field Potentials preview (the seats ring from the online explorer) ===== */
 .fp-preview { display: block; margin: 0 0 20px; text-decoration: none; border: 1px solid var(--line); background: var(--surface); }
 .fp-preview .preview { margin: 0; border: 0; aspect-ratio: 1200 / 627; }
 .fp-preview .preview img { object-fit: cover; object-position: center; }
 .fp-preview:hover .preview img { transform: scale(1.03); }
-.fp-preview-label { display: block; padding: 12px 16px; font-size: 0.9375rem; font-weight: 600; color: var(--gold); }
+.fp-preview-kicker { display: block; padding: 14px 16px 0; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.fp-preview-label { display: block; padding: 4px 16px 0; font-size: 0.9375rem; font-weight: 600; color: var(--gold); }
+.fp-preview-note { display: block; padding: 4px 16px 14px; font-size: 0.875rem; color: var(--text); }
 .fp-preview:hover .fp-preview-label { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ===== Splines figure: white panel in the house schematic style, sized to its container ===== */
@@ -481,8 +485,8 @@ footer { padding: 32px var(--pad); }
 
 @media (max-width: 640px) {
   .stat-links { grid-template-columns: 1fr; }
-  .stat-link { flex-direction: row; align-items: baseline; gap: 14px; padding-right: 44px; }
-  .stat-arrow { bottom: auto; top: 50%; transform: translateY(-50%); }
+  .stat-link { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 14px; }
+  .stat-action { margin-left: auto; padding-top: 0; }
 }
 
 /* Navigation collapses to the menu button before six links get crowded */
@@ -573,7 +577,7 @@ footer { padding: 32px var(--pad); }
         <p class="eyebrow">Clinical neuro · Neurotechnology · Neuroscience</p>
         <h1 id="hero-title">I make neuro <em>work.</em></h1>
         <div class="hero-body">
-          <p>I lead <strong>neuroscience clinical trials and partnerships at Radial</strong>, the largest brain medicine clinical network in the United States.</p>
+          <p>I am <strong>Head of Neuroscience Clinical Trials and Partnerships at Radial</strong>, the largest brain medicine clinical network in the United States.</p>
           <p>I earned my PhD in neuroscience at the University of Michigan, where I helped discover a brain rhythm the two hemispheres trade in opposite phase. As the first full-time hire at a focused ultrasound company, I then carried a device from concept to multi-site clinical trials.</p>
           <p>My path runs through discovery research, device testing, quality engineering, venture diligence, journalism, and advising, so I read the field from more than one seat. I turn what each seat learns into free tools and references others can use.</p>
         </div>
@@ -581,9 +585,9 @@ footer { padding: 32px var(--pad); }
         <a href="#field-potentials" class="btn btn-p hero-cta">Read Field Potentials free</a>
         <!-- Stat links: each number opens what it counts -->
         <ul class="stat-links">
-          <li><a class="stat-link" href="#resources"><span class="stat-n" aria-hidden="true" data-count="40" data-suffix="+">40+</span><span class="stat-l" aria-hidden="true">Published field resources</span><span class="sr-only">40 plus published field resources: go to writing and resources</span><svg class="stat-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a></li>
-          <li><a class="stat-link" href="#visualizers"><span class="stat-n" aria-hidden="true" data-count="11" data-suffix="">11</span><span class="stat-l" aria-hidden="true">Watch the neuro visualizers</span><span class="sr-only">Watch 11 neuro visualizers</span><svg class="stat-arrow stat-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></li>
-          <li><a class="stat-link" href="https://www.linkedin.com/in/sharenarice/" target="_blank" rel="noopener"><span class="stat-n" aria-hidden="true" data-count="16700" data-suffix="+">16,700+</span><span class="stat-l" aria-hidden="true">LinkedIn followers</span><span class="sr-only">16,700 plus LinkedIn followers: follow on LinkedIn (opens in a new tab)</span><svg class="stat-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a></li>
+          <li><a class="stat-link" href="#resources"><span class="stat-n" aria-hidden="true" data-count="40" data-suffix="+">40+</span><span class="stat-l" aria-hidden="true">Published field resources</span><span class="stat-action" aria-hidden="true">Read<svg class="stat-arrow" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span><span class="sr-only">Read 40 plus published field resources</span></a></li>
+          <li><a class="stat-link" href="#visualizers"><span class="stat-n" aria-hidden="true" data-count="11" data-suffix="">11</span><span class="stat-l" aria-hidden="true">Neuro visualizers</span><span class="stat-action" aria-hidden="true">Watch<svg class="stat-arrow stat-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="sr-only">Watch 11 neuro visualizers</span></a></li>
+          <li><a class="stat-link" href="https://www.linkedin.com/in/sharenarice/" target="_blank" rel="noopener"><span class="stat-n" aria-hidden="true" data-count="16700" data-suffix="+">16,700+</span><span class="stat-l" aria-hidden="true">LinkedIn followers</span><span class="stat-action" aria-hidden="true">See on LinkedIn<svg class="stat-arrow" viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></span><span class="sr-only">16,700 plus LinkedIn followers: see on LinkedIn (opens in a new tab)</span></a></li>
         </ul>
       </div>
       <figure class="hero-photo">
@@ -623,26 +627,29 @@ footer { padding: 32px var(--pad); }
       <div class="fp-side">
           <a class="fp-preview" href="https://sharenarice.com/fieldpotentials/" target="_blank" rel="noopener">
             <span class="preview">
-              <img src="images/field-potentials-thumb.jpg" alt="" loading="lazy" width="1200" height="627">
+              <img src="images/field-potentials-thumb.jpg" alt="" width="1200" height="627">
               <span class="preview-fallback"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="5" r="2"/><circle cx="27" cy="16" r="2"/><circle cx="16" cy="27" r="2"/><circle cx="5" cy="16" r="2"/></svg><span class="pf-kicker">Twelve seats, one field</span><span class="pf-title">Field Potentials</span></span>
             </span>
+            <span class="fp-preview-kicker">Interactive web companion</span>
             <span class="fp-preview-label">Explore the seats and mechanisms online<span class="sr-only"> (opens in a new tab)</span> →</span>
+            <span class="fp-preview-note">A guided map of the book’s structure. The full text is on Zenodo.</span>
           </a>
       <div class="signup reveal" id="signup">
         <!-- Step 1: the form. Step 2 (hidden until submit): the Zenodo link. -->
         <form id="fp-form" class="js-signup" data-source="field-potentials" novalidate>
-          <h3>Read it free</h3>
-          <p class="card-lead">Enter your email and the book opens on Zenodo, free to read, download, and share.</p>
+          <p class="field-label">Full text</p>
+          <h3>Read the whole book free</h3>
+          <p class="card-lead">Join the email list and the full text of Field Potentials opens on Zenodo, free to read, download, and share.</p>
           <label class="field-label" for="fp-email">Email</label>
           <input class="field-input" type="email" id="fp-email" name="email" autocomplete="email" required aria-describedby="fp-err fp-fine">
           <div class="hp" aria-hidden="true"><label for="fp-website">Leave this empty</label><input type="text" id="fp-website" name="website" tabindex="-1" autocomplete="off"></div>
-          <button type="submit" class="btn btn-p form-btn">Get the book</button>
+          <button type="submit" class="btn btn-p form-btn">Join the email list, get the book</button>
           <p class="form-error" id="fp-err" role="alert"></p>
-          <p class="fine" id="fp-fine">I will email you when Field Potentials is revised, and rarely otherwise. Your address is never shared or sold. Unsubscribe anytime by replying.</p>
+          <p class="fine" id="fp-fine">Your address is never shared or sold. Unsubscribe anytime by replying.</p>
         </form>
         <div class="unlocked" id="fp-unlocked" hidden tabindex="-1">
           <h3>Thank you. It is yours.</h3>
-          <p class="card-lead">Field Potentials v0.0 is on Zenodo, free to read and download.</p>
+          <p class="card-lead">The full text of Field Potentials v0.0 is on Zenodo, free to read and download.</p>
           <a class="btn btn-p" id="fp-zenodo" href="https://doi.org/10.5281/zenodo.24359235" target="_blank" rel="noopener">Open on Zenodo<span class="sr-only"> (opens in a new tab)</span> →</a>
           <div class="unlocked-links">
             <button type="button" class="link-btn js-share" data-share-url="https://doi.org/10.5281/zenodo.24359235" data-share-title="Field Potentials: A Systems Account of Clinical Neuro, free on Zenodo">Share the book’s link</button>
@@ -666,7 +673,7 @@ footer { padding: 32px var(--pad); }
     <h3 class="sr-only">Featured references</h3>
     <div class="resources-grid">
       <article class="res-card reveal">
-        <div class="preview" aria-hidden="true"><img src="/neurotechstandardsandgovernance/og-image.jpg" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Curated reference</span><span class="pf-title">Neurotechnology Standards &amp; Governance</span></span></div>
+        <div class="preview" aria-hidden="true"><img src="images/previews/standards.jpg" alt="" width="1200" height="627"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Curated reference</span><span class="pf-title">Neurotechnology Standards &amp; Governance</span></span></div>
         <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L27 7 V15 C27 22 22 27 16 29 C10 27 5 22 5 15 V7 Z"/><path d="M11 16 L15 20 L22 12"/></svg>
         <p class="res-tag">Standards and governance reference</p>
         <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/neurotechstandardsandgovernance/" target="_blank" rel="noopener">Neurotechnology Standards &amp; Governance<span class="sr-only"> (opens in a new tab)</span></a></h4>
@@ -675,7 +682,7 @@ footer { padding: 32px var(--pad); }
         <span class="res-cta" aria-hidden="true">View resource →</span>
       </article>
       <article class="res-card reveal">
-        <div class="preview is-fallback" aria-hidden="true"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">NeuroTechX Content Lab</span><span class="pf-title">Navigating the Neurotechnology Reimbursement Maze</span></span></div>
+        <div class="preview preview--contain" aria-hidden="true"><img src="images/previews/reimbursement.jpg" alt="" width="1400" height="581"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">NeuroTechX Content Lab</span><span class="pf-title">Navigating the Neurotechnology Reimbursement Maze</span></span></div>
         <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5 H13 L16 8 V20 H4 Z"/><path d="M7 12 L9 14 L13 10"/><path d="M15 25 H20"/><path d="M18 23 L20 25 L18 27"/><circle cx="25.5" cy="20" r="4.5"/><path d="M25.5 18 V22"/></svg>
         <p class="res-tag">Reimbursement reference</p>
         <h4 class="res-title"><a class="card-link" href="https://medium.com/neurotechx/navigating-the-neurotechnology-insurance-reimbursement-maze-challenges-and-solutions-in-the-united-a82ab89e69d7" target="_blank" rel="noopener">Navigating the Neurotechnology Reimbursement Maze<span class="sr-only"> (opens in a new tab)</span></a></h4>
@@ -684,7 +691,7 @@ footer { padding: 32px var(--pad); }
         <span class="res-cta" aria-hidden="true">Read the article →</span>
       </article>
       <article class="res-card reveal">
-        <div class="preview" aria-hidden="true"><img src="/patientcenteredneurotech/og-image.png" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Curated reference</span><span class="pf-title">Patient Centered Neurotechnology</span></span></div>
+        <div class="preview" aria-hidden="true"><img src="images/previews/patient-centered.jpg" alt="" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Curated reference</span><span class="pf-title">Patient Centered Neurotechnology</span></span></div>
         <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 27 C4 20 8 16 12 16 C14 16 15.5 16.6 17 17.6"/><path d="M24 27 C19 23.5 17.5 21.5 17.5 19.5 C17.5 17.8 18.8 16.5 20.5 16.5 C21.9 16.5 23.2 17.4 24 18.7 C24.8 17.4 26.1 16.5 27.5 16.5 C29.2 16.5 30.5 17.8 30.5 19.5 C30.5 21.5 29 23.5 24 27 Z"/></svg>
         <p class="res-tag">Patient centered neurotech</p>
         <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/patientcenteredneurotech/" target="_blank" rel="noopener">Patient Centered Neurotechnology<span class="sr-only"> (opens in a new tab)</span></a></h4>
@@ -693,7 +700,7 @@ footer { padding: 32px var(--pad); }
         <span class="res-cta" aria-hidden="true">View resource →</span>
       </article>
       <article class="res-card reveal">
-        <div class="preview preview--portrait" aria-hidden="true"><img src="https://substackcdn.com/image/fetch/w_800,c_limit,f_jpg,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc4526a79-87ea-48b3-99ae-295929fe5894_2560x3840.jpeg" data-fallback-src="https://substack-post-media.s3.amazonaws.com/public/images/c4526a79-87ea-48b3-99ae-295929fe5894_2560x3840.jpeg" alt="" loading="lazy" width="800" height="1200"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Essay</span><span class="pf-title">My Journey + Resources for Yours in Neurotech</span></span></div>
+        <div class="preview preview--portrait" aria-hidden="true"><img src="https://substackcdn.com/image/fetch/w_800,c_limit,f_jpg,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc4526a79-87ea-48b3-99ae-295929fe5894_2560x3840.jpeg" data-fallback-src="https://substack-post-media.s3.amazonaws.com/public/images/c4526a79-87ea-48b3-99ae-295929fe5894_2560x3840.jpeg" alt="" width="800" height="1200"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Essay</span><span class="pf-title">My Journey + Resources for Yours in Neurotech</span></span></div>
         <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 28 C5 22 14 23 14 17 C14 11 22 13 22 7"/><circle cx="5" cy="28" r="1.5"/><path d="M22 7 V2"/><path d="M22 2 L28 4 L22 6"/></svg>
         <p class="res-tag">Career reference · Essay</p>
         <h4 class="res-title"><a class="card-link" href="https://sharenarice.substack.com/p/my-journey-resources-for-yours-in" target="_blank" rel="noopener">My Journey + Resources for Yours in Neurotech<span class="sr-only"> (opens in a new tab)</span></a></h4>
@@ -727,7 +734,7 @@ footer { padding: 32px var(--pad); }
       <p class="note">Free to play and share, with no login and no email needed.</p>
       <div class="resources-grid">
         <article class="res-card reveal">
-        <div class="preview" aria-hidden="true"><img src="/thresholds-og.png" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Navigation game</span><span class="pf-title">Thresholds</span></span></div>
+        <div class="preview preview--contain" aria-hidden="true"><img src="/thresholds-og.png" alt=""><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Navigation game</span><span class="pf-title">Thresholds</span></span></div>
           <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 28 V5 H22 V28"/><path d="M4 28 H28"/><circle cx="18.5" cy="17" r="1"/><path d="M22 23 H27"/></svg>
           <p class="res-tag">For undergraduates interested in neuro</p>
           <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/thresholds/" target="_blank" rel="noopener">Thresholds<span class="sr-only">, a navigation game (opens in a new tab)</span></a></h4>
@@ -736,7 +743,7 @@ footer { padding: 32px var(--pad); }
           <span class="res-cta" aria-hidden="true">Play the game →</span>
         </article>
         <article class="res-card reveal">
-        <div class="preview" aria-hidden="true"><img src="/gradstudents-og.png" alt="" loading="lazy" width="1200" height="630"><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Navigation game</span><span class="pf-title">Potentials</span></span></div>
+        <div class="preview preview--contain" aria-hidden="true"><img src="/gradstudents-og.png" alt=""><span class="preview-fallback"><svg viewBox="0 0 32 32"><path d="M6 6h20v20H6z"/><path d="M10 12h12M10 16h12M10 20h7"/></svg><span class="pf-kicker">Navigation game</span><span class="pf-title">Potentials</span></span></div>
           <svg class="res-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 22 H10 L12 20 L14 5 L16.5 24.5 C17.5 26 19 25 20 23.5 L21.5 22 H30"/></svg>
           <p class="res-tag">For graduate students interested in neuro</p>
           <h4 class="res-title"><a class="card-link" href="https://sharenarice.com/potentials/" target="_blank" rel="noopener">Potentials<span class="sr-only">, a navigation game (opens in a new tab)</span></a></h4>
@@ -827,9 +834,9 @@ footer { padding: 32px var(--pad); }
       <button class="chip" type="button" data-aff-filter="all" aria-pressed="true">All</button>
       <button class="chip" type="button" data-aff-filter="work" aria-pressed="false">Worked at</button>
       <button class="chip" type="button" data-aff-filter="advise" aria-pressed="false">Advise and consult</button>
-      <button class="chip" type="button" data-aff-filter="speak" aria-pressed="false">Spoke at</button>
-      <button class="chip" type="button" data-aff-filter="write" aria-pressed="false">Wrote for</button>
       <button class="chip" type="button" data-aff-filter="study" aria-pressed="false">Studied at</button>
+      <button class="chip" type="button" data-aff-filter="write" aria-pressed="false">Wrote for</button>
+      <button class="chip" type="button" data-aff-filter="speak" aria-pressed="false">Spoke at</button>
       <button class="chip" type="button" data-aff-filter="found" aria-pressed="false">Co-founded</button>
     </div>
     <p class="sr-only" id="aff-count" role="status" aria-live="polite"></p>
@@ -852,7 +859,7 @@ footer { padding: 32px var(--pad); }
     </div>
     <a class="bc-card reveal" href="https://brainsconnected.com/" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
       <span class="preview">
-        <img src="https://brainsconnected.com/og-image.png" alt="" loading="lazy" width="1200" height="630">
+        <img src="https://brainsconnected.com/og-image.png" alt="" width="1200" height="630">
         <span class="preview-fallback"><svg viewBox="0 0 32 32"><circle cx="9" cy="16" r="4"/><circle cx="23" cy="9" r="3"/><circle cx="23" cy="23" r="3"/><path d="M13 14.5l7-4M13 17.5l7 4"/></svg><span class="pf-kicker">brainsconnected.com</span><span class="pf-title">The Nexus for Consumer Neurotech Buyers</span></span>
       </span>
     </a>
@@ -912,7 +919,7 @@ footer { padding: 32px var(--pad); }
    Until it is pasted, visitors still get the book, but no address is
    saved, and the browser console shows a warning.
    ================================================================= */
-const GOOGLE_FORM_PREFILLED_LINK = 'https://docs.google.com/spreadsheets/d/1cKzRqwympTFpzGFbxyD_fp6XVm4EjgZ-cH_bohjCPBo/edit?usp=sharing';
+const GOOGLE_FORM_PREFILLED_LINK = 'PASTE_PREFILLED_LINK_HERE';
 
 /* ===== Config: site constants ===== */
 const ZENODO_URL = 'https://doi.org/10.5281/zenodo.24359235';
@@ -921,7 +928,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 
 /* ===== Config: visualizers. Edit here to add, retitle, or reorder; cards and the viewer read from this list =====
    topic: recording | devices | cells (drives the filter chips)
-   type: video (src, poster) or carousel (slides with alt text, pdf)
+   type: video (src, poster) or carousel (slides with alt text). Everything plays in the page; nothing is offered for download.
    card: the 4:5 image shown on the grid card                                  */
 const TOPIC_NAMES = { recording: 'Recording and imaging', devices: 'Devices and delivery', cells: 'Cells and circuits' };
 const VISUALIZERS = [
@@ -943,7 +950,7 @@ const VISUALIZERS = [
   { id: 'ten-twenty', topic: 'recording', type: 'video', length: '10 second video',
     title: 'Every EEG electrode sits at a measured fraction of your head',
     desc: 'A top view of the head with the 10-20 EEG electrode positions, from the nasion at the front to the inion at the back. Electrodes sit at 10 and 20 percent steps of the distance across the head, so the layout fits any head size. Odd numbers mark the left side, even numbers the right, and z the midline.' },
-  { id: 'eeg', topic: 'recording', type: 'carousel', length: '6 slide carousel', pdf: 'media/carousels/eeg.pdf',
+  { id: 'eeg', topic: 'recording', type: 'carousel', length: '6 slide carousel',
     title: 'What EEG can answer follows from what it records',
     desc: 'EEG (electroencephalography) records the currents that action potentials set off at synapses. Long lasting inputs follow rhythms, aligned cortex is seen best, and wave size tracks synchrony, so EEG fits questions about rhythm and timing.',
     slides: ['Cover: what EEG can answer follows from what it records, over a top view of the head with EEG electrodes.',
@@ -952,7 +959,7 @@ const VISUALIZERS = [
              'Aligned cortex is seen best.',
              'Wave size tracks synchrony.',
              'EEG fits questions about rhythm and timing.'] },
-  { id: 'meg', topic: 'recording', type: 'carousel', length: '7 slide carousel', pdf: 'media/carousels/meg.pdf',
+  { id: 'meg', topic: 'recording', type: 'carousel', length: '7 slide carousel',
     title: 'MEG sees EEG’s currents, minus the skull’s blur',
     desc: 'MEG (magnetoencephalography) reads the magnetic field made by the same dendritic currents EEG records, and bone does not smear that field. The slides compare a SQUID helmet cooled by liquid helium with optically pumped sensors worn on the scalp, then cover how faint the signal is, which folds MEG sees best, how MEG compares with EEG and fMRI, surgery planning, and where MEG is strongest: fast activity near the surface.',
     slides: ['Cover: MEG sees EEG’s currents, minus the skull’s blur, comparing a SQUID helmet with OPM sensors.',
@@ -974,49 +981,64 @@ const VISUALIZERS = [
 ];
 
 /* ===== Config: connections (the logo wall). One entry per logo, in wall order.
+   Order: worked at, then advise and consult, then studied at, then wrote for, then spoke at;
+   an organization sits in the group of its highest ranked connection.
    verb: the connection in a few words; detail: one plain line; tags drive the highlight chips
-   (work, advise, speak, write, study, found). An entry with verb '' shows its logo without a caption. ===== */
+   (work, advise, speak, write, study, found); bg: tile color for logos drawn on a colored ground. ===== */
 const AFFILIATIONS = [
+  /* Worked at (co-founding counts as work) */
   { id: 'radial', org: 'Radial', verb: 'Work at', tags: ['work'],
     detail: 'Head of Neuroscience Clinical Trials and Partnerships, 2026 to present' },
-  { id: 'wellcome-leap', org: 'Wellcome Leap', verb: 'Consult for', tags: ['advise'],
-    detail: 'Consultant to the $50M FORM Program, 2026 to present' },
-  { id: 'mayo-clinic', org: 'Mayo Clinic', verb: 'Spoke at', tags: ['speak'],
-    detail: 'Invited speaker, EverybodyIN session' },
-  { id: 'sxsw', org: 'SXSW', verb: 'Advised', tags: ['advise'],
-    detail: 'Advisory board, 2022 to 2025; pitch competition finalist, 2020' },
-  { id: 'dana-foundation', org: 'Dana Foundation', verb: 'Spoke for', tags: ['speak'],
-    detail: 'Invited panelist, Virtual Career Fair, 2025' },
-  { id: 'michigan', org: 'University of Michigan', verb: 'Studied and spoke at', tags: ['study', 'speak'],
-    detail: 'PhD in neuroscience, 2021; invited panelist, 2025 and 2026' },
-  { id: 'foresight', org: 'Foresight Institute', verb: 'Advise', tags: ['advise'],
-    detail: 'Grant advisor, AI safety grant program, 2024 to present' },
-  { id: 'neurotech-reports', org: 'Neurotech Reports', verb: 'Write for', tags: ['write'],
-    detail: 'Contributing editor since 2022, with 35+ articles' },
-  { id: 'berkeley', org: 'UC Berkeley', verb: 'Spoke at', tags: ['speak'],
-    detail: 'Invited panelist, Neurotech Device Panel, 2024' },
-  { id: 'kaleida', org: 'Kaleida Capital', verb: 'Worked at', tags: ['work', 'write'],
-    detail: 'Venture fellow, 2025 to 2026; co-authored its brain foundation models article' },
+  { id: 'brainsconnected', org: 'BrainsConnected', verb: 'Co-founded', tags: ['work', 'found'],
+    detail: 'Co-founder, Chief Product Officer, and Executive Editor' },
   { id: 'sanmai', org: 'Sanmai', verb: 'Worked at', tags: ['work'],
     detail: 'First full-time hire, 2022 to 2026; carried a focused ultrasound device into multi-site trials' },
-  { id: 'nyu', org: 'NYU', verb: 'Spoke at', tags: ['speak'],
-    detail: 'Guest speaker, Future Humans class' },
-  { id: 'neurotechx', org: 'NeuroTechX', verb: 'Spoke and wrote for', tags: ['speak', 'write'],
-    detail: 'Speaker and panelist, 2022 to 2026; co-authored the reimbursement article' },
-  { id: 'ucla', org: 'UCLA', verb: 'Spoke for', tags: ['speak'],
-    detail: 'NeuroTechX club chapter' },
-  { id: 'brainsconnected', org: 'BrainsConnected', verb: 'Co-founded', tags: ['found'],
-    detail: 'Co-founder, Chief Product Officer, and Executive Editor' },
-  { id: 'uc-davis', org: 'UC Davis', verb: 'Spoke at', tags: ['speak'],
-    detail: 'Industry panelist, 2024 and 2025' },
+  { id: 'kaleida', org: 'Kaleida Capital', verb: 'Worked at', tags: ['work', 'write'],
+    detail: 'Venture fellow, 2025 to 2026; co-authored its brain foundation models article' },
+  { id: 'intvo', org: 'Intvo', verb: 'Co-founded', tags: ['work', 'found'],
+    detail: 'Chief Scientific Officer, 2019 to 2021; computer vision that predicts pedestrian behavior for cars' },
+  { id: 'cal-lutheran', org: 'California Lutheran University', verb: 'Studied, worked, and spoke at', tags: ['work', 'study', 'speak'], bg: '#3B2360',
+    detail: 'BA in biochemistry and molecular biology, 2015; Outstanding Young Alumni, 2023' },
+  /* Advise and consult */
+  { id: 'wellcome-leap', org: 'Wellcome Leap', verb: 'Consult for', tags: ['advise'],
+    detail: 'Consultant to the $50M FORM Program, 2026 to present' },
+  { id: 'foresight', org: 'Foresight Institute', verb: 'Advise', tags: ['advise'],
+    detail: 'Grant advisor, AI safety grant program, 2024 to present' },
+  { id: 'sxsw', org: 'SXSW', verb: 'Advised', tags: ['advise'],
+    detail: 'Advisory board, 2022 to 2025; pitch competition finalist, 2020' },
   { id: 'valence', org: 'Valence Vibrations', verb: 'Advised', tags: ['advise'],
     detail: 'Scientific advisor, 2021 to 2023, on a wearable that turns vocal emotion into haptics' },
-  { id: 'university-of-washington', org: 'University of Washington', verb: 'Spoke at', tags: ['speak'],
-    detail: 'Invited speaker, BIOEN 532 career panel' },
-  { id: 'simply-neuroscience', org: 'Simply Neuroscience', verb: 'Spoke at', tags: ['speak'],
-    detail: 'Keynote, Simply NeuroCon, 2021' },
+  /* Studied at */
+  { id: 'michigan', org: 'University of Michigan', verb: 'Studied and spoke at', tags: ['study', 'speak'],
+    detail: 'PhD in neuroscience, 2021; invited panelist, 2025 and 2026' },
+  { id: 'hbs-online', org: 'Harvard Business School Online', verb: 'Studied at', tags: ['study'], bg: '#980034',
+    detail: 'Credential of Readiness (CORe) in business analytics, economics, and accounting, 2021' },
+  /* Wrote for */
+  { id: 'neurotech-reports', org: 'Neurotech Reports', verb: 'Write for', tags: ['write'],
+    detail: 'Contributing editor since 2022, with 35+ articles' },
+  { id: 'neurotechx', org: 'NeuroTechX', verb: 'Wrote and spoke for', tags: ['write', 'speak'],
+    detail: 'Co-authored the reimbursement article; speaker and panelist, 2022 to 2026' },
+  { id: 'corundum', org: 'Corundum Neuroscience', verb: 'Wrote for', tags: ['write', 'speak'], bg: '#000000',
+    detail: 'Contributor; moderated its Future of Health panel, 2024' },
+  /* Spoke at */
+  { id: 'mayo-clinic', org: 'Mayo Clinic', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Invited speaker, EverybodyIN session' },
+  { id: 'nyu', org: 'NYU', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Guest speaker, Future Humans class' },
+  { id: 'berkeley', org: 'UC Berkeley', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Invited panelist, Neurotech Device Panel, 2024' },
+  { id: 'ucla', org: 'UCLA', verb: 'Spoke for', tags: ['speak'],
+    detail: 'NeuroTechX club chapter' },
   { id: 'usc', org: 'USC', verb: 'Spoke for', tags: ['speak'],
     detail: 'NeuroTechX club chapter' },
+  { id: 'uc-davis', org: 'UC Davis', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Industry panelist, 2024 and 2025' },
+  { id: 'university-of-washington', org: 'University of Washington', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Invited speaker, BIOEN 532 career panel' },
+  { id: 'dana-foundation', org: 'Dana Foundation', verb: 'Spoke for', tags: ['speak'],
+    detail: 'Invited panelist, Virtual Career Fair, 2025' },
+  { id: 'simply-neuroscience', org: 'Simply Neuroscience', verb: 'Spoke at', tags: ['speak'],
+    detail: 'Keynote, Simply NeuroCon, 2021' },
 ];
 
 /* ===== Config: publication index (featured references and Field Potentials sit above, so they are not repeated).
@@ -1029,8 +1051,6 @@ const PUBLICATIONS = [
     title: 'Thalamus and claustrum control parallel layer 1 circuits in retrosplenial cortex' },
   { group: 'research', year: 2021, venue: 'Dissertation · University of Michigan', url: 'https://hdl.handle.net/2027.42/169724',
     title: 'Oscillations of the Granular Retrosplenial Cortex' },
-  { group: 'research', year: 'In revision', venue: 'Neuroscience Letters · second author', url: '',
-    title: 'Unique Roles of L-Type Calcium Channel Subtypes in Homeostatic Synaptic Scaling' },
   { group: 'analysis', year: 2026, venue: 'Kaleida Capital Insights · with the firm’s General Partner', url: 'https://www.kaleidacapital.com/insights/foundationmodels',
     title: 'Foundation Models for the Brain: Why Neural Data Is a Critical Asset for AI' },
   { group: 'analysis', year: 2026, venue: 'Book · superseded by Field Potentials', url: 'https://drive.google.com/file/d/1ydwpztYCnzqJcLO8SB2RvkY91DG3RqGZ/preview',
@@ -1041,7 +1061,7 @@ const PUBLICATIONS = [
     title: 'Nods of Neuromod: Neuromodulation Techniques' },
   { group: 'analysis', year: 2024, venue: 'MedCity News · second author', url: 'https://medcitynews.com/2024/07/earning-trust-in-neurotech/',
     title: 'Earning Trust in Neurotech' },
-  { group: 'analysis', year: 2024, venue: 'Med Device Online · second author', url: '',
+  { group: 'analysis', year: 2024, venue: 'Med Device Online · second author', url: 'https://www.meddeviceonline.com/doc/tips-to-overcome-challenges-in-the-neurotech-startup-world-0001',
     title: 'Tips to Overcome 4 Challenges in the Neurotech Startup World' },
   { group: 'analysis', year: 2024, venue: 'The Frontier Psychiatrists · guest post', url: '',
     title: 'A Firm Science' },
@@ -1280,7 +1300,7 @@ function openViewer(id, trigger) {
 
   if (v.type === 'video') {
     vMedia.classList.remove('is-carousel');
-    vMedia.innerHTML = `<video controls playsinline muted loop preload="metadata" poster="media/posters/${v.id}.jpg" aria-describedby="viewer-desc">
+    vMedia.innerHTML = `<video controls controlslist="nodownload noremoteplayback" disablepictureinpicture playsinline muted loop preload="metadata" poster="media/posters/${v.id}.jpg" aria-describedby="viewer-desc">
       <source src="media/video/${v.id}.mp4" type="video/mp4"></video>`;
     const vid = vMedia.querySelector('video');
     if (!reduceMotion) vid.play().catch(() => {});   // autoplay only when motion is welcome; controls are always there
@@ -1296,10 +1316,6 @@ function openViewer(id, trigger) {
     vMedia.querySelectorAll('.slide-btn').forEach(b => b.addEventListener('click', () => showSlide(v, slideIndex + Number(b.dataset.step))));
     addSwipe(vMedia, dir => showSlide(v, slideIndex + dir));
     showSlide(v, 0);
-    const pdf = document.createElement('a');
-    pdf.className = 'btn btn-s'; pdf.href = v.pdf; pdf.download = '';
-    pdf.textContent = 'Download PDF';
-    actions.appendChild(pdf);
   }
   const share = document.createElement('button');
   share.type = 'button'; share.className = 'btn btn-p'; share.textContent = 'Share this visualizer';
@@ -1307,6 +1323,7 @@ function openViewer(id, trigger) {
   actions.prepend(share);
 
   history.replaceState(null, '', '#viz-' + v.id);
+  vMedia.oncontextmenu = e => e.preventDefault();   // no right-click "save video/image as" inside the viewer
   document.body.style.overflow = 'hidden';
   viewer.showModal();
   document.getElementById('viewer-close').focus();
@@ -1365,6 +1382,7 @@ AFFILIATIONS.forEach(a => {
   btn.type = 'button';
   btn.className = 'aff';
   btn.dataset.tags = a.tags.join(' ');
+  if (a.bg) btn.style.background = a.bg;   // keeps the logo on its own brand ground
   btn.innerHTML = `<img src="images/logos/${a.id}.png" alt="${a.org}" loading="lazy">` +
     (a.verb ? `<span class="aff-info"><span class="aff-verb">${a.verb}</span><span class="aff-org">${a.org}</span><span class="aff-detail">${a.detail}</span></span>` : '');
   if (!a.verb) btn.setAttribute('aria-disabled', 'true');
@@ -1400,8 +1418,9 @@ document.querySelectorAll('.preview img').forEach(img => {
     if (img.dataset.fallbackSrc && img.src !== img.dataset.fallbackSrc) { img.src = img.dataset.fallbackSrc; return; }
     img.closest('.preview').classList.add('is-fallback');
   };
-  if (img.complete && img.naturalWidth === 0) fallback();
   img.addEventListener('error', fallback);
+  /* Catches an error that fired before this script ran (the image then reports complete with no pixels) */
+  if (img.complete && img.naturalWidth === 0 && img.currentSrc) fallback();
 });
 
 /* ===== Publication index: rows from PUBLICATIONS, a type filter, and a show-all toggle ===== */
