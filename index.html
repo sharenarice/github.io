@@ -1110,7 +1110,7 @@ footer { padding: 32px var(--pad); }
    Until it is pasted, visitors still get the book, but no address is
    saved, and the browser console shows a warning.
    ================================================================= */
-const GOOGLE_FORM_PREFILLED_LINK = 'PASTE_PREFILLED_LINK_HERE';
+const GOOGLE_FORM_PREFILLED_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLSfYIHCX-EKHsIzjQdIXOkbxkA1tf0B0BIih-UKwOvAwVEGCZA/viewform?usp=pp_url&entry.1326636687=email@email.com&entry.1739939598=Name+Name';
 
 /* =================================================================
    ENGAGEMENT FORM SETUP (one paste; steps in SETUP-EMAIL-LIST.md, part 2)
@@ -1119,7 +1119,7 @@ const GOOGLE_FORM_PREFILLED_LINK = 'PASTE_PREFILLED_LINK_HERE';
    NAME, EMAIL, ORGANIZATION, and MESSAGE typed into its six questions (SEATS is optional; without it,
    the seats are written at the top of MESSAGE).
    ================================================================= */
-const CONTACT_FORM_PREFILLED_LINK = 'https://forms.gle/xw3CHDyYsgT4oVLy5';
+const CONTACT_FORM_PREFILLED_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLSfPXT94bNvkY5AZEU8-4DcS70HmfWmC0jI-2RNBEVdAsKnZBA/viewform?usp=pp_url&entry.1554886700=NAME&entry.1918257520=email@example.com&entry.255341022=TOPIC&entry.352363883=Trainee&entry.355580446=ORGANIZATION&entry.1756244939=MESSAGE';
 
 /* ===== Config: site constants ===== */
 const ZENODO_URL = 'https://doi.org/10.5281/zenodo.24359235';
@@ -1375,25 +1375,38 @@ document.querySelectorAll('.js-share').forEach(btn => btn.addEventListener('clic
 
 /* ===== 3 and 7. Email sign ups: one handler for both forms; each row in the Sheet records its source ===== */
 /* Reads the pre-filled link once: form address plus the entry IDs for the EMAIL and SOURCE questions */
-const formTarget = (() => {
+/* Reads a Google Form pre-filled link into { action, fields }.
+   Each question is recognized by the placeholder answer typed into it when the link was made:
+   EMAIL (or any address with an @), NAME, TOPIC, ORGANIZATION, MESSAGE, SOURCE, SEATS, or any one ticked seat.
+   A short forms.gle link has no question IDs, so it is reported in the console and ignored. */
+const SEAT_NAMES = ['trainee', 'discovery researcher', 'clinical researcher', 'clinician', 'builder', 'quality & regulatory',
+  'human factors & design', 'investor & funder', 'program leader', 'institutional administrator', 'commercial & economic', 'lived experience', 'other'];
+function readPrefilledLink(link, label) {
   try {
-    const u = new URL(GOOGLE_FORM_PREFILLED_LINK);
-    const t = { action: u.origin + u.pathname.replace(/\/viewform$/, '/formResponse') };
+    const u = new URL(link);
+    if (u.hostname === 'forms.gle') { console.warn(label + ': paste the long pre-filled link (docs.google.com/.../viewform?...entry...), not the short forms.gle link.'); return null; }
+    const t = { action: u.origin + u.pathname.replace(/\/viewform$/, '/formResponse'), fields: {} };
     u.searchParams.forEach((value, key) => {
-      if (!key.startsWith('entry.')) return;
-      if (value.trim().toUpperCase() === 'EMAIL') t.email = key;
-      if (value.trim().toUpperCase() === 'SOURCE') t.source = key;
+      if (key === 'emailAddress') { t.fields.EMAIL = key; return; }   // Google's built-in "collect email addresses" box
+      if (!/^entry\.\d+$/.test(key)) return;
+      const v = value.trim(), up = v.toUpperCase();
+      if (['EMAIL', 'NAME', 'TOPIC', 'ORGANIZATION', 'MESSAGE', 'SOURCE', 'SEATS'].includes(up)) t.fields[up] = key;
+      else if (v.includes('@')) t.fields.EMAIL = key;
+      else if (SEAT_NAMES.includes(v.toLowerCase()) || v === '__other_option__') t.fields.SEATS = key;
     });
-    return t.email ? t : null;
+    /* A form that collects addresses with Google's own E-mail box may leave it out of the pre-filled link */
+    if (!t.fields.EMAIL && Object.keys(t.fields).length) t.fields.EMAIL = 'emailAddress';
+    return t.fields.EMAIL ? t : null;
   } catch (e) { return null; }
-})();
+}
+const formTarget = readPrefilledLink(GOOGLE_FORM_PREFILLED_LINK, 'Email list');
 
 /* Sends one address to the Google Form. Google does not let the page read the reply, so the visitor sees success right away. */
 function saveEmail(email, source) {
   if (!formTarget) { console.warn('Email sign up: the Google Form is not connected yet, so this address was not saved.'); return; }
   const data = new URLSearchParams();
-  data.append(formTarget.email, email);
-  if (formTarget.source) data.append(formTarget.source, source);
+  data.append(formTarget.fields.EMAIL, email);
+  if (formTarget.fields.SOURCE) data.append(formTarget.fields.SOURCE, source);
   fetch(formTarget.action, { method: 'POST', mode: 'no-cors', body: data }).catch(() => {});
 }
 
@@ -1822,14 +1835,7 @@ const SEATS = ['Trainee', 'Discovery researcher', 'Clinical researcher', 'Clinic
 const seatRow = document.getElementById('seat-row');
 seatRow.innerHTML = SEATS.map(s => `<label class="seat"><input type="checkbox" name="seat" value="${s}"><span>${s.replace('&', '&amp;')}</span></label>`).join('');
 
-const contactTarget = (() => {
-  try {
-    const u = new URL(CONTACT_FORM_PREFILLED_LINK);
-    const t = { action: u.origin + u.pathname.replace(/\/viewform$/, '/formResponse'), fields: {} };
-    u.searchParams.forEach((value, key) => { if (key.startsWith('entry.')) t.fields[value.trim().toUpperCase()] = key; });
-    return t.fields.EMAIL && t.fields.MESSAGE ? t : null;
-  } catch (e) { return null; }
-})();
+const contactTarget = readPrefilledLink(CONTACT_FORM_PREFILLED_LINK, 'Engagement form');
 const contact = document.getElementById('contact');
 const contactForm = document.getElementById('contact-form');
 const contactDone = document.getElementById('contact-done');
@@ -1898,12 +1904,32 @@ contactForm.addEventListener('submit', e => {
   const details = topic === 'Project scoping call' ? `Work hoped for: ${val('c-scope')}`
     : topic === 'Speaking' ? `Audience, date, and format: ${val('c-talk')}`
     : `Decision to close: ${val('c-decision')}\nWhat they need from me: ${val('c-need')}`;
-  const fields = { TOPIC: topic, SEATS: seats.join(', '), NAME: val('c-name'), EMAIL: val('c-email'), ORGANIZATION: val('c-org'),
-                   MESSAGE: (contactTarget.fields.SEATS ? '' : `Seats: ${seats.join(', ') || 'not given'}\n`) + details };
+  const f = contactTarget.fields;
   const isBot = byId('c-website').value !== '' || Date.now() - contactOpenedAt < 3000;
   if (!isBot) {
     const data = new URLSearchParams();
-    Object.entries(fields).forEach(([k, v]) => { if (contactTarget.fields[k]) data.append(contactTarget.fields[k], v); });
+    data.append(f.EMAIL, val('c-email'));
+    if (f.NAME) data.append(f.NAME, val('c-name'));
+    if (f.ORGANIZATION) data.append(f.ORGANIZATION, val('c-org'));
+    /* Branch answers go to Message; if the form has no Message question, they ride along in Topic */
+    if (f.MESSAGE) data.append(f.MESSAGE, details);
+    if (f.TOPIC) data.append(f.TOPIC, f.MESSAGE ? topic : `${topic}\n\n${details}`);
+    /* Seats: a checkbox question gets one value per ticked seat, in the form's own capitalization;
+       "Other" goes in its write-in box. A short answer Seats question gets one comma separated line. */
+    const ticked = [...contactForm.querySelectorAll('input[name=seat]:checked')].map(c => c.value);
+    if (f.SEATS) {
+      const isCheckbox = !['SEATS'].includes((new URL(CONTACT_FORM_PREFILLED_LINK).searchParams.get(f.SEATS) || '').trim().toUpperCase());
+      if (isCheckbox) {
+        ticked.forEach(seat => {
+          if (seat === 'Other') {
+            data.append(f.SEATS, '__other_option__');
+            data.append(f.SEATS + '.other_option_response', val('c-seat-other'));
+          } else data.append(f.SEATS, seat.replace(/(^|\s)\w/g, m => m.toUpperCase()));   // "Quality & regulatory" -> "Quality & Regulatory"
+        });
+      } else data.append(f.SEATS, chosenSeats().join(', '));
+    } else if (f.MESSAGE) {
+      data.set(f.MESSAGE, `Seats: ${chosenSeats().join(', ') || 'not given'}\n${details}`);
+    }
     fetch(contactTarget.action, { method: 'POST', mode: 'no-cors', body: data }).catch(() => {});
   }
   contactForm.reset(); updateBranches(); contactForm.hidden = true; contactDone.hidden = false; contactDone.focus();
